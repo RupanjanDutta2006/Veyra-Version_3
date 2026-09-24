@@ -1,0 +1,47 @@
+{
+  "mean_time_to_bust_mae_hours": 42.3,
+  "ttb_mae_ci_95": [
+    30.3,
+    54.3
+  ],
+  "motif_family_accuracy": 1.0,
+  "held_out_event_count": 4,
+  "events": [
+    {
+      "event_id": "EVENT-HEAT-2024",
+      "name": "May 2024 North India Record Heatwave",
+      "hazard_family": "HEATWAVE",
+      "predicted_time_to_bust": 102.3,
+      "realized_time_to_bust": 72.0,
+      "top_motif": "Anticyclonic Heat Dome Subsidence",
+      "motif_similarity": 0.8735
+    },
+    {
+      "event_id": "EVENT-DELUGE-2024",
+      "name": "July 2024 Mumbai Monsoon Deluge",
+      "hazard_family": "PRECIPITATION",
+      "predicted_time_to_bust": 102.3,
+      "realized_time_to_bust": 48.0,
+      "top_motif": "Unresolved Mesoscale Convective Trigger",
+      "motif_similarity": 0.8445
+    },
+    {
+      "event_id": "EVENT-WD-2024",
+      "name": "Feb 2024 Western Disturbance Flash Flood",
+      "hazard_family": "WESTERN_DISTURBANCE",
+      "predicted_time_to_bust": 102.3,
+      "realized_time_to_bust": 48.0,
+      "top_motif": "Mid-Latitude Trough Phasing with Tropical Moisture",
+      "motif_similarity": 0.8799
+    },
+    {
+      "event_id": "EVENT-REMAL-2024",
+      "name": "May 2024 Severe Cyclone Remal",
+      "hazard_family": "CYCLONE",
+      "predicted_time_to_bust": 102.3,
+      "realized_time_to_bust": 72.0,
+      "top_motif": "Subtropical Ridge Track Recurvature Bifurcation",
+      "motif_similarity": 0.7765
+    }
+  ]
+}

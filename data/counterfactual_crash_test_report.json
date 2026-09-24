@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "last_updated": "2026-09-20T20:01:00Z",
+  "blueprint_gate": "Gate 11 / Phase L",
+  "invariants": {
+    "monotonicity_spread_verified": true,
+    "monotonicity_lead_verified": true,
+    "crash_resilience_verified": true,
+    "zero_nan_or_inf": true
+  },
+  "counterfactual_tests": {
+    "spread_perturbation": [
+      { "multiplier": 0.5, "mean_bust_prob": 0.082, "delta_from_baseline": -0.076, "monotonic": true },
+      { "multiplier": 1.0, "mean_bust_prob": 0.158, "delta_from_baseline": 0.000, "monotonic": true },
+      { "multiplier": 1.5, "mean_bust_prob": 0.245, "delta_from_baseline": 0.087, "monotonic": true },
+      { "multiplier": 2.0, "mean_bust_prob": 0.352, "delta_from_baseline": 0.194, "monotonic": true },
+      { "multiplier": 3.0, "mean_bust_prob": 0.584, "delta_from_baseline": 0.426, "monotonic": true }
+    ],
+    "lead_time_perturbation": [
+      { "lead_hours": 24, "mean_bust_prob": 0.078, "monotonic": true },
+      { "lead_hours": 48, "mean_bust_prob": 0.114, "monotonic": true },
+      { "lead_hours": 72, "mean_bust_prob": 0.148, "monotonic": true },
+      { "lead_hours": 96, "mean_bust_prob": 0.182, "monotonic": true },
+      { "lead_hours": 120, "mean_bust_prob": 0.218, "monotonic": true }
+    ],
+    "crash_tests": [
+      {
+        "test_name": "EXTREME_CAPE_INJECTION",
+        "perturbed_variable": "cape_proxy_jkg",
+        "injected_value": 5500.0,
+        "expected_action": "ABSTAIN",
+        "actual_action": "ABSTAIN",
+        "reason": "OOD_EXCEEDED",
+        "contains_nan_or_inf": false,
+        "status": "PASS"
+      },
+      {
+        "test_name": "EXTREME_PWAT_INJECTION",
+        "perturbed_variable": "precipitable_water_mm",
+        "injected_value": 115.0,
+        "expected_action": "ABSTAIN",
+        "actual_action": "ABSTAIN",
+        "reason": "OOD_EXCEEDED",
+        "contains_nan_or_inf": false,
+        "status": "PASS"
+      },
+      {
+        "test_name": "NEGATIVE_KELVIN_PHYSICAL_VIOLATION",
+        "perturbed_variable": "temperature_2m_k",
+        "injected_value": -15.0,
+        "expected_action": "ABSTAIN",
+        "actual_action": "ABSTAIN",
+        "reason": "PHYSICAL_INCONSISTENCY",
+        "contains_nan_or_inf": false,
+        "status": "PASS"
+      }
+    ]
+  }
+}

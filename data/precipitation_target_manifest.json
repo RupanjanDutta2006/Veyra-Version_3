@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "last_updated": "2026-09-20T12:00:00Z",
+  "gate": "Gate 3",
+  "hazard": "PRECIPITATION",
+  "description": "Canonical precipitation target and threshold manifest defining occurrence, amount, intensity, timing, and spatial failure modes across 6/12/24/48/72-hour accumulation windows.",
+  "invariants": {
+    "temporal_safety": "Precipitation target labels can only be evaluated post-valid-time when ground truth (IMD gridded rainfall / GPM IMERG) is available (valid_time + latency).",
+    "feature_target_isolation": "No target-derived variables, ground-truth residuals, or post-valid-time measurements may enter issue-time feature sets.",
+    "hazard_not_flood": "Precipitation reliability specialist diagnoses NWP rainfall forecast failure; it does not predict hydrological flooding or inundation.",
+    "unsupported_quantities_null": "Any unsupported amount, timing, spatial, or extreme category must remain null, never fabricated."
+  },
+  "accumulation_windows_hours": [6, 12, 24, 48, 72],
+  "intensity_thresholds_mm": {
+    "LIGHT": 2.5,
+    "MODERATE": 15.6,
+    "HEAVY": 64.5,
+    "VERY_HEAVY": 115.6,
+    "EXTREMELY_HEAVY": 204.5
+  },
+  "targets": [
+    {
+      "target_id": "PRECIP-OCCURRENCE-01",
+      "target_name": "precipitation_occurrence_failure",
+      "accumulation_window_hours": 24,
+      "unit": "binary",
+      "threshold_fixed_mm": 2.5,
+      "modes": {
+        "FALSE_ALARM": "Forecast >= 2.5 mm AND Observed < 2.5 mm",
+        "MISS": "Forecast < 2.5 mm AND Observed >= 2.5 mm"
+      },
+      "formula": "(F >= 2.5 AND O < 2.5) OR (F < 2.5 AND O >= 2.5)",
+      "description": "Occurrence failure: binary classification of dry/wet disagreement at standard measurable precipitation threshold (2.5 mm/24h)."
+    },
+    {
+      "target_id": "PRECIP-AMOUNT-01",
+      "target_name": "precipitation_amount_error",
+      "accumulation_window_hours": 24,
+      "unit": "mm",
+      "threshold_fixed_mm": 25.0,
+      "formula": "|F - O| > 25.0 mm",
+      "description": "Amount failure: absolute forecast error in 24h accumulated rainfall exceeds 25 mm or stratified 95th percentile error."
+    },
+    {
+      "target_id": "PRECIP-HEAVY-01",
+      "target_name": "heavy_rainfall_failure",
+      "accumulation_window_hours": 24,
+      "unit": "binary",
+      "threshold_fixed_mm": 64.5,
+      "modes": {
+        "FALSE_ALARM": "Forecast >= 64.5 mm AND Observed < 64.5 mm",
+        "MISS": "Forecast < 64.5 mm AND Observed >= 64.5 mm"
+      },
+      "formula": "(F >= 64.5 AND O < 64.5) OR (F < 64.5 AND O >= 64.5)",
+      "description": "Heavy rainfall failure: failure to predict IMD Heavy Rainfall threshold (>= 64.5 mm/24h) or false alarm."
+    },
+    {
+      "target_id": "PRECIP-EXTREME-01",
+      "target_name": "extreme_rainfall_failure",
+      "accumulation_window_hours": 24,
+      "unit": "binary",
+      "threshold_fixed_mm": 204.5,
+      "modes": {
+        "FALSE_ALARM": "Forecast >= 204.5 mm AND Observed < 204.5 mm",
+        "MISS": "Forecast < 204.5 mm AND Observed >= 204.5 mm"
+      },
+      "formula": "(F >= 204.5 AND O < 204.5) OR (F < 204.5 AND O >= 204.5)",
+      "description": "Extreme rainfall failure: failure to predict IMD Extremely Heavy Rainfall threshold (>= 204.5 mm/24h) or severe over-prediction."
+    },
+    {
+      "target_id": "PRECIP-TIMING-01",
+      "target_name": "precipitation_timing_displacement",
+      "accumulation_window_hours": 24,
+      "unit": "hours",
+      "threshold_fixed_hours": 6.0,
+      "formula": "|T_peak_forecast - T_peak_observed| > 6.0 h",
+      "description": "Timing displacement failure: diurnal or convective peak precipitation hour error exceeds 6 hours."
+    },
+    {
+      "target_id": "PRECIP-SPATIAL-01",
+      "target_name": "precipitation_spatial_displacement",
+      "accumulation_window_hours": 24,
+      "unit": "km",
+      "threshold_fixed_km": 75.0,
+      "formula": "Centroid_Distance_km > 75.0 km",
+      "description": "Spatial displacement failure: precipitation swath/rain-band center of mass is displaced by more than 75 km from observed center."
+    },
+    {
+      "target_id": "PRECIP-ACCUM-6H",
+      "target_name": "precipitation_accum_6h_error",
+      "accumulation_window_hours": 6,
+      "unit": "mm",
+      "threshold_fixed_mm": 15.0,
+      "formula": "|F_6h - O_6h| > 15.0 mm",
+      "description": "6-hour sub-daily accumulation failure."
+    },
+    {
+      "target_id": "PRECIP-ACCUM-12H",
+      "target_name": "precipitation_accum_12h_error",
+      "accumulation_window_hours": 12,
+      "unit": "mm",
+      "threshold_fixed_mm": 20.0,
+      "formula": "|F_12h - O_12h| > 20.0 mm",
+      "description": "12-hour sub-daily accumulation failure."
+    },
+    {
+      "target_id": "PRECIP-ACCUM-48H",
+      "target_name": "precipitation_accum_48h_error",
+      "accumulation_window_hours": 48,
+      "unit": "mm",
+      "threshold_fixed_mm": 40.0,
+      "formula": "|F_48h - O_48h| > 40.0 mm",
+      "description": "48-hour multi-day accumulation failure."
+    },
+    {
+      "target_id": "PRECIP-ACCUM-72H",
+      "target_name": "precipitation_accum_72h_error",
+      "accumulation_window_hours": 72,
+      "unit": "mm",
+      "threshold_fixed_mm": 60.0,
+      "formula": "|F_72h - O_72h| > 60.0 mm",
+      "description": "72-hour extended accumulation failure."
+    }
+  ]
+}

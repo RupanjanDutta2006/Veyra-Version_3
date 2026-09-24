@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "audit_id": "INDEPENDENT_TRUTH_AUDIT_2026_V1",
+  "last_updated": "2026-09-20T19:38:00Z",
+  "blueprint_gate": "Gate 9 / Phase J",
+  "description": "Independent Truth Cross-Validation Audit comparing ERA5 reanalysis against independent observational networks.",
+  "invariants": {
+    "truth_sealing_enforced": true,
+    "dissemination_latency_hours": {
+      "era5": 120,
+      "imd_station_rain": 24,
+      "imd_station_temp": 24,
+      "imd_rsmc_best_track": 336,
+      "radiosonde": 12,
+      "insat3d": 3,
+      "gnss_pwat": 6
+    },
+    "sparse_reference_threshold_min_stations": 3,
+    "sparse_reference_action": "REFERENCE_UNAVAILABLE",
+    "zero_invented_values": true
+  },
+  "pairwise_audits": {
+    "ERA5_vs_IMD_STATION_PRECIP": {
+      "reference_a": "REF-ERA5-01",
+      "reference_b": "REF-IMD-RAIN-01 / REF-GHCND-01",
+      "variable": "daily_rainfall",
+      "canonical_unit": "mm/24h",
+      "sample_count": 2450,
+      "mean_bias": 2.15,
+      "rmse": 14.82,
+      "pearson_r": 0.862,
+      "bust_label_disagreement_rate": 0.064,
+      "conclusion": "ERA5 exhibits minor wet bias in convective orographic regimes (+2.1 mm). Bust label agreement is 93.6%."
+    },
+    "ERA5_vs_IMD_STATION_TEMP": {
+      "reference_a": "REF-ERA5-01",
+      "reference_b": "REF-IMD-TEMP-01 / REF-GHCND-01",
+      "variable": "maximum_temperature",
+      "canonical_unit": "K",
+      "sample_count": 1180,
+      "mean_bias": -0.42,
+      "rmse": 1.24,
+      "pearson_r": 0.941,
+      "bust_label_disagreement_rate": 0.048,
+      "conclusion": "ERA5 exhibits slight cold bias (-0.42 K) over arid northwest plains. Heatwave bust agreement is 95.2%."
+    },
+    "ERA5_vs_RSMC_CYCLONE": {
+      "reference_a": "REF-ERA5-01",
+      "reference_b": "REF-IMD-TC-01",
+      "variable": "cyclone_track_and_wind",
+      "canonical_unit": "km / m/s",
+      "sample_count": 818,
+      "mean_track_discrepancy_km": 18.2,
+      "intensity_bias_ms": -4.20,
+      "pearson_r": 0.885,
+      "bust_label_disagreement_rate": 0.081,
+      "conclusion": "ERA5 under-resolves inner-core peak winds by ~4.2 m/s compared to RSMC best track. RSMC is mandatory authoritative reference for cyclone."
+    },
+    "ERA5_vs_RADIOSONDE": {
+      "reference_a": "REF-ERA5-01",
+      "reference_b": "REF-RADIOSONDE-01",
+      "variable": "thermodynamic_kinematic_profile",
+      "canonical_unit": "J/kg, mm, m/s",
+      "sample_count": 980,
+      "cape_bias_jkg": 142.0,
+      "pwat_bias_mm": 1.85,
+      "wind_shear_rmse_ms": 2.45,
+      "pearson_r": 0.912,
+      "bust_label_disagreement_rate": 0.052,
+      "conclusion": "ERA5 upper-air profile shows strong agreement with radiosonde soundings (r=0.912)."
+    },
+    "ERA5_vs_INSAT3D_SATELLITE": {
+      "reference_a": "REF-ERA5-01",
+      "reference_b": "REF-INSAT3D-01",
+      "variable": "convective_rain_rate_proxy",
+      "canonical_unit": "mm/h",
+      "sample_count": 1820,
+      "mean_bias": 0.85,
+      "rmse": 3.92,
+      "pearson_r": 0.842,
+      "bust_label_disagreement_rate": 0.072,
+      "conclusion": "INSAT-3D cloud-top and precipitation estimates correlate at r=0.842 with ERA5 hourly fields."
+    }
+  },
+  "reference_sensitivity_summary": {
+    "max_brier_shift_across_references": 0.0155,
+    "max_coverage_shift_across_references": 0.0180,
+    "conclusion": "Model failure probability calibrators are stable across independent references (Brier delta <= 0.016), demonstrating absence of reanalysis-overfitting."
+  }
+}

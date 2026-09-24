@@ -1,0 +1,13 @@
+{
+  "normalized_capabilities": 45,
+  "substantial": 2,
+  "partial": 12,
+  "missing": 31,
+  "strictly_proven_end_to_end": 0,
+  "percentages": {
+    "substantial": 4.4,
+    "partial": 26.7,
+    "missing": 68.9,
+    "strictly_proven_end_to_end": 0.0
+  }
+}

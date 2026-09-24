@@ -1,0 +1,64 @@
+# Veyra Benchmark Ladder Configuration (Gate 1 / Phase B)
+# Governed by Blueprint Section 5: Universal Experiment Contract & Baseline Ladder
+
+version: "1.0.0"
+gate: "Gate 1"
+description: "Authoritative 7-Tier Benchmark Ladder comparing baselines against V3 incumbent."
+
+dataset:
+  train_split: "2022-01-01 to 2023-12-31"
+  val_split: "2024-01-01 to 2024-06-30"
+  test_split: "2024-07-01 to 2024-12-31"
+  target_variable: "bust_95th_mad"
+  canonical_features_file: "models/v3/feature_names.json"
+
+bootstrap:
+  method: "cycle"
+  n_iterations: 1000
+  confidence_interval: 0.95
+  seed: 42
+  block_size_cycles: 4  # 24-hour cycle block to preserve intra-day meteorological autocorrelation
+
+ladder_tiers:
+  - tier_id: 1
+    name: "Climatology Baseline"
+    type: "CLIMATOLOGY"
+    description: "Historical unconditional bust prevalence (~6.2%)"
+  - tier_id: 2
+    name: "Persistence Difficulty"
+    type: "PERSISTENCE"
+    description: "Previous cycle's forecast error persistence"
+  - tier_id: 3
+    name: "Raw Ensemble Spread"
+    type: "RAW_SPREAD"
+    description: "Normalized ensemble standard deviation alone"
+  - tier_id: 4
+    name: "Spread Logistic Regression"
+    type: "LOGISTIC_SPREAD"
+    description: "Univariate logistic regression on ensemble spread"
+  - tier_id: 5
+    name: "Compact Statistical Model"
+    type: "COMPACT_STATISTICAL"
+    description: "Multi-feature regularized logistic regression (spread, lead, revision delta)"
+  - tier_id: 6
+    name: "V3 Incumbent (Raw)"
+    type: "V3_RAW"
+    model_artifact: "models/v3/lightgbm_v3_challenger.joblib"
+    description: "Frozen LightGBM V3 uncalibrated probability"
+  - tier_id: 7
+    name: "V3 Incumbent (Calibrated)"
+    type: "V3_CALIBRATED"
+    model_artifact: "models/v3/lightgbm_v3_challenger.joblib"
+    calibrator_artifact: "models/v3/probability_calibrator_v3.joblib"
+    description: "Frozen LightGBM V3 with Isotonic Calibration"
+
+metrics:
+  - "pr_auc"
+  - "roc_auc"
+  - "brier_score"
+  - "brier_skill_score"
+  - "expected_calibration_error"
+
+output:
+  report_json: "data/evaluation/benchmark_ladder_results.json"
+  summary_table: true

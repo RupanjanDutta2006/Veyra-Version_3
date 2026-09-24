@@ -1,0 +1,79 @@
+{
+  "manifest_id": "MANIFEST-WD-2026-V1",
+  "hazard_family": "WESTERN_DISTURBANCE",
+  "gate": "Gate 6",
+  "priority": "P1",
+  "description": "Target manifest for Western Disturbance Reliability Specialist, covering arrival timing, trough/center location, precipitation intensity, spatial displacement, duration, and rain/snow partition failure modes.",
+  "invariants": {
+    "decomposed_evaluation": "Arrival timing, trough location, precipitation amount, spatial displacement, duration, and rain/snow partition must be evaluated independently without collapsing into an opaque single score.",
+    "anti_leakage": "All evaluation features strictly constrained to issue time t0. Verification against gridded rainfall, snow-depth observations, and IMD/NCMRWF synoptic charts sealed with 24h latency.",
+    "terrain_conditioned_validation": "Validation must be partitioned across Western Himalayan High-Altitude (>2500m), Foothill/Sub-Himalayan (500-2500m), and Indo-Gangetic Plains (<500m) regimes.",
+    "rain_snow_null_safety": "Rain/snow phase partition error must strictly be null unless high-altitude ground observations and freezing level/surface temperature are available."
+  },
+  "targets": [
+    {
+      "target_id": "WD-ARRIVAL-01",
+      "name": "Western Disturbance Arrival Timing Error Exceedance",
+      "metric_type": "THRESHOLD_EXCEEDANCE",
+      "threshold_value": 6.0,
+      "threshold_unit": "hours",
+      "secondary_threshold_value": 12.0,
+      "secondary_threshold_unit": "hours",
+      "variable": "arrival_timing_error",
+      "primary_reference": "IMD_SYNOPTIC_BULLETINS_NORTH_INDIA",
+      "description": "Arrival timing error exceeding 6.0 hours at 24h/48h leads, or 12.0 hours at 72h+ leads."
+    },
+    {
+      "target_id": "WD-TRACK-LOC-01",
+      "name": "WD Trough and Center Position Placement Error Exceedance",
+      "metric_type": "THRESHOLD_EXCEEDANCE",
+      "threshold_value": 150.0,
+      "threshold_unit": "km",
+      "secondary_threshold_value": 250.0,
+      "secondary_threshold_unit": "km",
+      "variable": "trough_center_position_error",
+      "primary_reference": "NCMRWF_ANALYSIS_500HPA",
+      "description": "WD 500-hPa trough axis or surface induced center placement error exceeding 150 km at 48h or 250 km at 72h."
+    },
+    {
+      "target_id": "WD-PRECIP-AMT-01",
+      "name": "WD 24h Precipitation Intensity Error Exceedance",
+      "metric_type": "THRESHOLD_EXCEEDANCE",
+      "threshold_value": 35.0,
+      "threshold_unit": "mm/24h",
+      "variable": "precipitation_intensity_error",
+      "primary_reference": "IMD_GRIDDED_RAINFALL_025DEG",
+      "description": "Forecast 24h accumulated precipitation intensity error exceeding 35.0 mm/24h in hill or plain sectors."
+    },
+    {
+      "target_id": "WD-PRECIP-DISP-01",
+      "name": "WD Precipitation Centroid Spatial Displacement Exceedance",
+      "metric_type": "THRESHOLD_EXCEEDANCE",
+      "threshold_value": 100.0,
+      "threshold_unit": "km",
+      "variable": "precipitation_centroid_displacement_error",
+      "primary_reference": "IMD_GRIDDED_RAINFALL_025DEG",
+      "description": "Precipitation centroid spatial displacement error exceeding 100 km (misplaced orographic vs plains rainfall)."
+    },
+    {
+      "target_id": "WD-DURATION-01",
+      "name": "WD Event Duration Error Exceedance",
+      "metric_type": "THRESHOLD_EXCEEDANCE",
+      "threshold_value": 12.0,
+      "threshold_unit": "hours",
+      "variable": "event_duration_error",
+      "primary_reference": "IMD_SYNOPTIC_BULLETINS_NORTH_INDIA",
+      "description": "Forecast event duration error exceeding 12.0 hours."
+    },
+    {
+      "target_id": "WD-RAIN-SNOW-01",
+      "name": "WD Rain-Snow Phase Partition Failure",
+      "metric_type": "PHASE_PARTITION_FAILURE",
+      "threshold_value": 0.5,
+      "threshold_unit": "fraction",
+      "variable": "rain_snow_partition_error",
+      "primary_reference": "IMD_SNOW_OBSERVATION_NETWORK",
+      "description": "Misclassification of precipitation phase (rain vs snow) evaluated conditionally when freezing level and surface temperature observations are present; strictly null when unsupported."
+    }
+  ]
+}

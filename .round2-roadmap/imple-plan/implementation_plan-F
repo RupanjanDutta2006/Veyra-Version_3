@@ -1,0 +1,141 @@
+# Implementation Plan - Phase F: Monsoon and Low-Pressure-System Reliability (Gate 5 / P1)
+
+Phase F implements the **Monsoon and Low-Pressure-System (LPS) Reliability Specialist (`MONSOON_RELIABILITY_V1`)**, covering:
+1. **Low-pressure systems, depressions, deep depressions, and monsoon depressions**
+2. **Active and break monsoon regimes**
+3. **System dynamics failure** (system location $> 200$ km, propagation speed $> 5$ km/h, deepening $> 4$ hPa)
+4. **Precipitation failure** (rainfall placement $> 100$ km, rainfall intensity $> 50$ mm/24h)
+5. **Regime-transition failure** (unstable active $\rightarrow$ break or break $\rightarrow$ active shifts)
+
+## User Review Required
+
+> [!IMPORTANT]
+> - **Three-Pillar Decomposition**: Monsoon reliability will NOT be collapsed into one opaque score. It explicitly decomposes into:
+>   - System Dynamics Reliability (location, speed, deepening)
+>   - Precipitation Reliability (rainfall placement, intensity)
+>   - Regime Transition Reliability (active $\leftrightarrow$ break stability)
+> - **Anti-Leakage**: Strictly issue-time features at $t_0$ (SLP, 850-hPa wind, vorticity, moisture transport, vertical shear). Ground truth observations (IMD gridded rainfall, RSMC monsoon bulletins) sealed with 24h verification latency.
+> - **Regime-Slice Validation**: Performance is verified separately across active monsoon, break monsoon, and transition periods.
+
+## Proposed Changes
+
+Grouped by component:
+
+### 1. Data Contracts, Target Manifests & Regime Catalogue
+
+#### [NEW] [monsoon_target_manifest.json](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/data/monsoon_target_manifest.json)
+- Define canonical monsoon targets:
+  - `MONSOON-LPS-LOC-01`: LPS center position error $> 200$ km
+  - `MONSOON-LPS-SPEED-01`: Propagation speed error $> 5$ km/h or arrival timing $> 12$h
+  - `MONSOON-LPS-INTENSITY-01`: Central pressure deepening error $> 4$ hPa
+  - `MONSOON-PRECIP-LOC-01`: Rainfall centroid placement error $> 100$ km
+  - `MONSOON-PRECIP-AMT-01`: Rainfall intensity error $> 50$ mm/24h
+  - `MONSOON-REGIME-TRANS-01`: Active $\leftrightarrow$ Break transition timing error or false transition.
+
+#### [NEW] [monsoon_event_catalogue.json](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/data/monsoon_event_catalogue.json)
+- Historical North Indian Ocean & Central India monsoon depressions, deep depressions, and active/break spells (e.g. 2018 Kerala surge, 2019 depression cluster, 2020 Central India floods, 2021 active-break cycle, 2022 BOB 05 depression, 2023 monsoon trough depression, 2024 depression cluster).
+
+#### [NEW] [monsoon_contract.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/backend/app/contracts/monsoon_contract.py)
+- Pydantic v2 schemas:
+  - `MonsoonSystemType` (LOW_PRESSURE_AREA, DEPRESSION, DEEP_DEPRESSION, MONSOON_DEPRESSION)
+  - `MonsoonRegimeState` (ACTIVE_MONSOON, BREAK_MONSOON, NORMAL, TRANSITION_TO_ACTIVE, TRANSITION_TO_BREAK)
+  - `MonsoonIssueFeatures`: SLP, 24h pressure tendency, 850-hPa wind, 850-hPa vorticity, moisture transport, vertical shear, ensemble track spread, ensemble rain spread, revision delta.
+  - `MonsoonReliabilityOutput`:
+    - `hazard`: "MONSOON_LPS"
+    - `system_location_failure_probability`: float | None
+    - `propagation_speed_failure_probability`: float | None
+    - `deepening_failure_probability`: float | None
+    - `rainfall_placement_failure_probability`: float | None
+    - `rainfall_intensity_failure_probability`: float | None
+    - `regime_transition_failure_probability`: float | None
+    - `overall_reliability`: float | None
+    - `evidence`: List[str]
+    - `ood`: bool | None
+    - `provenance`: Dict[str, Any]
+
+#### [NEW] [MONSOON_RELIABILITY_V1.json](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/models/v3/MONSOON_RELIABILITY_V1.json)
+- Certified model specification for `MONSOON_RELIABILITY_V1` with baseline ladder benchmarks, regime slices, and operational status.
+
+---
+
+### 2. Specialist Engine & Baseline Ladder
+
+#### [NEW] [monsoon_specialist.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/backend/app/builder2/monsoon_specialist.py)
+- `MonsoonReliabilitySpecialist`:
+  - Implements the baseline ladder:
+    1. Historical climatology baseline
+    2. Raw ensemble spread baseline
+    3. Spread-to-bust logistic regression
+    4. MONSOON_RELIABILITY_V1 specialist
+    5. Regime-transition specialist
+  - Decomposes system dynamics, precipitation, and regime transitions.
+  - Universal `ReliabilityState` contract integration.
+  - OOD detection & selective prediction.
+
+---
+
+### 3. Evaluation Scripts Extension
+
+#### [MODIFY] [evaluate_hazard_engines.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/scripts/evaluate_hazard_engines.py)
+- Extend to support `--hazards monsoon,lps`.
+- Benchmark `MonsoonReliabilitySpecialist` against the baseline ladder with cycle-block bootstrap (95% CI).
+
+#### [NEW] [evaluate_regime_slices.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/scripts/evaluate_regime_slices.py)
+- Evaluates performance sliced across:
+  - Active Monsoon vs Break Monsoon vs Normal
+  - Low Pressure Areas vs Monsoon Depressions vs Deep Depressions
+  - Transition episodes (Active $\rightarrow$ Break, Break $\rightarrow$ Active)
+- Computes cycle-block bootstrap confidence intervals.
+
+---
+
+### 4. Tests
+
+#### [NEW] [test_monsoon_contract.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/backend/tests/test_monsoon_contract.py)
+- Validates monsoon schemas, feature bounds, regime enums, and output constraints.
+
+#### [NEW] [test_monsoon_targets.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/backend/tests/test_monsoon_targets.py)
+- Validates `data/monsoon_target_manifest.json`, event catalogue integrity, system location error, propagation speed error, deepening error, rainfall displacement, and regime transition logic.
+
+#### [MODIFY] [test_hazard_specific_engines.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/backend/tests/test_hazard_specific_engines.py)
+- Add tests evaluating `MonsoonReliabilitySpecialist`:
+  - Baseline ladder progression
+  - Separate system dynamics, precipitation, and regime transition outputs
+  - OOD abstention and `ReliabilityState` integration.
+
+---
+
+### 5. Documentation & Deliverables
+
+#### [NEW] [phase-f-report.md](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/docs/phase-f-report.md)
+- Complete drop-in report meeting all Gate 5 criteria:
+  - Status: COMPLETE
+  - Environment, commands, test outputs
+  - Baseline ladder comparisons (PR-AUC, Brier, BSS, ECE)
+  - Regime slice evaluations (Active, Break, Normal, Transition)
+  - Leakage audit, rollback decision, and next-phase authorization.
+
+## Verification Plan
+
+### Automated Tests
+Run phase commands:
+```bash
+python -m pytest backend/tests/test_monsoon_contract.py backend/tests/test_monsoon_targets.py backend/tests/test_hazard_specific_engines.py -q
+python scripts/evaluate_hazard_engines.py --hazards monsoon,lps --bootstrap cycle
+python scripts/evaluate_regime_slices.py --hazards monsoon,lps --bootstrap cycle
+```
+
+Verify full repository test suite and frontend build:
+```bash
+python -m pytest backend/tests/ -q
+cd frontend
+npm test -- --run
+npm run build
+```
+
+### Git Commit & Push
+```bash
+git add data/monsoon_target_manifest.json data/monsoon_event_catalogue.json backend/app/contracts/monsoon_contract.py models/v3/MONSOON_RELIABILITY_V1.json backend/app/builder2/monsoon_specialist.py scripts/evaluate_hazard_engines.py scripts/evaluate_regime_slices.py backend/tests/test_monsoon_contract.py backend/tests/test_monsoon_targets.py backend/tests/test_hazard_specific_engines.py docs/phase-f-report.md
+git commit -m "docs: complete phase F - monsoon-and-low-pressure-system-reliability"
+git push origin main
+```

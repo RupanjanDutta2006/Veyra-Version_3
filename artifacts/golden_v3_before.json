@@ -1,0 +1,28 @@
+{
+  "seed": 42,
+  "input_shape": [
+    5,
+    50
+  ],
+  "raw_predictions": [
+    0.025117903614184253,
+    0.029131140138439236,
+    0.05365759377217046,
+    0.019700369828136957,
+    0.07522594040396736
+  ],
+  "calibrated_predictions": [
+    0.02459526774595268,
+    0.03075571177504393,
+    0.05945945945945946,
+    0.020892151326933936,
+    0.07644382911392406
+  ],
+  "feature_count": 50,
+  "model_type": "Booster",
+  "calibrator_type": "IsotonicRegression",
+  "model_sha256": "00a8410746f4a0eecbf7e76aaa0565143fc948d0e06aea65e7bcc4ce28a1c660",
+  "calibrator_sha256": "9f448606ce4338ded92f238a551b3a9d8e6d2cb5902e8bc687bce5f5850af531",
+  "features_sha256": "265cffbbd157a2b8b8b46d3702438050980043b5ed3a6a646a7969cdb9853355",
+  "v3_threshold": 0.06
+}

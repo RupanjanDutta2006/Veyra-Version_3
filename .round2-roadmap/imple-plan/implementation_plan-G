@@ -1,0 +1,175 @@
+# Implementation Plan - Phase G: Western Disturbance Reliability Specialist (Gate 6 / P1)
+
+Phase G implements the **Western Disturbance Reliability Specialist (`WD_RELIABILITY_V1`)**, diagnosing medium-range NWP forecast failure for extratropical western disturbances affecting the Western Himalayas and Indo-Gangetic Plains without collapsing it into one opaque score. It explicitly decomposes western disturbance forecast reliability into:
+1. **Arrival timing error** (arrival offset $> 6$ hours)
+2. **Track/trough location error** (center/trough axis displacement $> 150$ km at 48h, $> 250$ km at 72h)
+3. **Precipitation intensity error** (accumulated precipitation error $> 35$ mm/24h)
+4. **Precipitation spatial displacement** (centroid misplacement $> 100$ km between orographic slope and plains)
+5. **Event duration error** (system duration error $> 12$ hours)
+6. **Rain/snow phase partition error** (strictly conditional on ground observation / freezing level availability; `null` when unsupported)
+7. **Terrain-conditioned reliability** (explicitly separating Western Himalayan high altitude, foothill/sub-Himalayan, and Indo-Gangetic plain regimes)
+
+---
+
+## User Review Required
+
+> [!IMPORTANT]
+> - **Decomposed Failure Modes**: Western Disturbance reliability will NOT be collapsed into one opaque score. Arrival timing, trough position, precipitation amount, spatial displacement, duration, and rain/snow partition are independently evaluated and reported.
+> - **Rain/Snow Null Safety**: As required by the Phase G failure and rollback rules (*"Do not infer rain/snow failure without suitable observations"*), rain/snow phase partition is strictly `null` unless high-altitude observations and freezing level / surface temperature are explicitly present.
+> - **Anti-Leakage & Issue-Time Boundary**: At issue time $t_0$, only $t_0$ features (subtropical jet speed/displacement, 500-hPa trough depth/tilt, induced low status, ensemble trough/precip spread, terrain class) enter inference. Ground truth observations (IMD/NCMRWF/snow-gauges) are sealed with 24h verification latency.
+
+---
+
+## Proposed Changes
+
+Grouped by component:
+
+### 1. Data Contracts, Target Manifests & Historical Event Catalogue
+
+#### [NEW] [western_disturbance_target_manifest.json](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/data/western_disturbance_target_manifest.json)
+- Define canonical western disturbance target definitions:
+  - `WD-ARRIVAL-01`: Arrival timing error $|T_{fc} - T_{obs}| > 6$ hours ($> 12$ hours at leads $\ge 72$h)
+  - `WD-TRACK-LOC-01`: Trough/center position error $> 150$ km at 48h ($> 250$ km at 72h)
+  - `WD-PRECIP-AMT-01`: 24h precipitation intensity error $> 35$ mm/24h
+  - `WD-PRECIP-DISP-01`: Precipitation centroid spatial displacement $> 100$ km
+  - `WD-DURATION-01`: Event duration error $|D_{fc} - D_{obs}| > 12$ hours
+  - `WD-RAIN-SNOW-01`: Rain/snow phase partitioning failure (conditional on observations; `null` when unsupported)
+
+#### [NEW] [western_disturbance_event_catalogue.json](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/data/western_disturbance_event_catalogue.json)
+- Historical Western Disturbance benchmark episodes across Western Himalayas (J&K, Himachal, Uttarakhand) and Indo-Gangetic Plains (Punjab, Haryana, Delhi, Rajasthan, Western UP):
+  - `WD-2019-JAN-01`: Intense active WD with severe snowfall across Western Himalayas and cold wave over plains.
+  - `WD-2020-MAR-01`: Unseasonal convective WD with induced cyclonic circulation producing hailstorms in northern plains.
+  - `WD-2021-FEB-01`: Fast-propagating WD with significant arrival timing bust (+14h error).
+  - `WD-2022-JAN-02`: Active WD with deep 500-hPa trough causing heavy precipitation displacement toward foothills.
+  - `WD-2023-JUL-01`: Catastrophic monsoon-WD interaction episode over Himachal Pradesh.
+  - `WD-2024-FEB-01`: Jet-displacement bust with precipitation misplaced by 180 km.
+
+#### [NEW] [western_disturbance_contract.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/backend/app/contracts/western_disturbance_contract.py)
+- Pydantic v2 schemas:
+  - `WDIntensityClass` (`WEAK`, `MODERATE`, `SEVERE_ACTIVE`)
+  - `WDTerrainRegime` (`HIMALAYAN_HIGH_ALTITUDE`, `FOOTHILL_SUB_HIMALAYAN`, `INDO_GANGETIC_PLAINS`)
+  - `WDIssueFeatures`:
+    - Lead hours (0 to 240)
+    - Intensity class, terrain regime, forecast lat/lon (24.0-38.0°N, 68.0-86.0°E)
+    - Subtropical jet speed (200 hPa), jet axis latitude displacement
+    - 500-hPa trough depth (gpm), trough tilt (`POSITIVE`, `NEUTRAL`, `NEGATIVE`)
+    - Induced low / cyclonic circulation indicator (`induced_low_present`)
+    - Ensemble trough spread (km), ensemble precipitation spread (mm), forecast max precip 24h (mm)
+    - Forecast duration (hours)
+    - Freezing level (m), surface temperature (°C), high altitude observation flag (`has_high_altitude_obs`)
+  - `WDReliabilityOutput`:
+    - `hazard`: "WESTERN_DISTURBANCE"
+    - `arrival_failure_probability`: float | None
+    - `track_location_failure_probability`: float | None
+    - `precipitation_amount_failure_probability`: float | None
+    - `precipitation_displacement_failure_probability`: float | None
+    - `duration_failure_probability`: float | None
+    - `rain_snow_partition_failure_probability`: float | None (strictly `null` if observations unsupported)
+    - `overall_reliability`: float | None
+    - `evidence`: List[str]
+    - `ood`: bool | None
+    - `provenance`: Dict[str, Any]
+  - Manifest and catalogue loader functions.
+
+#### [NEW] [WD_RELIABILITY_V1.json](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/models/v3/WD_RELIABILITY_V1.json)
+- Certified model specification for `WD_RELIABILITY_V1` with baseline ladder benchmarks, terrain-conditioned slices, and operational status.
+
+---
+
+### 2. Specialist Engine & Baseline Ladder
+
+#### [NEW] [western_disturbance_specialist.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/backend/app/builder2/western_disturbance_specialist.py)
+- `WesternDisturbanceReliabilitySpecialist`:
+  - Implements the baseline ladder:
+    1. Historical terrain-conditioned climatology baseline
+    2. Raw ensemble trough spread baseline
+    3. Spread-to-bust logistic regression
+    4. Specialist (`WD_RELIABILITY_V1`) incorporating jet dynamics, 500 hPa trough depth, induced low, and terrain conditioning
+    5. Terrain-conditioned conformal bounds (Western Himalayas vs Plains)
+  - Decomposed predictors for:
+    - Arrival timing failure ($> 6$h error)
+    - Trough/center position failure ($> 150$ km error)
+    - Precipitation amount failure ($> 35$ mm/24h error)
+    - Precipitation spatial displacement ($> 100$ km error)
+    - Event duration failure ($> 12$h error)
+    - Rain/snow partition failure (strictly `null` unless observations and freezing level are present)
+  - Out-of-Distribution (OOD) detection: extreme jet speed ($> 95$ m/s), extreme trough spread ($> 280$ km), or unprecedented negative tilt.
+  - Conversion to universal `ReliabilityState` with continuous error distribution, monotonic survival curves, hazard curves, and terrain-conditioned failure motifs.
+
+---
+
+### 3. Evaluation Scripts Extension
+
+#### [MODIFY] [evaluate_hazard_engines.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/scripts/evaluate_hazard_engines.py)
+- Add `--hazards western_disturbance --bootstrap cycle` support.
+- Add `generate_synthetic_wd_dataset` and `evaluate_western_disturbance(cycles)`:
+  - Benchmark ladder comparison (Climatology vs Spread vs Logistic vs Specialist)
+  - Cycle-block bootstrap 95% confidence intervals
+  - Verification of completion gate criteria.
+
+#### [MODIFY] [evaluate_regime_slices.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/scripts/evaluate_regime_slices.py)
+- Add `--hazards western_disturbance --bootstrap cycle` support.
+- Add `evaluate_wd_regime_slices(cycles)`:
+  - Terrain-partitioned evaluation (High-Altitude Western Himalayas, Foothills/Sub-Himalayan, Indo-Gangetic Plains)
+  - Synoptic intensity partitioned evaluation (Weak, Moderate, Severe/Active)
+  - Decomposed failure mode metrics (Arrival, Track/Position, Precip Amount, Precip Displacement, Duration)
+  - Lead-time slices (24h, 48h, 72h, 96h, 120h)
+  - Terrain-block bootstrap 95% confidence intervals.
+
+---
+
+### 4. Tests
+
+#### [NEW] [test_western_disturbance_contract.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/backend/tests/test_western_disturbance_contract.py)
+- Validates Western Disturbance schemas, terrain enums, intensity enums, bounds checking, null-safety when observations are unsupported, and disk loaders.
+
+#### [NEW] [test_western_disturbance_targets.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/backend/tests/test_western_disturbance_targets.py)
+- Validates `data/western_disturbance_target_manifest.json`, event catalogue integrity, exact thresholds and units, and threshold exceedance evaluation logic.
+
+#### [MODIFY] [test_hazard_specific_engines.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/backend/tests/test_hazard_specific_engines.py)
+- Add comprehensive test suite for `WesternDisturbanceReliabilitySpecialist`:
+  - Baseline ladder progression
+  - Decomposed failure modes (arrival, track, precip amount, displacement, duration)
+  - Rain/snow null-safety when high-altitude obs are absent
+  - Terrain conditioning sensitivity (Himalayas vs Plains)
+  - OOD detection and abstention state
+  - Universal `ReliabilityState` integration with monotonic survival curves.
+
+---
+
+### 5. Documentation & Deliverables
+
+#### [NEW] [phase-g-report.md](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/docs/phase-g-report.md)
+- Complete drop-in report meeting all Gate 6 criteria:
+  - Status: COMPLETE
+  - Environment, commands, and execution logs
+  - Baseline ladder metrics (PR-AUC, Brier, BSS, ECE)
+  - Terrain-conditioned subgroup metrics (High-Altitude, Foothill, Plains)
+  - Leakage audit, negative control, rollback decision, and next-phase authorization.
+
+---
+
+## Verification Plan
+
+### Automated Tests
+Run Phase G phase commands:
+```bash
+python -m pytest backend/tests/test_western_disturbance_contract.py backend/tests/test_western_disturbance_targets.py backend/tests/test_hazard_specific_engines.py -q
+python scripts/evaluate_hazard_engines.py --hazards western_disturbance --bootstrap cycle
+python scripts/evaluate_regime_slices.py --hazards western_disturbance --bootstrap cycle
+```
+
+Run full regression suites:
+```bash
+python -m pytest backend/tests/ -q
+cd frontend
+npm test -- --run
+npm run build
+```
+
+### Git Commit & Push
+```bash
+git add data/western_disturbance_target_manifest.json data/western_disturbance_event_catalogue.json backend/app/contracts/western_disturbance_contract.py models/v3/WD_RELIABILITY_V1.json backend/app/builder2/western_disturbance_specialist.py scripts/evaluate_hazard_engines.py scripts/evaluate_regime_slices.py backend/tests/test_western_disturbance_contract.py backend/tests/test_western_disturbance_targets.py backend/tests/test_hazard_specific_engines.py docs/phase-g-report.md
+git commit -m "docs: complete phase G - western-disturbance-reliability"
+git push origin main
+```

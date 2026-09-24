@@ -1,0 +1,37 @@
+{
+  "label_version": "v2.0-q95-mad",
+  "protocol_specification": "SIH26079 Master Specification §8.1-§8.3",
+  "created_at": "2026-09-19T17:45:00Z",
+  "status": "AUTHORITATIVE_FROZEN",
+  "primary_policy": {
+    "quantile": 0.95,
+    "description": "B = 1 if E_norm > Q_0.95^train(tau, v, R, season)",
+    "normalization": "E_norm = (E - median(E)) / (MAD(E) + eps)"
+  },
+  "sensitivity_policies": {
+    "quantiles": [0.90, 0.95, 0.975, 0.99],
+    "description": "Multi-quantile sensitivity evaluation to assess decision stability across extreme percentiles"
+  },
+  "ambiguity_policy": {
+    "tolerance_mad": 0.25,
+    "gray_zone": "[Q_0.90, Q_0.95)",
+    "flag": "ambiguity_flag",
+    "description": "Near-threshold instances flagged to avoid false certainty on border cases"
+  },
+  "severity_classes": {
+    "low": "E_norm < Q_0.95 (below bust threshold)",
+    "moderate": "Q_0.95 <= E_norm <= 1.5 * Q_0.95 (elevated failure)",
+    "severe": "E_norm > 1.5 * Q_0.95 (extreme catastrophic divergence)"
+  },
+  "spatial_verification": {
+    "metric": "Fractions Skill Score (FSS)",
+    "target_score": 0.50,
+    "displacement_tolerance_km": 75.0,
+    "object_metrics": ["centroid_displacement_km", "object_overlap_iou", "area_fraction"]
+  },
+  "event_grouping": {
+    "policy": "Episode-held-out",
+    "embargo_days": 14,
+    "rule": "One cyclone or monsoon episode is never split across train/test"
+  }
+}

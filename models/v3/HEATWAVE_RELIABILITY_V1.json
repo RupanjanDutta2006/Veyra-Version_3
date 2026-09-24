@@ -1,0 +1,92 @@
+{
+  "model_id": "HEATWAVE_RELIABILITY_V1",
+  "hazard": "HEATWAVE",
+  "gate": "Gate 7",
+  "priority": "P1",
+  "certification_date": "2026-09-20T15:30:00Z",
+  "operational_status": "OPERATIONAL",
+  "description": "Heatwave and Data-Dependent Severe-Wind Forecast Reliability Specialist diagnosing separate threshold exceedance, peak temperature, onset timing, duration/persistence, warm nights, spatial extent, and gale gusts across Core Heatwave Zone, Northwest Plains, Coastal, and Hill regions.",
+  "invariants": {
+    "decomposed_failure_modes": "Threshold exceedance, peak temperature, onset, duration, warm nights, spatial extent, and severe wind are evaluated separately; never collapsed into an opaque single score.",
+    "anti_leakage": "Uses strictly issue-time features available at t0; IMD gridded maximum/minimum temperature and ERA5 hourly gust observations sealed with 24h verification latency.",
+    "data_dependent_wind_activation": "Severe wind evaluation is strictly activated on paired forecast/reference datasets meeting Gate 0 data availability contracts.",
+    "regional_conditioning": "Performance certified across Core Heatwave Zone, Northwest Plains, Coastal Peninsular, and Hill Region domains."
+  },
+  "targets_addressed": [
+    "HEATWAVE-THRESH-01",
+    "HEATWAVE-PEAK-01",
+    "HEATWAVE-ONSET-01",
+    "HEATWAVE-DURATION-01",
+    "HEATWAVE-NIGHT-01",
+    "HEATWAVE-SPATIAL-01",
+    "WIND-GUST-THRESH-01"
+  ],
+  "feature_families": [
+    "surface_thermal_maximum_and_departure",
+    "ensemble_temperature_spread_and_extremes",
+    "soil_moisture_depletion_and_land_atmosphere_coupling",
+    "850hpa_thermal_advection_and_subsidence",
+    "nocturnal_cooling_and_warm_night_departure",
+    "paired_severe_wind_gust_dynamics"
+  ],
+  "baseline_ladder_benchmarks": {
+    "climatology_heatwave_baseline": {
+      "pr_auc": 0.185,
+      "brier": 0.145,
+      "bss": 0.0,
+      "ece": 0.052
+    },
+    "ensemble_dispersion_proxy": {
+      "pr_auc": 0.235,
+      "brier": 0.125,
+      "bss": 0.138,
+      "ece": 0.039
+    },
+    "spread_logistic_regression": {
+      "pr_auc": 0.278,
+      "brier": 0.105,
+      "bss": 0.276,
+      "ece": 0.026
+    },
+    "heatwave_reliability_v1_specialist": {
+      "pr_auc": 0.345,
+      "brier": 0.082,
+      "bss": 0.434,
+      "ece": 0.015
+    }
+  },
+  "regime_slices": {
+    "core_heatwave_zone": {
+      "pr_auc": 0.365,
+      "brier": 0.078,
+      "bss": 0.462,
+      "sample_fraction": 0.40
+    },
+    "northwest_plains": {
+      "pr_auc": 0.348,
+      "brier": 0.084,
+      "bss": 0.420,
+      "sample_fraction": 0.30
+    },
+    "coastal_peninsular": {
+      "pr_auc": 0.320,
+      "brier": 0.089,
+      "bss": 0.386,
+      "sample_fraction": 0.20
+    },
+    "hill_region": {
+      "pr_auc": 0.305,
+      "brier": 0.092,
+      "bss": 0.365,
+      "sample_fraction": 0.10
+    }
+  },
+  "held_out_evaluation": {
+    "total_evaluation_cycles": 200,
+    "bootstrap_method": "cycle_block",
+    "confidence_interval_pct": 95,
+    "pr_auc_ci": [0.318, 0.372],
+    "brier_ci": [0.075, 0.091],
+    "bss_ci": [0.385, 0.478]
+  }
+}

@@ -1,0 +1,517 @@
+"""Prediction request and response schemas."""
+from datetime import datetime, timezone
+from enum import Enum
+from typing import Any, Optional
+from pydantic import BaseModel, Field, model_validator
+
+from backend.app.schemas.explainability import ExplanationItem
+from backend.app.schemas.certification import ScientificCertificationResult
+from backend.app.schemas.ood import OODDiagnosticResult
+
+
+class TrustState(str, Enum):
+    """Trust state of the forecast bust assessment."""
+
+    UNAVAILABLE = "UNAVAILABLE"
+    HIGH_CONFIDENCE = "HIGH_CONFIDENCE"
+    MODERATE_CONFIDENCE = "MODERATE_CONFIDENCE"
+    LOW_CONFIDENCE = "LOW_CONFIDENCE"
+    ABSTAINED = "ABSTAINED"
+
+
+class CalibrationStatus(str, Enum):
+    """Minimal status contract for probability calibration."""
+
+    CALIBRATED = "CALIBRATED"
+    FAILED = "FAILED"
+    UNAVAILABLE = "UNAVAILABLE"
+
+
+class RiskLevel(str, Enum):
+    """Categorical risk level of forecast bust."""
+
+    LOW = "LOW"
+    MEDIUM = "MEDIUM"
+    HIGH = "HIGH"
+    CRITICAL = "CRITICAL"
+
+
+class ReasonCode(str, Enum):
+    """Standardized reason codes explaining trust state, pipeline status, and abstention."""
+
+    DATA_NOT_READY = "DATA_NOT_READY"
+    DATA_UNAVAILABLE = "DATA_UNAVAILABLE"
+    FEATURES_NOT_READY = "FEATURES_NOT_READY"
+    MODEL_NOT_READY = "MODEL_NOT_READY"
+    MODEL_UNAVAILABLE = "MODEL_UNAVAILABLE"
+    INVALID_LOCATION = "INVALID_LOCATION"
+    INVALID_REGION = "INVALID_REGION"
+    QC_FAILED = "QC_FAILED"
+    OOD_ABSTAIN = "OOD_ABSTAIN"
+    OOD_DETECTED = "OOD_DETECTED"
+    INSUFFICIENT_DATA = "INSUFFICIENT_DATA"
+    EXTREME_VOLATILITY = "EXTREME_VOLATILITY"
+    CALIBRATION_FAILURE = "CALIBRATION_FAILURE"
+    INTERNAL_ERROR = "INTERNAL_ERROR"
+    SUCCESS = "SUCCESS"
+    REVISION_ACCELERATION = "REVISION_ACCELERATION"
+    SPREAD_TO_ERROR_RATIO = "SPREAD_TO_ERROR_RATIO"
+    REGIME_TRANSITION = "REGIME_TRANSITION"
+    ANALOG_BUST_FREQUENCY = "ANALOG_BUST_FREQUENCY"
+    HIGH_REVISION_DRIFT = "HIGH_REVISION_DRIFT"
+    HIGH_ENSEMBLE_SPREAD = "HIGH_ENSEMBLE_SPREAD"
+
+
+SUPPORTED_VARIABLES: set[str] = {
+    "temperature_2m",
+    "surface_pressure",
+    "wind_speed_10m",
+    "relative_humidity_2m",
+    "precipitation",
+    "geopotential_height_500hPa",
+    "geopotential_height_500hpa",
+    "z500",
+    "temperature",
+    "pressure",
+    "wind_speed",
+    "humidity",
+}
+
+SUPPORTED_MODEL_TYPES: set[str] = {
+    "prototype-gbm-v1",
+    "lightgbm",
+    "lgbm",
+    "baseline-logistic-v1.0",
+    "logistic",
+    "baseline",
+    "default",
+    "veyra-v3-benchmark-lightgbm",
+}
+
+MAX_SUPPORTED_LEAD_HOURS: int = 384  # 16-day NOAA GEFS operational horizon
+
+
+class PredictionRequest(BaseModel):
+    """Forecast bust prediction request payload."""
+
+    location: Optional[str] = Field(
+        default=None,
+        description="Location name, city, or coordinates for forecast evaluation",
+        examples=["London", "Tokyo", "Kolkata"],
+    )
+    region_id: Optional[str] = Field(
+        default=None,
+        description="Region identifier or city name (supported alias for location)",
+        examples=["Kolkata", "Delhi", "London"],
+    )
+    issue_time: Optional[str] = Field(
+        default=None,
+        description="Forecast issuance timestamp in ISO 8601 UTC format (e.g., 2026-08-27T00:00:00Z)",
+        examples=["2026-08-27T00:00:00Z"],
+    )
+    valid_time: Optional[str] = Field(
+        default=None,
+        description="Forecast valid target timestamp in ISO 8601 UTC format (e.g., 2026-08-28T00:00:00Z)",
+        examples=["2026-08-28T00:00:00Z"],
+    )
+    variable: Optional[str] = Field(
+        default="temperature_2m",
+        description="Forecast meteorological variable to evaluate (e.g., temperature_2m, surface_pressure)",
+        examples=["temperature_2m"],
+    )
+    model_type: Optional[str] = Field(
+        default=None,
+        description="Optional model type identifier or compatibility override (e.g., prototype-gbm-v1, baseline-logistic-v1.0, veyra-v3-benchmark-lightgbm)",
+        examples=["prototype-gbm-v1"],
+        json_schema_extra={
+            "enum": [
+                "prototype-gbm-v1",
+                "baseline-logistic-v1.0",
+                "veyra-v3-benchmark-lightgbm",
+            ],
+            "example": "prototype-gbm-v1",
+        },
+    )
+    target_date: Optional[str] = Field(
+        default=None,
+        description="Optional target forecast date (ISO format YYYY-MM-DD)",
+        examples=["2026-09-01"],
+    )
+
+    model_config = {
+        "extra": "forbid",
+        "json_schema_extra": {
+            "example": {
+                "location": "Kolkata",
+                "variable": "temperature_2m",
+                "model_type": "prototype-gbm-v1",
+            }
+        },
+    }
+
+    @model_validator(mode="after")
+    def validate_request_payload(self) -> "PredictionRequest":
+        """Comprehensive input validation for location, variable, timestamps, and horizons."""
+        # 1. Location & region_id resolution and blank check
+        loc_candidate = self.location if self.location is not None else self.region_id
+        if loc_candidate is None:
+            raise ValueError("Either 'location' or 'region_id' must be provided")
+
+        loc_clean = loc_candidate.strip()
+        if not loc_clean:
+            raise ValueError("location or region_id cannot be empty or whitespace only")
+
+        self.location = loc_clean
+
+        # 2. Variable validation
+        if self.variable is not None:
+            v_clean = self.variable.strip().lower()
+            supported_lower = {v.lower() for v in SUPPORTED_VARIABLES}
+            if not v_clean or v_clean not in supported_lower:
+                raise ValueError(
+                    f"Unsupported forecast variable '{self.variable}'. "
+                    f"Supported variables: {', '.join(sorted(SUPPORTED_VARIABLES))}"
+                )
+
+        # 3. Model Type validation
+        if self.model_type is not None:
+            mt_clean = self.model_type.strip().lower()
+            if not mt_clean or mt_clean not in SUPPORTED_MODEL_TYPES:
+                raise ValueError(
+                    f"Unsupported model_type '{self.model_type}'. "
+                    f"Supported model types: prototype-gbm-v1, baseline-logistic-v1.0, veyra-v3-benchmark-lightgbm"
+                )
+
+        # 4. Target Date validation
+        if self.target_date is not None:
+            td_clean = self.target_date.strip()
+            try:
+                datetime.strptime(td_clean, "%Y-%m-%d")
+            except ValueError as err:
+                raise ValueError(
+                    f"Invalid target_date format '{self.target_date}'. Expected ISO format YYYY-MM-DD"
+                ) from err
+
+        # 5. Timestamp Parsing & Chronological Ordering
+        dt_issue = None
+        dt_valid = None
+
+        if self.issue_time is not None:
+            raw_issue = self.issue_time.strip()
+            try:
+                parsed_issue = datetime.fromisoformat(raw_issue.replace("Z", "+00:00"))
+                if parsed_issue.tzinfo is None:
+                    dt_issue = parsed_issue.replace(tzinfo=timezone.utc)
+                else:
+                    dt_issue = parsed_issue.astimezone(timezone.utc)
+            except Exception as err:
+                raise ValueError(
+                    f"Invalid issue_time timestamp '{self.issue_time}': must be valid ISO 8601 format"
+                ) from err
+
+        if self.valid_time is not None:
+            raw_valid = self.valid_time.strip()
+            try:
+                parsed_valid = datetime.fromisoformat(raw_valid.replace("Z", "+00:00"))
+                if parsed_valid.tzinfo is None:
+                    dt_valid = parsed_valid.replace(tzinfo=timezone.utc)
+                else:
+                    dt_valid = parsed_valid.astimezone(timezone.utc)
+            except Exception as err:
+                raise ValueError(
+                    f"Invalid valid_time timestamp '{self.valid_time}': must be valid ISO 8601 format"
+                ) from err
+
+        if dt_issue is not None and dt_valid is not None:
+            lead_seconds = (dt_valid - dt_issue).total_seconds()
+            lead_hours = lead_seconds / 3600.0
+
+            if lead_seconds <= 0:
+                raise ValueError(
+                    f"valid_time ({self.valid_time}) must be strictly after issue_time ({self.issue_time}). "
+                    f"Negative or zero forecast lead time ({lead_hours:.1f}h) is invalid for forecast inference."
+                )
+
+            if lead_hours > MAX_SUPPORTED_LEAD_HOURS:
+                raise ValueError(
+                    f"Forecast lead time ({lead_hours:.1f}h) exceeds the maximum supported forecast horizon of "
+                    f"{MAX_SUPPORTED_LEAD_HOURS} hours (16 days)."
+                )
+
+        return self
+
+
+class PredictionResponse(BaseModel):
+    """Forecast bust prediction response payload."""
+
+    location: str = Field(
+        ...,
+        description="Location requested for forecast evaluation",
+    )
+    bust_probability: Optional[float] = Field(
+        default=None,
+        ge=0.0,
+        le=1.0,
+        description="Calibrated probability (0.0 - 1.0) that forecast absolute error meets or exceeds the stratum-specific bust threshold derived from historical Train reforecasts (2000-2013). null when unavailable or abstained.",
+    )
+    risk_level: Optional[RiskLevel] = Field(
+        default=None,
+        description="Categorical risk level for forecast failure",
+    )
+    trust_state: TrustState = Field(
+        default=TrustState.UNAVAILABLE,
+        description="Assessment of model reliability for this forecast instance",
+    )
+    abstain: bool = Field(
+        default=True,
+        description="Whether the sentinel abstains from making a prediction",
+    )
+    reason_codes: list[str] = Field(
+        default_factory=lambda: [ReasonCode.MODEL_NOT_READY.value],
+        description="List of reason codes explaining the prediction or abstention decision",
+    )
+    model_version: Optional[str] = Field(
+        default=None,
+        description="Identifier of the ML model used, if available",
+    )
+    data_version: Optional[str] = Field(
+        default=None,
+        description="Identifier of the weather data pipeline version used, if available",
+    )
+    explanation: Optional["ExplanationItem"] = Field(
+        default=None,
+        description="Deterministic physical feature attribution and explanation summary",
+    )
+    calibration_status: Optional[str] = Field(
+        default=None,
+        description="Probability calibration status: CALIBRATED, FAILED, or UNAVAILABLE",
+    )
+    label_version: Optional[str] = Field(
+        default="v2.0-q95-mad",
+        description="Version identifier of the bust label policy (e.g. v2.0-q95-mad)",
+    )
+    ambiguity_flag: Optional[bool] = Field(
+        default=None,
+        description="Flag indicating forecast error or probability is in the near-threshold ambiguity zone",
+    )
+    severity: Optional[str] = Field(
+        default=None,
+        description="Forecast bust severity classification: low, moderate, or severe",
+    )
+    normalized_error: Optional[float] = Field(
+        default=None,
+        description="Continuous normalized error relative to training MAD distribution",
+    )
+    spatial_fss: Optional[float] = Field(
+        default=None,
+        description="Fractions Skill Score for neighborhood spatial evaluation, if spatial field available",
+    )
+    sensitivity_labels: Optional[dict[str, int]] = Field(
+        default=None,
+        description="Multi-threshold bust sensitivity outcomes (e.g. {'q90': 1, 'q95': 1, 'q975': 0, 'q99': 0})",
+    )
+    # Builder 2 Advanced Intelligence Fields
+    confidence_index: Optional[float] = Field(
+        default=None,
+        ge=0.0,
+        le=1.0,
+        description="Heuristic probability separation score 2*|P - 0.5| assessing distance from maximum decision boundary ambiguity (not a formal statistical confidence interval)",
+    )
+    uncertainty_pct: Optional[float] = Field(
+        default=None,
+        ge=0.0,
+        le=100.0,
+        description="Decision boundary ambiguity percentage 100*(1 - 2*|P - 0.5|) assessing proximity to 0.5 threshold (not a formal predictive uncertainty interval)",
+    )
+    ood_score: Optional[float] = Field(
+        default=None,
+        description="Diagnostic out-of-distribution score from training distribution (diagnostic only, not active safety gate)",
+    )
+    stability_index: Optional[float] = Field(
+        default=None,
+        description="Trajectory and spread stability index",
+    )
+    structural_overconfidence: Optional[bool] = Field(
+        default=None,
+        description="Flag indicating narrow ensemble spread despite high historical error growth",
+    )
+    failure_fingerprint: Optional[dict[str, Any]] = Field(
+        default=None,
+        description="Structured multi-group instability fingerprint and trajectory regime evidence",
+    )
+    dominant_risk_drivers: Optional[list[str]] = Field(
+        default=None,
+        description="Top physical features driving bust risk",
+    )
+    decision_mode: Optional[str] = Field(
+        default=None,
+        description="Operational decision mode (e.g. STANDARD_MONITORING, ACTIVE_ALERT, ABSTAINED)",
+    )
+    decision_guidance: Optional[str] = Field(
+        default=None,
+        description="Human-readable operational guidance based on risk level and trust state",
+    )
+    within_trust_horizon: Optional[bool] = Field(
+        default=None,
+        description="Whether current forecast lead time is within the operational trust horizon",
+    )
+    operational_trust_horizon_hours: Optional[int] = Field(
+        default=None,
+        description="Maximum forecast lead time (hours) where model error remains bounded",
+    )
+    lead_hours: Optional[int] = Field(
+        default=None,
+        ge=1,
+        le=MAX_SUPPORTED_LEAD_HOURS,
+        description="Forecast lead time in hours if evaluated for an explicit horizon",
+    )
+    valid_time: Optional[str] = Field(
+        default=None,
+        description="Forecast valid target timestamp in ISO 8601 UTC format if evaluated for an explicit horizon",
+    )
+    issue_time: Optional[str] = Field(
+        default=None,
+        description="Forecast issuance timestamp in ISO 8601 UTC format if evaluated for an explicit horizon",
+    )
+    # Phase 4 Output Expansion Fields (§12, §15.1, G2-G12)
+    color_band: Optional[str] = Field(
+        default=None,
+        description="Operational color risk band: GREEN, YELLOW, ORANGE, RED, or GRAY (§12.1, G12)",
+    )
+    probability_interval: Optional[dict[str, Any]] = Field(
+        default=None,
+        description="Split-conformal prediction interval: lower_bound, upper_bound, confidence_level, method (§11.2, G2)",
+    )
+    severity_estimate: Optional[float] = Field(
+        default=None,
+        description="Continuous normalized error magnitude estimate relative to training MAD (§8.2, G3)",
+    )
+    severity_class: Optional[str] = Field(
+        default=None,
+        description="Versioned bust severity class: low, moderate, or severe (§8.2, G3)",
+    )
+    spatial_extent: Optional[dict[str, Any]] = Field(
+        default=None,
+        description="Spatial risk distribution: area_fraction, object_count, centroids, risk_field (§12, G4)",
+    )
+    time_to_first_failure_hours: Optional[int] = Field(
+        default=None,
+        description="Earliest forecast lead time in hours crossing bust alert threshold (§12, G5)",
+    )
+    ood_status: Optional[dict[str, Any]] = Field(
+        default=None,
+        description="Multi-signal out-of-distribution evaluation: score, state, dominant_drivers (§11.3, G8)",
+    )
+    analog_cards: Optional[list[dict[str, Any]]] = Field(
+        default=None,
+        description="Historical similar forecast failure and success cases with event exclusion (§12, §21, G9)",
+    )
+    claim_scope: Optional[str] = Field(
+        default="PUBLIC_PROXY_PROTOTYPE",
+        description="Declared operational scope and validation boundary (§2.1, G10)",
+    )
+    truth_status: Optional[str] = Field(
+        default="PENDING",
+        description="Verification ground truth status: PENDING, VERIFIED, or UNVERIFIED (§12, G11)",
+    )
+    # Phase 9 Failure Handling, Security & Scope Enforcement Fields (§1, §3.1, §21, §22)
+    certification: Optional[ScientificCertificationResult] = Field(
+        default=None,
+        description="Evaluated Day 32 Scientific Certification Gate result assessing evidence bounds",
+    )
+    ood_diagnostics: Optional[OODDiagnosticResult] = Field(
+        default=None,
+        description="Physical out-of-distribution diagnostic evaluation (Gate C2)",
+    )
+    is_certified: Optional[bool] = Field(
+        default=True,
+        description="Whether query parameters conform strictly to certified operational scope (A3)",
+    )
+    outside_certified_domain: Optional[bool] = Field(
+        default=False,
+        description="Whether requested location is outside the certified Indian subcontinental domain (A4)",
+    )
+    uncertified_horizon: Optional[bool] = Field(
+        default=False,
+        description="Whether forecast lead time is outside certified 24h-240h medium range (A5)",
+    )
+    uncertified_variable: Optional[bool] = Field(
+        default=False,
+        description="Whether evaluated weather variable is uncertified (A3)",
+    )
+    is_degraded: Optional[bool] = Field(
+        default=False,
+        description="Whether forecast evaluation ran in degraded mode due to incomplete ensemble (K2)",
+    )
+    is_fallback_cycle: Optional[bool] = Field(
+        default=False,
+        description="Whether evaluation used previous cached cycle due to upstream NWP delay (K1)",
+    )
+    is_baseline_fallback: Optional[bool] = Field(
+        default=False,
+        description="Whether evaluation fell back to calibrated spread-only baseline due to model unavailability (K3)",
+    )
+    human_approval_status: Optional[str] = Field(
+        default="PENDING",
+        description="Human forecaster review and sign-off status: PENDING, APPROVED, REJECTED, OVERRIDDEN (A2)",
+    )
+    prediction_id: Optional[str] = Field(
+        default=None,
+        description="Unique traceable identifier for audit logging and human review (L3)",
+    )
+
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "location": "London",
+                "bust_probability": None,
+                "risk_level": None,
+                "trust_state": "UNAVAILABLE",
+                "abstain": True,
+                "reason_codes": ["MODEL_NOT_READY"],
+                "model_version": None,
+                "data_version": None,
+                "explanation": None,
+            }
+        }
+    }
+
+    def to_envelope(self) -> "Any":
+        """Convert PredictionResponse to authoritative PredictionEnvelope (§15.1)."""
+        from backend.app.schemas.prediction_envelope import PredictionEnvelope
+        from backend.app.schemas.risk_bands import ColorRiskBand
+
+        c_band = ColorRiskBand.GRAY
+        if self.color_band:
+            try:
+                c_band = ColorRiskBand(self.color_band)
+            except ValueError:
+                c_band = ColorRiskBand.GRAY
+
+        return PredictionEnvelope(
+            location=self.location,
+            bust_probability=self.bust_probability,
+            probability_interval=self.probability_interval,
+            risk_level=self.risk_level,
+            color_band=c_band,
+            trust_state=self.trust_state,
+            abstain=self.abstain,
+            reason_codes=self.reason_codes,
+            time_to_first_failure_hours=self.time_to_first_failure_hours,
+            severity_estimate=self.severity_estimate,
+            severity_class=self.severity_class or "v2.0-q95-mad",
+            spatial_extent=self.spatial_extent,
+            ood_status=self.ood_status,
+            analog_cards=self.analog_cards or [],
+            explanation=self.explanation,
+            model_version=self.model_version,
+            data_version=self.data_version,
+            decision_mode=self.decision_mode,
+            decision_guidance=self.decision_guidance,
+            lead_hours=self.lead_hours,
+            valid_time=self.valid_time,
+            issue_time=self.issue_time,
+            claim_scope=self.claim_scope or "PUBLIC_PROXY_PROTOTYPE",
+            truth_status=self.truth_status or "PENDING",
+        )
+

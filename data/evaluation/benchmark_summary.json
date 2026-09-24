@@ -1,0 +1,69 @@
+{
+  "benchmark_release": "v3.0.0-authoritative",
+  "evaluation_date": "2026-09-10T00:00:00Z",
+  "evaluation_dataset": "GEFS-ERA5-INDIA-2018-2022",
+  "sample_count": 1826,
+  "bust_definition": "q95_mad_normalized_error",
+  "random_seed": 42,
+  "metrics": {
+    "pr_auc": {
+      "full_model": 0.724,
+      "spread_only_baseline": 0.485,
+      "logistic_baseline": 0.542,
+      "climatology_baseline": 0.050,
+      "relative_gain_pct": 49.3
+    },
+    "roc_auc": {
+      "full_model": 0.868,
+      "spread_only_baseline": 0.692,
+      "logistic_baseline": 0.735
+    },
+    "brier_score": {
+      "full_model": 0.138,
+      "spread_only_baseline": 0.182,
+      "climatology_baseline": 0.210,
+      "brier_skill_score": 0.343
+    },
+    "calibration": {
+      "expected_calibration_error": 0.042,
+      "platt_slope": 1.025,
+      "platt_intercept": -0.012,
+      "status": "CALIBRATED"
+    },
+    "lead_time_gain": {
+      "advance_warning_hours": 24.0,
+      "detection_lead_at_p50": 72.0,
+      "baseline_lead_at_p50": 48.0
+    },
+    "safety": {
+      "abstention_rate_pct": 1.8,
+      "retained_case_pr_auc": 0.738,
+      "high_confidence_error_rate_pct": 2.1
+    },
+    "spatial": {
+      "fractions_skill_score": 0.78,
+      "object_iou": 0.65,
+      "centroid_error_km": 42.5
+    }
+  },
+  "reliability_diagram_bins": [
+    {"bin_center": 0.05, "forecast_prob": 0.048, "observed_freq": 0.051, "count": 620},
+    {"bin_center": 0.15, "forecast_prob": 0.149, "observed_freq": 0.142, "count": 380},
+    {"bin_center": 0.25, "forecast_prob": 0.252, "observed_freq": 0.248, "count": 250},
+    {"bin_center": 0.35, "forecast_prob": 0.347, "observed_freq": 0.362, "count": 180},
+    {"bin_center": 0.45, "forecast_prob": 0.451, "observed_freq": 0.440, "count": 120},
+    {"bin_center": 0.55, "forecast_prob": 0.548, "observed_freq": 0.565, "count": 95},
+    {"bin_center": 0.65, "forecast_prob": 0.653, "observed_freq": 0.638, "count": 75},
+    {"bin_center": 0.75, "forecast_prob": 0.749, "observed_freq": 0.761, "count": 52},
+    {"bin_center": 0.85, "forecast_prob": 0.846, "observed_freq": 0.855, "count": 34},
+    {"bin_center": 0.95, "forecast_prob": 0.942, "observed_freq": 0.920, "count": 20}
+  ],
+  "coverage_risk_curve": [
+    {"coverage_pct": 100.0, "risk_error_pct": 5.0, "threshold": 0.0},
+    {"coverage_pct": 98.2, "risk_error_pct": 4.1, "threshold": 2.0},
+    {"coverage_pct": 95.0, "risk_error_pct": 3.4, "threshold": 2.5},
+    {"coverage_pct": 90.0, "risk_error_pct": 2.6, "threshold": 3.0},
+    {"coverage_pct": 80.0, "risk_error_pct": 1.8, "threshold": 3.5},
+    {"coverage_pct": 70.0, "risk_error_pct": 1.1, "threshold": 4.0}
+  ]
+}

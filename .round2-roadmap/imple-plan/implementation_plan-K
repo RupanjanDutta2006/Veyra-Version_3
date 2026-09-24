@@ -1,0 +1,56 @@
+# Implementation Plan - Phase K: Cross-system transfer, operations and promotion (Gate 10 / P1)
+
+## Status: COMPLETED
+Certified: 2026-09-20  
+Blueprint Gate: Gate 10  
+Priority: P1  
+
+---
+
+## 1. Overview & Problem Definition
+
+Phase K implements **Cross-system transfer, operations, watchlists, alerts, Builder 2 to Builder 1 parity, and promotion governance (Gate 10 / P1)** across all meteorological hazard families in Veyra:
+- `PRECIPITATION`
+- `CYCLONE`
+- `MONSOON_LPS`
+- `WESTERN_DISTURBANCE`
+- `HEATWAVE`
+- `SEVERE_WIND`
+
+In accordance with Veyra's non-negotiable architectural principles:
+- **Status Taxonomy & No Fake Certifications**: Every hazard model is explicitly labelled `FROZEN`, `CERTIFIED`, `OPERATIONAL_ONLY`, `EXPERIMENTAL`, `DIAGNOSTIC`, `ABSTAINED`, `REJECTED`, or `FUTURE`. Crucially, **no experimental output appears as certified**.
+- **Cross-System Transfer Robustness**: Challengers and specialists trained on primary forecast systems (e.g. ECMWF IFS) are evaluated across aligned systems (NOAA GFS, NCMRWF UM, Open-Meteo GEFS). Transfer Brier degradation must be bounded ($\le 0.035$) or trigger safe recalibration/abstention.
+- **Upstream Model Version Shift Safety**: Detect feature distribution shifts caused by upstream NWP version upgrades (e.g. ECMWF 47r1 $\to$ 48r1) and automatically apply conservative margins or abstain until recalibrated.
+- **Builder 2 to Builder 1 Parity**: Ensure complete schema and value compatibility between Builder 2 hazard specialists and Builder 1 base serving pipelines.
+- **Zero Invented Values**: Unsupported outputs yield `null` or explicit abstention reason, never invented numbers.
+
+---
+
+## 2. Deliverables Checklist
+
+- [x] `CROSS_SYSTEM_EVIDENCE` (`data/cross_system_evidence.json` & `backend/app/builder2/cross_system_transfer_engine.py`)
+- [x] Operational Hazard Registry (`data/operational_hazard_registry.json`)
+- [x] Alert/Watchlist Contract (`data/alert_watchlist_contract.json` & `backend/app/contracts/operational_watchlist_contract.py`)
+- [x] Builder Parity Adapter (`backend/app/builder2/builder_parity_adapter.py`)
+- [x] Cross-System Evaluation Script (`scripts/evaluate_cross_system.py`)
+- [x] Operational Promotion Gate Script (`scripts/run_operational_gate.py`)
+- [x] `backend/tests/test_multi_system.py`
+- [x] `backend/tests/test_model_version_shift.py`
+- [x] `backend/tests/test_production_hardening.py`
+- [x] `backend/tests/test_api_contract.py`
+- [x] `backend/tests/test_builder_parity.py`
+- [x] `backend/tests/test_ui_reliability_fields.py`
+- [x] `docs/phase-k-report.md`
+- [x] `.round2-roadmap/imple-plan/implementation_plan-K`
+
+---
+
+## 3. Verification Commands & Results
+
+1. `python -m pytest backend/tests/test_multi_system.py backend/tests/test_model_version_shift.py backend/tests/test_production_hardening.py -q` -> 37 passed in 7.49s (Exit Code 0).
+2. `python -m pytest backend/tests/test_api_contract.py backend/tests/test_builder_parity.py backend/tests/test_ui_reliability_fields.py -q` -> 13 passed in 0.39s (Exit Code 0).
+3. `python scripts/evaluate_cross_system.py --all-hazards --bootstrap cycle` -> All 6 hazards certified across ECMWF, GFS, NCMRWF, Open-Meteo ($\Delta \text{Brier} \le 0.035$) (Exit Code 0).
+4. `python scripts/run_operational_gate.py --all-hazards` -> Gate 10 criteria and status taxonomy certified, zero experimental models marked certified (Exit Code 0).
+5. `python -m pytest backend/tests/ -q` -> 743 passed (Exit Code 0).
+6. `cd frontend && npm test -- --run` -> 58 passed in 7.5s (Exit Code 0).
+7. `cd frontend && npm run build` -> built cleanly in 10.5s (Exit Code 0).

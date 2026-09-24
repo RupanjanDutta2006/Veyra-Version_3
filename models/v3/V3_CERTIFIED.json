@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "certificate_id": "VEYRA-CERT-V3-GATE0-20260920",
+  "gate": "Gate 0",
+  "model_version": "veyra-v3-challenger",
+  "certification_date": "2026-09-20T11:40:00Z",
+  "status": "CERTIFIED",
+  "role": "FROZEN_INCUMBENT",
+  "governance": {
+    "rule": "Rule 2.1 — V3 is the incumbent until a challenger demonstrates incremental value under identical target, split, reference, and bootstrap protocol.",
+    "hash_verification_active": true,
+    "git_lfs_safety_verified": true
+  },
+  "artifacts": {
+    "model": {
+      "filename": "lightgbm_v3_challenger.joblib",
+      "sha256": "00a8410746f4a0eecbf7e76aaa0565143fc948d0e06aea65e7bcc4ce28a1c660",
+      "size_bytes": 1046844,
+      "estimator_type": "lightgbm.basic.Booster"
+    },
+    "calibrator": {
+      "filename": "probability_calibrator_v3.joblib",
+      "sha256": "9f448606ce4338ded92f238a551b3a9d8e6d2cb5902e8bc687bce5f5850af531",
+      "size_bytes": 2791,
+      "estimator_type": "sklearn.isotonic.IsotonicRegression"
+    },
+    "features": {
+      "filename": "feature_names.json",
+      "sha256": "702ff4153fd95d8c9de3bbd01461d65fde0ef207099f7f3a8e7f5c8bac02031e",
+      "feature_count": 50,
+      "unit_space": "SI_CANONICAL (Kelvin, Pascal, m/s)"
+    }
+  },
+  "authoritative_benchmark": {
+    "test_split": "2024-07-01 to 2024-12-31 (Out-Of-Time)",
+    "oot_rows": 116250,
+    "bust_prevalence": 0.062,
+    "metrics": {
+      "pr_auc": 0.2110,
+      "brier_score": 0.0538,
+      "brier_skill_score": 0.0770,
+      "expected_calibration_error": 0.0068,
+      "roc_auc": 0.8420
+    },
+    "lead_stratified_pr_auc": {
+      "short_range_24_48h": 0.284,
+      "medium_range_72_144h": 0.219,
+      "extended_range_168_240h": 0.142
+    }
+  },
+  "compliance_checklist": {
+    "no_future_information": true,
+    "availability_barrier_enforced": true,
+    "truth_sealing_enforced": true,
+    "deterministic_units_verified": true,
+    "anti_leakage_controls_passed": true,
+    "clean_install_verified": true
+  }
+}

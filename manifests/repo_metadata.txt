@@ -1,0 +1,15 @@
+=== repo_a ===
+Branch: main
+Commit Date: '2026-09-21T09:44:50+05:30'
+Remote URL: https://github.com/RupanjanDutta2006/Veyra-Know-When-Forecasts-May-Fail
+Status: clean
+History Commit Count: 112
+Tags: audit-repo-a-b9f52d3
+
+=== repo_b ===
+Branch: integration/sih-round2-selective-merge
+Commit Date: '2026-09-21T00:02:06+05:30'
+Remote URL: https://github.com/adishxm/Veyra-Know-When-Forecasts-May-Fail-VERSION-2
+Status: clean
+History Commit Count: 127
+Tags: audit-repo-b-82eded8

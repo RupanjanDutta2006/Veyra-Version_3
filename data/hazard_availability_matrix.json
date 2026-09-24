@@ -1,0 +1,343 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "last_updated": "2026-09-20T11:40:00Z",
+  "gate": "Gate 0",
+  "description": "Veyra Operational Hazard Availability Matrix and Ingestion Contracts across 6 meteorological hazard families.",
+  "invariants": {
+    "temporal_causality": "availability_time <= issue_time",
+    "ground_truth_sealing": "Reference ground truth is sealed until valid_time + latency_hours",
+    "unsupported_policy": "Missing, uncertified, or out-of-scope hazard inputs must abstain or mark PROXY/FUTURE, never synthesize fake observations"
+  },
+  "hazards": [
+    {
+      "hazard_id": "HAZARD-PRECIP-01",
+      "hazard_family": "PRECIPITATION",
+      "hazard_name": "Heavy Precipitation & Flash Flood Proxy",
+      "provider": "Open-Meteo GEFS / GFS Ensemble",
+      "variables": [
+        {
+          "name": "precipitation_amount",
+          "raw_unit": "mm",
+          "canonical_unit": "mm/24h",
+          "description": "24-hour accumulated surface precipitation"
+        },
+        {
+          "name": "precipitation_probability",
+          "raw_unit": "%",
+          "canonical_unit": "fraction",
+          "description": "Ensemble fraction predicting > 0.1 mm"
+        }
+      ],
+      "grid": {
+        "spatial_resolution_deg": 0.25,
+        "domain": "Global / South Asia Regional [0-40N, 60-100E]",
+        "coordinate_system": "WGS84"
+      },
+      "cadence": {
+        "issue_cycle_hours": [0, 6, 12, 18],
+        "lead_hours_min": 6,
+        "lead_hours_max": 240,
+        "cadence_hours": 6
+      },
+      "ensemble": {
+        "member_count": 31,
+        "minimum_required_members": 25,
+        "missingness_tolerance_pct": 20.0
+      },
+      "dissemination_latency_hours": 4.5,
+      "reference": {
+        "primary": "IMD_GRIDDED_RAINFALL",
+        "fallback": "ERA5_TOTAL_PRECIPITATION",
+        "resolution_deg": 0.25,
+        "verification_latency_days": 1
+      },
+      "label_contract": {
+        "label_name": "bust_precip_95th_mad",
+        "threshold_type": "PERCENTILE_AND_FIXED",
+        "threshold_fixed_mm": 50.0,
+        "threshold_quantile": 0.95,
+        "description": "Forecast error |F - O| exceeds 50mm or 95th percentile error threshold for climate stratum"
+      },
+      "operational_status": "OPERATIONAL"
+    },
+    {
+      "hazard_id": "HAZARD-CYCLONE-01",
+      "hazard_family": "CYCLONE",
+      "hazard_name": "Tropical Cyclone Track, Intensity & Landfall",
+      "provider": "IMD / RSMC New Delhi & GEFS TC Tracker",
+      "variables": [
+        {
+          "name": "tc_center_latitude",
+          "raw_unit": "degrees_north",
+          "canonical_unit": "degrees_north",
+          "description": "Vortex center latitude"
+        },
+        {
+          "name": "tc_center_longitude",
+          "raw_unit": "degrees_east",
+          "canonical_unit": "degrees_east",
+          "description": "Vortex center longitude"
+        },
+        {
+          "name": "max_sustained_wind_speed",
+          "raw_unit": "knots",
+          "canonical_unit": "m/s",
+          "description": "10-minute maximum sustained wind at 10m"
+        },
+        {
+          "name": "central_pressure",
+          "raw_unit": "hPa",
+          "canonical_unit": "Pa",
+          "description": "Estimated minimum central sea-level pressure"
+        }
+      ],
+      "grid": {
+        "spatial_resolution_deg": 0.25,
+        "domain": "North Indian Ocean (Bay of Bengal & Arabian Sea) [0-30N, 50-100E]",
+        "coordinate_system": "WGS84"
+      },
+      "cadence": {
+        "issue_cycle_hours": [0, 6, 12, 18],
+        "lead_hours_min": 12,
+        "lead_hours_max": 120,
+        "cadence_hours": 6
+      },
+      "ensemble": {
+        "member_count": 31,
+        "minimum_required_members": 20,
+        "missingness_tolerance_pct": 35.0
+      },
+      "dissemination_latency_hours": 3.0,
+      "reference": {
+        "primary": "IMD_BEST_TRACK",
+        "fallback": "JTWC_BEST_TRACK",
+        "resolution_deg": 0.1,
+        "verification_latency_days": 14
+      },
+      "label_contract": {
+        "label_name": "bust_cyclone_track_intensity",
+        "threshold_type": "COMPOUND",
+        "threshold_track_error_km": 100.0,
+        "threshold_intensity_error_ms": 7.7,
+        "description": "Track position error > 100km at 48h or intensity error > 15 knots (7.7 m/s)"
+      },
+      "operational_status": "PROXY"
+    },
+    {
+      "hazard_id": "HAZARD-MONSOON-01",
+      "hazard_family": "MONSOON_LPS",
+      "hazard_name": "Monsoon Low Pressure System & Depression Dynamics",
+      "provider": "GEFS Ensemble / NCMRWF Unified Model Proxy",
+      "variables": [
+        {
+          "name": "vorticity_850hpa",
+          "raw_unit": "1/s",
+          "canonical_unit": "1/s",
+          "description": "Relative vorticity at 850 hPa pressure surface"
+        },
+        {
+          "name": "vertical_wind_shear_200_850",
+          "raw_unit": "m/s",
+          "canonical_unit": "m/s",
+          "description": "Deep layer wind shear between 200 hPa and 850 hPa"
+        },
+        {
+          "name": "precipitable_water_total",
+          "raw_unit": "kg/m^2",
+          "canonical_unit": "kg/m^2",
+          "description": "Total column integrated water vapor"
+        }
+      ],
+      "grid": {
+        "spatial_resolution_deg": 0.25,
+        "domain": "South Asian Monsoon Trough Zone [15-28N, 70-90E]",
+        "coordinate_system": "WGS84"
+      },
+      "cadence": {
+        "issue_cycle_hours": [0, 12],
+        "lead_hours_min": 24,
+        "lead_hours_max": 168,
+        "cadence_hours": 12
+      },
+      "ensemble": {
+        "member_count": 31,
+        "minimum_required_members": 25,
+        "missingness_tolerance_pct": 20.0
+      },
+      "dissemination_latency_hours": 6.0,
+      "reference": {
+        "primary": "ERA5_MONSOON_ANALYSIS",
+        "fallback": "IMD_SYNOPTIC_CHARTS",
+        "resolution_deg": 0.25,
+        "verification_latency_days": 5
+      },
+      "label_contract": {
+        "label_name": "bust_lps_track_genesis",
+        "threshold_type": "GENESIS_AND_PLACEMENT",
+        "threshold_genesis_timing_hours": 24.0,
+        "threshold_center_placement_km": 200.0,
+        "description": "LPS genesis timing error > 24h or center placement error > 200 km"
+      },
+      "operational_status": "PROXY"
+    },
+    {
+      "hazard_id": "HAZARD-WD-01",
+      "hazard_family": "WESTERN_DISTURBANCE",
+      "hazard_name": "Western Disturbance Troughs & Orographic Precipitation",
+      "provider": "Open-Meteo GEFS / GFS",
+      "variables": [
+        {
+          "name": "geopotential_height_500hpa",
+          "raw_unit": "gpm",
+          "canonical_unit": "m",
+          "description": "Geopotential height at 500 hPa denoting mid-latitude trough depth"
+        },
+        {
+          "name": "temperature_advection_700hpa",
+          "raw_unit": "K/s",
+          "canonical_unit": "K/s",
+          "description": "Horizontal temperature advection at 700 hPa"
+        },
+        {
+          "name": "orographic_precipitation_flux",
+          "raw_unit": "mm/h",
+          "canonical_unit": "mm/24h",
+          "description": "Precipitation rate over Western Himalayan terrain"
+        }
+      ],
+      "grid": {
+        "spatial_resolution_deg": 0.25,
+        "domain": "Northwest India & Western Himalayas [24-38N, 68-82E]",
+        "coordinate_system": "WGS84"
+      },
+      "cadence": {
+        "issue_cycle_hours": [0, 12],
+        "lead_hours_min": 12,
+        "lead_hours_max": 144,
+        "cadence_hours": 12
+      },
+      "ensemble": {
+        "member_count": 31,
+        "minimum_required_members": 25,
+        "missingness_tolerance_pct": 20.0
+      },
+      "dissemination_latency_hours": 5.0,
+      "reference": {
+        "primary": "IMD_WESTERN_HIMALAYAN_GRIDDED",
+        "fallback": "ERA5_REANALYSIS",
+        "resolution_deg": 0.25,
+        "verification_latency_days": 3
+      },
+      "label_contract": {
+        "label_name": "bust_wd_arrival_precipitation",
+        "threshold_type": "ARRIVAL_TIME_AND_PRECIP",
+        "threshold_arrival_hours": 12.0,
+        "threshold_precip_error_mm": 25.0,
+        "description": "Trough arrival timing error > 12h or precipitation error > 25mm/24h in orographic zone"
+      },
+      "operational_status": "PROXY"
+    },
+    {
+      "hazard_id": "HAZARD-HEATWAVE-01",
+      "hazard_family": "HEATWAVE",
+      "hazard_name": "Extreme Heat & Heatwave Persistence",
+      "provider": "Open-Meteo GEFS / GFS Ensemble",
+      "variables": [
+        {
+          "name": "maximum_temperature_2m",
+          "raw_unit": "°C",
+          "canonical_unit": "K",
+          "description": "Daily maximum 2-meter air temperature"
+        },
+        {
+          "name": "tmax_climatological_anomaly",
+          "raw_unit": "°C",
+          "canonical_unit": "K",
+          "description": "Departure of daily maximum temperature from 30-year normal"
+        }
+      ],
+      "grid": {
+        "spatial_resolution_deg": 0.25,
+        "domain": "Core Heatwave Zone (Central, North, and Coastal India) [10-32N, 72-88E]",
+        "coordinate_system": "WGS84"
+      },
+      "cadence": {
+        "issue_cycle_hours": [0, 12],
+        "lead_hours_min": 24,
+        "lead_hours_max": 240,
+        "cadence_hours": 24
+      },
+      "ensemble": {
+        "member_count": 31,
+        "minimum_required_members": 25,
+        "missingness_tolerance_pct": 20.0
+      },
+      "dissemination_latency_hours": 4.0,
+      "reference": {
+        "primary": "IMD_GRIDDED_MAX_TEMP",
+        "fallback": "ERA5_TMAX",
+        "resolution_deg": 0.5,
+        "verification_latency_days": 1
+      },
+      "label_contract": {
+        "label_name": "bust_heatwave_threshold",
+        "threshold_type": "IMD_HEATWAVE_CRITERIA",
+        "threshold_plains_celsius": 40.0,
+        "threshold_anomaly_celsius": 4.5,
+        "description": "Forecast misses heatwave occurrence (Tmax >= 40°C and departure >= 4.5°C) or predicts false alarm with error > 3.0 K"
+      },
+      "operational_status": "OPERATIONAL"
+    },
+    {
+      "hazard_id": "HAZARD-WIND-01",
+      "hazard_family": "SEVERE_WIND",
+      "hazard_name": "Severe Surface Wind Gusts & Squall Lines",
+      "provider": "Open-Meteo GEFS Ensemble",
+      "variables": [
+        {
+          "name": "wind_gust_10m",
+          "raw_unit": "km/h",
+          "canonical_unit": "m/s",
+          "description": "Peak 10-meter wind gust speed in the interval"
+        },
+        {
+          "name": "sustained_wind_10m",
+          "raw_unit": "m/s",
+          "canonical_unit": "m/s",
+          "description": "Mean 10-meter horizontal wind speed"
+        }
+      ],
+      "grid": {
+        "spatial_resolution_deg": 0.25,
+        "domain": "All India Land & Coastal Waters [6-38N, 68-98E]",
+        "coordinate_system": "WGS84"
+      },
+      "cadence": {
+        "issue_cycle_hours": [0, 6, 12, 18],
+        "lead_hours_min": 6,
+        "lead_hours_max": 120,
+        "cadence_hours": 6
+      },
+      "ensemble": {
+        "member_count": 31,
+        "minimum_required_members": 25,
+        "missingness_tolerance_pct": 20.0
+      },
+      "dissemination_latency_hours": 4.5,
+      "reference": {
+        "primary": "ERA5_HOURLY_GUSTS",
+        "fallback": "IMD_SURFACE_STATION_AWS",
+        "resolution_deg": 0.25,
+        "verification_latency_days": 5
+      },
+      "label_contract": {
+        "label_name": "bust_gale_gust_exceedance",
+        "threshold_type": "FIXED_SPEED_EXCEEDANCE",
+        "threshold_speed_ms": 17.2,
+        "description": "Forecast misses gale-force gust (>= 17.2 m/s / 34 knots / 62 km/h) or overpredicts by > 6 m/s"
+      },
+      "operational_status": "OPERATIONAL"
+    }
+  ]
+}

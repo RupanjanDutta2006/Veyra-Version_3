@@ -1,0 +1,27 @@
+{
+  "seed": 42,
+  "input_shape": [
+    5,
+    50
+  ],
+  "raw_predictions": [
+    0.025117903614184253,
+    0.029131140138439236,
+    0.05365759377217046,
+    0.019700369828136957,
+    0.07522594040396736
+  ],
+  "calibrated_predictions": [
+    0.02459526774595268,
+    0.03075571177504393,
+    0.05945945945945946,
+    0.020892151326933936,
+    0.07644382911392406
+  ],
+  "feature_count": 50,
+  "model_type": "Booster",
+  "calibrator_type": "IsotonicRegression",
+  "raw_max_diff": 0.0,
+  "cal_max_diff": 0.0,
+  "parity_status": "EXACT_MATCH"
+}

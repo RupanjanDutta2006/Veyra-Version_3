@@ -1,0 +1,22 @@
+{
+  "Builder-2": {
+    "status": "historical_noncanonical",
+    "reason": "Duplicate backend/model tree from intermediate hackathon stage. Contains outdated requirements and redundant endpoints.",
+    "disposition": "REJECT - do not merge into base repo."
+  },
+  "Parinidhi": {
+    "status": "historical_noncanonical",
+    "reason": "Duplicate application tree containing patch scripts (_v4_patch, _v5_patch) and older frontend copies.",
+    "disposition": "REJECT - do not merge into base repo."
+  },
+  "Frontend-Original": {
+    "status": "historical_noncanonical",
+    "reason": "Original legacy React frontend superseded by repo_b frontend implementation.",
+    "disposition": "REJECT - do not merge into base repo."
+  },
+  "Overview": {
+    "status": "historical_noncanonical",
+    "reason": "Temporary evaluation notes and partial mock logs.",
+    "disposition": "REJECT - do not merge into base repo."
+  }
+}

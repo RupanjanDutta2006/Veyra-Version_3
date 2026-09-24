@@ -1,0 +1,9 @@
+source_repo,path_pattern,reason
+repo_a,models/v3/*.joblib,"Git LFS pointer text, not deployable binary"
+repo_a,Builder-2/,Duplicate application tree
+repo_a,Parinidhi/,Duplicate application tree
+repo_a,Frontend-Original/,Duplicate application tree
+repo_a,Overview/,Historical tree
+repo_a,Audits/stale_*,Stale audit notes
+repo_b,models/day4/* as active model,"Baseline model only, never deploy as active V3"
+repo_b,specialist metrics without empirical dataset,Cannot be promoted to production without independent training

@@ -1,0 +1,38 @@
+{
+  "manifest_version": "1.0.0",
+  "generated_at": "2026-09-20T11:17:00Z",
+  "model_family": "v3-lightgbm-isotonic",
+  "model_version": "3.0.0",
+  "artifacts": {
+    "model": {
+      "filename": "lightgbm_v3_challenger.joblib",
+      "path": "models/v3/lightgbm_v3_challenger.joblib",
+      "sha256": "00a8410746f4a0eecbf7e76aaa0565143fc948d0e06aea65e7bcc4ce28a1c660",
+      "size_bytes": 1046844,
+      "type": "lightgbm.Booster",
+      "format": "joblib"
+    },
+    "calibrator": {
+      "filename": "probability_calibrator_v3.joblib",
+      "path": "models/v3/probability_calibrator_v3.joblib",
+      "sha256": "9f448606ce4338ded92f238a551b3a9d8e6d2cb5902e8bc687bce5f5850af531",
+      "size_bytes": 2791,
+      "type": "sklearn.isotonic.IsotonicRegression",
+      "format": "joblib"
+    },
+    "features": {
+      "filename": "feature_names.json",
+      "path": "models/v3/feature_names.json",
+      "sha256": "702ff4153fd95d8c9de3bbd01461d65fde0ef207099f7f3a8e7f5c8bac02031e",
+      "feature_count": 50,
+      "format": "json"
+    }
+  },
+  "training_provenance": {
+    "train_split": "2000-2013 (547,500 rows, 730 cycles)",
+    "val_split": "2014-2016 (116,250 rows, 155 cycles)",
+    "test_split": "2017-2019 (116,250 rows, 155 cycles)",
+    "temporal_purge_window_days": 14,
+    "embargo_window_days": 21
+  }
+}

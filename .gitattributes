@@ -1,0 +1,5 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Canonical LF line endings for schema definitions & feature contracts
+models/v3/feature_names.json text eol=lf

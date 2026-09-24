@@ -1,0 +1,9 @@
+doc_path,disposition,action_required
+README.md,REWRITE,Remove '6 Certified Specialists' claim; update test count breakdown; note Open-Meteo proxy data; specify V3 0.060 threshold
+ARCHITECTURE.md,REWRITE,Align architecture diagrams with actual single active destination and experimental specialist boundaries
+REPRODUCIBILITY_PACKAGE.md,REWRITE,Add clear distinction between software test reproduction and empirical scientific validation
+BUILDER_1_BUILDER_2_INTEGRATION_CONTRACT.md,RETAIN,Keep as historical evidence reference with audited SHA link
+BUILDER_2_HANDOFF.md,RETAIN,Keep as reference document with evidence labels
+Parinidhi/README.md,ARCHIVE,Mark as historical unmerged tree
+Builder-2/README.md,ARCHIVE,Mark as historical unmerged tree
+Frontend-Original/README.md,REJECT,Quarantined duplicate tree

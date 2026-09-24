@@ -1,0 +1,927 @@
+# MASTER PROMPT — BLIND, ZERO-BIAS DUAL-REPOSITORY SIH ROUND-2 AUDIT
+# Evidence-weighted scoring, scientific truth discipline, selective integration analysis, graph/table output
+
+You are acting as an independent senior scientific-ML reviewer, software architect, release auditor, and SIH Round-2 submission assessor.
+
+Your task is to perform a fresh, evidence-based, repository-level and document-level audit of two independently evolved implementations of the same SIH26079 concept.
+
+## BLIND / ZERO-BIAS PROTOCOL
+This audit must be as neutral as possible.
+
+To reduce bias:
+1. Treat the repositories as `Repository Alpha` and `Repository Beta` internally during analysis.
+2. Do not rely on author identity, repository reputation, naming, prior verification, or perceived prestige.
+3. Evaluate each repository independently before direct comparison.
+4. Apply the exact same checklist, evidence standard, rubric, and output structure to both repositories.
+5. Do not reward larger README files, more advanced wording, more files, more tests claimed, or more polished presentation unless independently evidenced.
+6. Do not penalize a repository simply because it is smaller or less polished if its evidence is stronger.
+7. Perform a label-swap invariance check:
+   - ask: if Alpha and Beta were swapped, would the conclusion change?
+   - if yes, identify the reason and correct any asymmetry.
+8. Use the same thresholds for evidence, validation, and scoring for both repositories.
+9. If evidence is close or uncertain, explicitly say so rather than forcing a false winner.
+10. Do not let documentation ambition override code/test/runtime evidence.
+
+Do not let these factors bias the outcome:
+- repository name,
+- author identity,
+- previous human verification,
+- README length,
+- number of files,
+- advanced architecture wording,
+- claim density,
+- marketing language,
+- commit volume,
+- age of the repo,
+- number of diagrams,
+- or confidence-by-style.
+
+The only acceptable basis for judgment is observable evidence.
+
+If a capability is not independently evidenced, classify it as one of:
+- `N/A — uncovered/missing`
+- `MISSING`
+- `DOCUMENTATION_ONLY`
+- `UNVERIFIED`
+- `CONTRADICTED`
+- `FUTURE_BY_DESIGN`
+
+Use neutral language throughout.
+Do not assume one repository is better because it looks more sophisticated.
+Do not assume more claims means more truth.
+Do not assume previous verification remains valid now.
+
+If evidence is weak, say so explicitly.
+If evidence is absent, do not invent equivalent functionality.
+If claims conflict with code or execution, code/execution wins.
+
+---
+
+# 0. REPOSITORIES TO AUDIT
+
+## Repository A
+URL: `https://github.com/RupanjanDutta2006/Veyra-Know-When-Forecasts-May-Fail`
+
+## Repository B
+URL: `https://github.com/adishxm/Veyra-Know-When-Forecasts-May-Fail-VERSION-2`
+
+At the beginning of the audit, resolve the current default branch and latest HEAD for both repositories.
+If either repository has moved, use the newest inspected HEAD and record both the prompt-time SHA and the audit-time SHA.
+
+Use neutral names `Repository A` and `Repository B` only in the final report.
+
+---
+
+# 1. REQUIRED SOURCE MATERIAL
+
+You must use all available sources, not only GitHub READMEs.
+
+At minimum inspect these supplied project documents:
+1. `SIH26079 — Forecast-Bust Sentinel (1) (1)(1).md`
+2. `SIH26079_120_RESEARCH_PAPERS_MERGED.md`
+3. `VEYRA_Hazard_Specific_Reliability_Implementation_Blueprint(1).md`
+4. `VEYRA_500_Test_Master_Suite(1).md`
+5. `Docs_vs_Research_vs_Live_comparison (1).md`
+
+Also inspect, when available in the workspace/repositories:
+- Phase A — V3 certification and hazard data contracts
+- Phase B — Reliability core and benchmark ladder
+- Phase C — Multi-horizon hazard, motifs and recovery
+- Phase D — Precipitation reliability specialist
+- Phase E — Tropical cyclone reliability specialist
+- Phase F — Monsoon and low-pressure-system reliability
+- Phase G — Western disturbance reliability
+- Phase H — Heatwave and data-dependent severe-wind specialists
+- Phase I — Spatial, compound and common-mode reliability
+- Phase J — Hazard-specific calibration, OOD, drift and independent truth
+- Phase K — Cross-system transfer, operations and promotion
+- Phase L — Frontier challengers and reliability digital twin
+- architecture docs
+- reproducibility docs
+- release/audit docs
+- API docs
+- model manifests
+- training/evaluation manifests
+- test docs
+- Round-2 roadmap/report folders
+- deployment/demo docs
+- Builder-1 / Builder-2 integration contracts
+- all current README files relevant to production paths
+
+If the same document exists in several copies, identify duplicates and choose the most current/authoritative copy rather than double-counting it.
+
+---
+
+# 2. EVIDENCE HIERARCHY / TRUTH DISCIPLINE
+
+Use this evidence hierarchy when claims conflict:
+
+1. **Reproduced executable evidence**
+   - tests actually run now,
+   - build results,
+   - model hashes,
+   - replay results,
+   - endpoint/runtime smoke tests.
+
+2. **Current source code and committed artifacts at the audited SHA**
+   - actual implementation,
+   - actual model/calibrator files,
+   - schemas,
+   - fixtures,
+   - data manifests,
+   - migration/storage code.
+
+3. **Current machine-readable manifests / frozen evaluation outputs**
+   - metrics JSON,
+   - artifact manifests,
+   - benchmark tables generated from reproducible workflows.
+
+4. **Current technical docs tied to code**
+   - architecture,
+   - release/audit docs,
+   - exact implementation notes.
+
+5. **README claims and presentation claims**
+
+6. **Roadmap / blueprint / intended future architecture**
+
+A planned item is not an implemented item.
+An implemented class is not automatically a scientifically validated model.
+A documented benchmark is not automatically reproduced evidence.
+A “CERTIFIED” string in source code is not automatically certification.
+
+If README conflicts with code/test evidence, report the README as stale or overclaimed.
+
+---
+
+# 3. NON-NEGOTIABLE SCIENTIFIC INTERPRETATION
+
+The supplied project documents impose several truth boundaries that must control this audit.
+
+## 3.1 Veyra is a forecast-reliability layer
+The project does not replace an issued NWP forecast.
+Its core scientific purpose is to estimate whether an already-issued forecast may fail unusually badly, and to communicate uncertainty, evidence boundaries, and abstention honestly.
+Do not reward either repository for turning Veyra into a generic weather forecaster.
+
+## 3.2 Public-proxy vs NCMRWF/NEPS
+Treat the current project as a public-proxy research prototype unless real paired NCMRWF/NEPS forecast history, metadata, verification truth, permission, and reproducible evaluation are actually present.
+
+Do not award scientific credit for architecture diagrams, variable names, or README language that merely mention:
+- NCMRWF,
+- NEPS,
+- IMD,
+- DWR,
+- INSAT,
+- ECMWF,
+- or other systems.
+
+Verify real access and real use separately.
+
+## 3.3 V3 incumbent rule
+The frozen V3 is the incumbent until a challenger proves incremental value under the same:
+- target definition,
+- reference definition,
+- temporal protocol,
+- leakage rules,
+- evaluation contract,
+- calibration criteria,
+- subgroup analysis,
+- uncertainty/bootstrap procedure,
+- prediction interval coverage,
+- ensemble-member dispersion,
+- provider disagreement,
+- OOD/novelty,
+- confidence heuristic,
+- scientific certification.
+
+Do not give a challenger production-science credit simply because it has a more advanced architecture.
+
+## 3.4 No future information
+At issue time `t0`, prediction features must use only information available at or before `t0`.
+
+Audit for leakage from:
+- future observations,
+- future reanalysis,
+- future forecast error,
+- future bust labels,
+- post-valid-time data,
+- target-derived features,
+- verifying radar/satellite frames,
+- or historical retrieval that accidentally includes future periods.
+
+## 3.5 Hazard is not bust
+A cyclone, heavy-rain event, heatwave, large ensemble spread, OOD state, or provider disagreement is not automatically a forecast bust.
+Hazard-specific models must estimate forecast failure conditional on the hazard/regime, not confuse hazard occurrence probability with forecast unreliability.
+
+## 3.6 Keep uncertainty concepts separate
+Do not reward semantic conflation between:
+- calibrated P(BUST),
+- hazard probability,
+- continuous forecast error,
+- prediction interval coverage,
+- ensemble-member dispersion,
+- provider disagreement,
+- OOD/novelty,
+- confidence heuristic,
+- scientific certification.
+
+## 3.7 Missing target rule from the 500-test suite
+The 500-test master suite says the final repository is authoritative for what exists.
+If a named capability is absent, classify it as `N/A — uncovered/missing`.
+Do not invent equivalent functionality.
+
+---
+
+# 4. INITIAL REPOSITORY FORENSICS
+
+Before scoring, collect for both repositories:
+- current main/default branch,
+- HEAD SHA,
+- commit timestamp,
+- repository size,
+- branch strategy,
+- recent commit history,
+- PR history if available,
+- CI/workflow status,
+- open failures if visible,
+- top-level tree,
+- backend structure,
+- frontend structure,
+- model/artifact directories,
+- scripts,
+- tests,
+- docs,
+- data/manifests,
+- deployment configuration.
+
+Determine whether development appears to use:
+- protected branch + PR workflow,
+- direct commits to main,
+- or mixed governance.
+
+Do not automatically penalize direct-main development heavily if the code is otherwise good, but include it under release/governance risk.
+
+For each repository inspect:
+- model files,
+- calibrators,
+- feature schemas,
+- feature order,
+- artifact hashes,
+- model IDs,
+- training manifests,
+- validation/test splits,
+- benchmark metrics,
+- baselines,
+- calibration method,
+- serving model selection,
+- fallback model paths.
+
+For Repository A specifically verify whether the frozen V3 artifacts remain identical to the documented production artifacts.
+
+Known expected V3 artifacts to verify if still authoritative:
+- Model: `models/v3/lightgbm_v3_challenger.joblib`
+- Expected SHA256: `00a8410746f4a0eecbf7e76aaa0565143fc948d0e06aea65e7bcc4ce28a1c660`
+- Calibrator: `models/v3/probability_calibrator_v3.joblib`
+- Expected SHA256: `9f448606ce4338ded92f238a551b3a9d8e6d2cb5902e8bc687bce5f5850af531`
+- Expected V3 feature count: `50`
+- Expected calibrator: `IsotonicRegression`
+
+If any of these have intentionally changed, explain the new provenance and do not assume the new artifact is superior.
+
+For Repository B, locate equivalent artifacts and determine whether:
+- the same V3 is preserved,
+- there are new specialist models,
+- those specialist models are trained artifacts or deterministic hand-coded formulas,
+- coefficients/thresholds have reproducible empirical provenance.
+
+---
+
+# 5. ANTI-BIAS RULES
+
+You must explicitly check for bias and prevent it.
+
+Do not let the following bias the result:
+- more polished README,
+- larger number of files,
+- more future modules,
+- more self-declared certification,
+- more advanced architecture wording,
+- more claimed tests without execution,
+- stronger branding,
+- more diagrams,
+- more machine-readable buzzwords,
+- more ambitious roadmap,
+- repository ownership,
+- prior human verification,
+- or human preference.
+
+Use the same rubric, same weights, same leakage rules, same scientific rules, same evidence hierarchy, same confidence levels, and same penalty logic for both repositories.
+
+If one repository contains stronger documentation but weaker execution, do not credit the documentation above execution.
+If one repository contains more tests but they are not reproducible or meaningful, do not overcredit them.
+If one repository has a bigger feature surface but less evidence, do not reward breadth over validity.
+
+Perform a symmetry audit:
+- identify any category where A is treated more generously than B for similar evidence,
+- or vice versa,
+- and correct the asymmetry before finalizing.
+
+Do not write “verified” unless evidence supports it.
+Do not write “superior” unless evidence clearly supports it.
+Do not use name familiarity or repository history as a shortcut.
+
+---
+
+# 6. DOCUMENT-TO-CODE REQUIREMENT MATRIX
+
+Build a master matrix containing every major requirement/capability from the main docs, research docs, hazard blueprint, Phase A–L docs, 500-test suite, and previous Docs-vs-Research-vs-Live report.
+
+Use these status values:
+- `VERIFIED`
+- `IMPLEMENTED_NOT_INDEPENDENTLY_VALIDATED`
+- `PARTIAL`
+- `PROTOTYPE_ONLY`
+- `DOCUMENTED_ONLY`
+- `MISSING`
+- `FUTURE_BY_DESIGN`
+- `CONTRADICTED`
+- `UNVERIFIED`
+
+For every row show:
+1. Requirement/capability
+2. Source document/section
+3. Repository A evidence
+4. Repository A status
+5. Repository B evidence
+6. Repository B status
+7. Scientific/operational importance
+8. Which implementation is preferable, if either
+9. Merge recommendation
+
+At minimum cover the following families:
+- mission, scope and SIH alignment
+- bust definition / labels
+- data sources / data engineering
+- feature engineering
+- models and baseline ladder
+- evaluation science
+- revision / historical intelligence
+- failure memory
+- failure motifs
+- multi-horizon / time-to-bust / recovery
+- precipitation reliability specialist
+- cyclone reliability specialist
+- monsoon/LPS specialist
+- western disturbance specialist
+- heatwave specialist
+- severe wind
+- spatial reliability
+- compound / common-mode failure
+- multi-provider / cross-system intelligence
+- drift / independent truth
+- explainability / evidence graph
+- digital twin / replay / counterfactuals
+- API / backend
+- frontend / SIH demo
+- reproducibility / release engineering
+- security / robustness / operations
+- test suite coverage
+- live/runtime checks
+- documentation drift audit
+- scientific claim audit
+- scoring and decision logic
+- combine / integration safety
+
+Do not translate one generic test into all tests in a domain.
+Where exact mapping cannot be established, mark it uncertain.
+
+---
+
+# 7. SCIENTIFIC CLAIM AUDIT
+
+Audit the claims in both repositories separately.
+
+Pay special attention to claims such as:
+- “6 Certified Meteorological Hazard Specialists”
+- specific Brier/ECE values per hazard
+- conditional conformal coverage / ≥90% coverage claims
+- +24h to +96h advance warning
+- NCMRWF/IMD/DWR/INSAT ingestion
+- cross-system transferability
+- certified common-mode / compound reliability
+- digital-twin scientific conclusions
+
+For every major claim classify it as one of:
+- `REPRODUCED`
+- `SUPPORTED_BY_ARTIFACT`
+- `SUPPORTED_BY_CODE_ONLY`
+- `SUPPORTED_BY_TEST_FIXTURE_ONLY`
+- `DOCUMENTATION_ONLY`
+- `CONTRADICTED`
+- `UNVERIFIED`
+
+If a specialist uses deterministic formulas or fixed coefficients rather than a trained empirical model, state that explicitly and score scientific validation separately from software completeness.
+
+Pay attention to:
+- frozen V3 artifact identity,
+- 50-feature contract,
+- isotonic calibration,
+- certified 25-station / 3-variable / <=240h scope if still current,
+- operational >240h handling,
+- OOD diagnostic-only vs active abstention,
+- GEFS N=31 live diagnostics,
+- cross-provider fixture/live disclosure,
+- revision-store durability,
+- replay independence,
+- release manifest integrity,
+- scientific explanation method,
+- human-verification fixes,
+- any README drift toward older baseline behavior.
+
+Distinguish:
+- verified frozen-core behavior,
+- operational extensions,
+- diagnostic-only components,
+- future work.
+
+---
+
+# 8. HARDENED EVIDENCE CHECKS
+
+A passing unit test is not automatically empirical scientific validation.
+A documented benchmark is not automatically reproduced evidence.
+A “CERTIFIED” string in source code is not automatically certification.
+
+When a README conflicts with code/test evidence, report the README as stale or overclaimed.
+
+For each repository, explicitly inspect:
+- test count claims vs actual discovered tests,
+- executed tests vs claimed tests,
+- passed vs failed vs skipped vs xfail,
+- warnings,
+- runtime,
+- build status,
+- artifact hashes,
+- model versioning,
+- release/rollback discipline,
+- clean-clone reproducibility,
+- golden replay parity,
+- startup integrity,
+- branch/PR discipline,
+- working-tree cleanliness if available.
+
+If dependency/data/network limitations prevent reproduction, say so and score only the evidence that can actually be verified.
+
+---
+
+# 9. SCORECARD AND WEIGHTS
+
+Every major category gets a raw score from 0 to 100 for each repository.
+
+Use the following weighted rubric for the final SIH Round-2 score:
+
+1. Scientific correctness, claim discipline & leakage safety — 15
+2. Alignment with SIH26079 main docs + research corpus — 8
+3. Core V3 / baseline quality, calibration & artifact reproducibility — 10
+4. Data pipeline, issue-time contracts, provenance & QC — 7
+5. Reliability intelligence: revisions, Failure Memory, Motifs, multi-horizon/recovery — 8
+6. Hazard-specific specialists and empirical validation — 10
+7. Certification, OOD, abstention, drift & independent truth — 9
+8. Spatial, ensemble, provider and cross-system intelligence — 6
+9. Backend/API architecture & robustness — 6
+10. Frontend/demo quality & scientific communication — 5
+11. Testing, reproducibility, replay & release engineering — 8
+12. Documentation accuracy, traceability & maintainability — 4
+13. SIH Round-2 submission readiness — 4
+
+Total = 100
+
+Interpretation:
+- 90–100: exceptionally complete, reproduced, scientifically defensible, release-ready
+- 80–89: strong, minor gaps
+- 70–79: good prototype, meaningful gaps remain
+- 60–69: functional but incomplete or weakly evidenced
+- 40–59: partial / mostly prototype
+- 20–39: mostly planned or weak evidence
+- 1–19: minimal relevant implementation
+- 0: absent
+
+A category must not receive 90+ based only on documentation.
+
+For a science-heavy capability, software implementation without empirical evidence should normally be capped below a fully validated score.
+
+For each category, provide:
+- Repo A raw score /100
+- Repo B raw score /100
+- evidence summary
+- confidence in the score: High / Medium / Low
+- weighted contribution
+
+Then calculate:
+- `REPO_A_FINAL_WEIGHTED_SCORE`
+- `REPO_B_FINAL_WEIGHTED_SCORE`
+
+Also provide separate 0–100 diagnostic scorecards for:
+- scientific maturity
+- software engineering maturity
+- research breadth
+- reproducibility
+- operational honesty
+- demo/presentation readiness
+- documentation quality
+- long-term extensibility
+- immediate SIH submission readiness
+- mergeability / integration compatibility
+
+These diagnostic scores do not replace the main weighted result.
+
+Do not hide trade-offs behind one number.
+
+---
+
+# 10. GRAPH / TABLE OUTPUT REQUIREMENT
+
+You must include a graph-like comparison section similar in spirit to the attached score visualizations.
+
+If your output medium supports charts, include them.
+If charts are not supported, provide a text-only graph table that is still visually readable.
+
+Required visual-comparison outputs:
+1. **Overall weighted score comparison**
+   - Repository A vs Repository B
+   - title, axes, and labeled scores
+
+2. **Weighted category contribution comparison**
+   - one horizontal-style bar per category
+   - show both repos side by side
+   - show the weighted contribution per category
+
+3. **Score table**
+   - category
+   - weight
+   - Repo A raw score
+   - Repo A weighted contribution
+   - Repo B raw score
+   - Repo B weighted contribution
+   - short reason
+
+Preferred format:
+- Markdown table plus a compact bar-style text visualization.
+- If Mermaid is supported, you may also provide a Mermaid bar chart.
+- If not, use ASCII bars like `██████████`.
+
+Do not omit the graph/table section.
+Do not present only prose when a scorecard is requested.
+
+Use the graph/table to make the comparison easy to inspect quickly, but keep all numbers tied to evidence.
+
+---
+
+# 11. DO NOT TRUST README TEST COUNTS
+
+Independently inspect and, when the environment permits, run the tests.
+
+For Repository A, known prior claims include roughly:
+- backend suite around 684 passing tests,
+- frontend suite around 109 passing tests,
+- production build passing,
+- post-human-verification repair of certification wording and stale location coordinates.
+
+Reproduce this rather than assuming it.
+
+For Repository B, its README has claimed a substantially larger test count and broad phase completion.
+Reproduce this rather than assuming it.
+
+Record separately:
+- claimed test count
+- discovered test count
+- executed test count
+- passed
+- failed
+- skipped
+- xfail
+- warnings
+- test runtime
+
+A repository gets no test-quality advantage from a large number alone.
+
+---
+
+# 12. MODEL / ARTIFACT AUDIT
+
+For Repository A specifically verify whether the frozen V3 artifacts remain identical to the documented production artifacts.
+
+Known expected V3 artifacts:
+- `models/v3/lightgbm_v3_challenger.joblib`
+- SHA256 `00a8410746f4a0eecbf7e76aaa0565143fc948d0e06aea65e7bcc4ce28a1c660`
+- `models/v3/probability_calibrator_v3.joblib`
+- SHA256 `9f448606ce4338ded92f238a551b3a9d8e6d2cb5902e8bc687bce5f5850af531`
+- expected V3 feature count `50`
+- expected calibrator `IsotonicRegression`
+
+For Repository B, locate equivalent artifacts and determine whether:
+- the same V3 is preserved,
+- there are new specialist models,
+- those specialist models are trained artifacts or deterministic hand-coded formulas,
+- coefficients/thresholds have reproducible empirical provenance.
+
+For each repository inspect:
+- model files,
+- calibrators,
+- feature schemas,
+- feature order,
+- artifact hashes,
+- model IDs,
+- training manifests,
+- validation/test splits,
+- benchmark metrics,
+- baselines,
+- calibration method,
+- serving model selection,
+- fallback model paths.
+
+If any changed artifact is intentional, explain the provenance and do not assume the new artifact is superior.
+
+---
+
+# 13. REPOSITORY-SPECIFIC CLARIFICATIONS
+
+## Repository A
+Assess whether:
+- the verified frozen V3 path is preserved,
+- specialist modules are truly implemented,
+- claims of certification are supported,
+- the system is stable enough to submit immediately,
+- the codebase is governance-clean enough to trust as a base.
+
+## Repository B
+Assess whether:
+- it meaningfully extends A,
+- it replaces V3 appropriately,
+- it adds genuine specialist capability,
+- it has better or worse evidence discipline,
+- it is a better immediate submission candidate,
+- it is a better long-term base or only a stronger prototype.
+
+Do not assume Repository B is better because it looks more advanced.
+Do not assume Repository A is better because it has been previously verified.
+Judge only current evidence.
+
+---
+
+# 14. COMBINE DECISION MUST BE SPLIT INTO TWO PARTS
+
+You must answer two separate combine-related questions.
+
+## Q1. Immediate suitability as-is
+Decide whether each repository is suitable for submission in its current state based only on observed evidence.
+
+Choose exactly one immediate path:
+- `SUBMIT_REPOSITORY_A`
+- `SUBMIT_REPOSITORY_B`
+- `SELECTIVE_COMBINE_BEFORE_SUBMISSION`
+- `NO_REPOSITORY_READY_YET`
+
+Then explain:
+- why that option is best,
+- what evidence supports it,
+- what major gaps remain,
+- and what risks exist if the wrong repo is submitted unchanged.
+
+This decision must be based only on observed evidence.
+Do not use bias, intuition, or architecture hype.
+
+## Q2. Hypothetical combined-system outcome
+Now answer a separate hypothetical question:
+
+If both repositories were combined, what would happen?
+
+Do not simply say “merge both repos.”
+Instead analyze the likely combined system in terms of fundamentals:
+- architecture,
+- scientific validity,
+- reproducibility,
+- leakage risk,
+- calibration integrity,
+- OOD/abstention handling,
+- release governance,
+- test migration,
+- API/backend compatibility,
+- frontend/demo stability,
+- maintainability,
+- dependency conflicts,
+- duplicated capabilities,
+- missing capabilities,
+- validation burden,
+- regression risk.
+
+State clearly:
+- what would be kept from A,
+- what would be kept from B,
+- what would need to be rebuilt,
+- what would need revalidation,
+- what would become weaker after merge,
+- what would improve after merge,
+- and whether the combined system would actually be worth the added risk.
+
+If combination is recommended, it must be a selective, evidence-based integration plan.
+Do not recommend a monolithic merge unless it is clearly defensible.
+
+---
+
+# 15. SELECTIVE INTEGRATION MATRIX
+
+If combination is recommended or even partly plausible, produce a **Selective Integration Matrix** with these columns:
+
+1. Capability
+2. Current best source: A / B / Neither
+3. Source files/modules
+4. Scientific status
+5. Destination in combined system
+6. Dependency conflicts
+7. API/schema conflict
+8. Data/model conflict
+9. Test migration needed
+10. Revalidation needed
+11. Integration risk: Low / Medium / High
+12. Priority: P0 / P1 / P2 / P3
+13. Keep / Adapt / Reimplement / Reject
+
+Do not say “merge both repos” as a vague conclusion.
+Instead explain which exact capabilities belong where and why.
+
+If Repository B is selected as the base, do not inherit broad `CERTIFIED` labels unless certification evidence is independently reproduced.
+
+In all cases:
+- preserve model/artifact provenance,
+- preserve issue-time safety,
+- preserve truthful abstention,
+- preserve live-vs-fixture disclosure,
+- preserve certification boundaries,
+- preserve provider identity,
+- preserve UTC/time identity,
+- do not fabricate revision history,
+- do not reinterpret P(BUST),
+- do not turn hazard probability into bust probability,
+- do not infer flood probability from rainfall reliability.
+
+---
+
+# 16. MERGE SAFETY PRINCIPLES
+
+If Repository A is selected as the base, do not replace its verified frozen V3 path until a challenger passes equivalent scientific gates.
+
+If Repository B is selected as the base, do not replace any preserved verified baseline until challengers are independently validated.
+
+If a merge is considered:
+- keep frozen artifacts frozen,
+- isolate experimental modules,
+- require revalidation before promotion,
+- do not conflate future architecture with current readiness,
+- do not let a speculative improvement overwrite a validated incumbent.
+
+If combination is not worth the risk, say so clearly.
+
+---
+
+# 17. REQUIRED TABLES
+
+The report must include at least these tables:
+
+### Table A — Repository Snapshot
+### Table B — Documents vs Code vs Tests vs Runtime
+### Table C — Major Capability Comparison
+### Table D — Main Docs Requirement Coverage
+### Table E — Hazard Specialist Evidence
+### Table F — 500-Test Domain Coverage
+### Table G — Scientific Claims: Claimed vs Proven
+### Table H — 0–100 Scoring
+### Table I — Weighted Total
+### Table J — Selective Integration Matrix
+### Table K — Submission Blockers
+### Table L — Post-Merge Acceptance Gates
+### Table M — Graph/Scoreboard Summary
+
+The graph/scoreboard summary should resemble a scorecard with:
+- overall weighted score comparison,
+- weighted category contributions,
+- and a compact conclusion line.
+
+---
+
+# 18. FINAL REVIEWER BEHAVIOR
+
+Be rigorous and fair.
+
+Do not favor Repository A because it previously underwent human verification.
+Do not favor Repository B because it has more advanced modules or a larger README.
+Do not favor either repository because it sounds more impressive.
+
+Reward:
+- reproducibility,
+- scientific honesty,
+- actual implementation,
+- empirical evidence,
+- safe failure behavior,
+- architecture quality,
+- SIH usefulness,
+- maintainability.
+
+Penalize:
+- unsupported certification,
+- documentation inflation,
+- scientific-semantic conflation,
+- fake/synthetic data presented as live,
+- leakage risk,
+- stale docs,
+- dead code,
+- unexercised modules,
+- tests that only validate constants,
+- fragile demo behavior,
+- hidden dependency on unavailable data.
+
+The goal is not to prove a preferred repository “wins”.
+The goal is to determine the strongest, most defensible, most demonstrable Veyra system for SIH Round 2 and identify the safest path to combine complementary work if that creates a materially better submission.
+
+---
+
+# 19. REQUIRED DECISION OUTPUTS
+
+The final report must give a concrete result.
+
+## Overall Technical Winner
+Choose one repository based on the weighted evidence.
+
+## Stronger Scientific Foundation
+Choose one repository.
+
+## Broader Research/Feature Architecture
+Choose one repository.
+
+## Better Immediate SIH Round-2 Submission Candidate
+Choose one repository.
+
+These may be different repositories.
+Do not force every sub-award to the same repository.
+
+## Immediate Round-2 decision
+Choose exactly one:
+- `SUBMIT_REPOSITORY_A`
+- `SUBMIT_REPOSITORY_B`
+- `SELECTIVE_COMBINE_BEFORE_SUBMISSION`
+- `NO_REPOSITORY_READY_YET`
+
+## Long-term technical decision
+Choose exactly one:
+- `KEEP_A_AS_BASE_IMPORT_FROM_B`
+- `KEEP_B_AS_BASE_IMPORT_FROM_A`
+- `FULL_REARCHITECTURE_REQUIRED`
+- `NO_COMBINATION_NEEDED`
+
+Explain why.
+
+---
+
+# 20. FINAL VERDICT FORMAT
+
+End with a compact block in this exact style:
+
+```text
+AUDITED_REPO_A_SHA:
+AUDITED_REPO_B_SHA:
+
+REPO_A_FINAL_WEIGHTED_SCORE:
+REPO_B_FINAL_WEIGHTED_SCORE:
+
+OVERALL_TECHNICAL_WINNER:
+STRONGER_SCIENTIFIC_FOUNDATION:
+BROADER_RESEARCH_ARCHITECTURE:
+BETTER_IMMEDIATE_SIH_ROUND2_CANDIDATE:
+
+IMMEDIATE_DECISION:
+- `SUBMIT_REPOSITORY_A`
+- `SUBMIT_REPOSITORY_B`
+- `SELECTIVE_COMBINE_BEFORE_SUBMISSION`
+- `NO_REPOSITORY_READY_YET`
+
+LONG_TERM_DECISION:
+- `KEEP_A_AS_BASE_IMPORT_FROM_B`
+- `KEEP_B_AS_BASE_IMPORT_FROM_A`
+- `FULL_REARCHITECTURE_REQUIRED`
+- `NO_COMBINATION_NEEDED`
+
+HYPOTHETICAL_MERGED_SYSTEM_OUTCOME:
+- concise summary of what would happen if both repos were merged
+- fundamental benefits
+- fundamental risks
+- major conflicts
+- required revalidation
+- whether merge is worth it
+
+MERGE_RECOMMENDATION:
+- `DO_NOT_MERGE`
+- `SELECTIVE_MERGE_ONLY`
+- `MERGE_WITH_FULL_REVALIDATION`
+- `FULL_REWRITE_REQUIRED`
+
+FINAL_ONE_PARAGRAPH_RECOMMENDATION:

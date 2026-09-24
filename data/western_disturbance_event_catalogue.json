@@ -1,0 +1,110 @@
+{
+  "catalogue_id": "CATALOGUE-WD-EVENTS-V1",
+  "hazard_family": "WESTERN_DISTURBANCE",
+  "gate": "Gate 6",
+  "description": "Historical benchmark catalogue of extratropical Western Disturbances impacting the Western Himalayas and Indo-Gangetic Plains across high-altitude, foothill, and plain terrain regimes.",
+  "invariants": {
+    "reference_standard": "IMD synoptic charts, NCMRWF reanalysis 500-hPa geopotential height, and IMD 0.25-degree daily gridded precipitation / snow observations.",
+    "anti_leakage": "Trough positions, jet core velocities, and gridded precipitation/snow observations sealed behind 24h verification latency."
+  },
+  "events": [
+    {
+      "event_id": "WD-2019-JAN-01",
+      "name": "January 2019 Intense Himalayan Snowfall & Plains Cold Wave",
+      "intensity_class": "SEVERE_ACTIVE",
+      "terrain_regime": "HIMALAYAN_HIGH_ALTITUDE",
+      "period": "2019-01-20 to 2019-01-26",
+      "subtropical_jet_speed_ms": 78.0,
+      "trough_depth_500hpa_gpm": 5480.0,
+      "trough_tilt": "NEGATIVE",
+      "induced_low_present": true,
+      "max_precip_24h_mm": 115.0,
+      "synoptic_narrative": "A deep mid-tropospheric trough with negative tilt in the westerlies interacted with an induced cyclonic circulation over Rajasthan, yielding historic snowfall across Jammu & Kashmir, Ladakh, and Himachal Pradesh, followed by severe cold wave over Punjab, Haryana, and Delhi.",
+      "observed_error_modes": ["ARRIVAL_TIMING_ERROR_48H", "HEAVY_PRECIPITATION_INTENSITY_UNDERESTIMATION", "RAIN_SNOW_PARTITION_MISCLASSIFICATION"]
+    },
+    {
+      "event_id": "WD-2020-MAR-01",
+      "name": "March 2020 Convective Induced Low & Hailstorm",
+      "intensity_class": "SEVERE_ACTIVE",
+      "terrain_regime": "INDO_GANGETIC_PLAINS",
+      "period": "2020-03-04 to 2020-03-07",
+      "subtropical_jet_speed_ms": 72.0,
+      "trough_depth_500hpa_gpm": 5560.0,
+      "trough_tilt": "NEUTRAL",
+      "induced_low_present": true,
+      "max_precip_24h_mm": 88.0,
+      "synoptic_narrative": "Spring WD with strong moisture incursion from the Arabian Sea feeding an induced cyclonic circulation over Haryana and West UP, triggering widespread convective squalls, intense rain, and severe hailstorms across the northern plains.",
+      "observed_error_modes": ["PRECIPITATION_CENTROID_DISPLACEMENT", "EVENT_DURATION_OVERESTIMATION"]
+    },
+    {
+      "event_id": "WD-2021-FEB-01",
+      "name": "February 2021 Fast-Propagating Timing Bust",
+      "intensity_class": "MODERATE",
+      "terrain_regime": "FOOTHILL_SUB_HIMALAYAN",
+      "period": "2021-02-03 to 2021-02-06",
+      "subtropical_jet_speed_ms": 86.0,
+      "trough_depth_500hpa_gpm": 5620.0,
+      "trough_tilt": "POSITIVE",
+      "induced_low_present": false,
+      "max_precip_24h_mm": 45.0,
+      "synoptic_narrative": "Fast-moving progressive upper-tropospheric trough embedded in an accelerated subtropical westerly jet core (86 m/s). Forecast arrival was premature by +14 hours over Uttarakhand and Himachal Pradesh foothills.",
+      "observed_error_modes": ["ARRIVAL_TIMING_ERROR_EXCEEDANCE", "TROUGH_SPEED_OVERESTIMATION"]
+    },
+    {
+      "event_id": "WD-2022-JAN-02",
+      "name": "January 2022 Deep Trough Snowfall Episode",
+      "intensity_class": "SEVERE_ACTIVE",
+      "terrain_regime": "HIMALAYAN_HIGH_ALTITUDE",
+      "period": "2022-01-04 to 2022-01-09",
+      "subtropical_jet_speed_ms": 74.0,
+      "trough_depth_500hpa_gpm": 5440.0,
+      "trough_tilt": "NEGATIVE",
+      "induced_low_present": true,
+      "max_precip_24h_mm": 130.0,
+      "synoptic_narrative": "Intense active Western Disturbance with slow eastward propagation over northern Pakistan and Jammu & Kashmir. Moisture convergence along the Pir Panjal range caused severe avalanches and highway blockages.",
+      "observed_error_modes": ["TROUGH_CENTER_POSITION_ERROR_72H", "PRECIPITATION_DISPLACEMENT_ERROR"]
+    },
+    {
+      "event_id": "WD-2023-JUL-01",
+      "name": "July 2023 Catastrophic WD-Monsoon Interaction",
+      "intensity_class": "SEVERE_ACTIVE",
+      "terrain_regime": "HIMALAYAN_HIGH_ALTITUDE",
+      "period": "2023-07-08 to 2023-07-12",
+      "subtropical_jet_speed_ms": 58.0,
+      "trough_depth_500hpa_gpm": 5680.0,
+      "trough_tilt": "NEGATIVE",
+      "induced_low_present": true,
+      "max_precip_24h_mm": 240.0,
+      "synoptic_narrative": "Unprecedented monsoon-WD coupling: an unseasonal active western disturbance trough dipped southward into Northwest India while the monsoon trough surged northward, causing catastrophic flash floods and landslides in Himachal Pradesh, Uttarakhand, and Punjab.",
+      "observed_error_modes": ["HEAVY_PRECIPITATION_INTENSITY_UNDERESTIMATION", "PRECIPITATION_CENTROID_DISPLACEMENT", "EVENT_DURATION_ERROR"]
+    },
+    {
+      "event_id": "WD-2024-FEB-01",
+      "name": "February 2024 Jet-Displacement Precipitation Bust",
+      "intensity_class": "MODERATE",
+      "terrain_regime": "INDO_GANGETIC_PLAINS",
+      "period": "2024-02-18 to 2024-02-22",
+      "subtropical_jet_speed_ms": 82.0,
+      "trough_depth_500hpa_gpm": 5590.0,
+      "trough_tilt": "NEUTRAL",
+      "induced_low_present": true,
+      "max_precip_24h_mm": 52.0,
+      "synoptic_narrative": "Subtropical westerly jet axis displaced 3.5 degrees south of climatological winter position, steering the primary precipitation centroid 180 km south of forecast coordinates over Rajasthan and Haryana.",
+      "observed_error_modes": ["PRECIPITATION_CENTROID_DISPLACEMENT", "TROUGH_AXIS_PLACEMENT_ERROR"]
+    },
+    {
+      "event_id": "WD-2024-NOV-01",
+      "name": "November 2024 Early-Winter Weak Disturbance",
+      "intensity_class": "WEAK",
+      "terrain_regime": "HIMALAYAN_HIGH_ALTITUDE",
+      "period": "2024-11-12 to 2024-11-15",
+      "subtropical_jet_speed_ms": 62.0,
+      "trough_depth_500hpa_gpm": 5740.0,
+      "trough_tilt": "POSITIVE",
+      "induced_low_present": false,
+      "max_precip_24h_mm": 18.0,
+      "synoptic_narrative": "Shallow upper-tropospheric trough causing light scattered snow over higher reaches of Kashmir and Ladakh with negligible plains impact.",
+      "observed_error_modes": ["EVENT_DURATION_UNDERESTIMATION"]
+    }
+  ]
+}

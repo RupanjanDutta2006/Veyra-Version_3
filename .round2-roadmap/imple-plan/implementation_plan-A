@@ -1,0 +1,127 @@
+# Phase A: V3 Certification and Hazard Data Contracts (Gate 0)
+
+Following the updated roadmap in [`.round2-roadmap/updatedone/Phase A — V3 certification and hazard data contracts.md`](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/.round2-roadmap/updatedone/Phase%20A%20%E2%80%94%20V3%20certification%20and%20hazard%20data%20contracts.md) and addressing the audit requirements from [`.docstest-round_1/.comparsion/Veyra Sentinel completion audit.txt`](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/.docstest-round_1/.comparsion/Veyra%20Sentinel%20completion%20audit.txt), this plan executes **Gate 0: Phase A** to certify the frozen V3 incumbent and establish operational contracts across all meteorological hazards.
+
+## User Review Required
+
+> [!IMPORTANT]
+> - **Incumbent Invariant**: The frozen V3 model (`00a84107...`) and calibrator remain the authoritative baseline. No model weights or feature names are altered.
+> - **Hazard Availability Scope**: In accordance with Rule 2.3 and Section 14 of the blueprint, hazards without operational access (e.g. real-time Doppler radar or proprietary NCMRWF feeds) are explicitly classified as `PROXY`, `ABSTAINED`, or `FUTURE` in the hazard availability matrix rather than inventing unverified data.
+
+---
+
+## Deliverables & Proposed Changes
+
+### 1. Hazard Operational Contracts & Availability Matrix
+Create standardized, strongly typed contracts for all 6 core hazard families defined in the blueprint:
+- **Precipitation**: (Heavy rainfall, dry spells, flash flood potential proxy)
+- **Tropical Cyclone**: (Bay of Bengal / Arabian Sea track, intensity, landfall)
+- **Monsoon & LPS**: (Monsoon depressions, low-pressure systems, onset/withdrawal)
+- **Western Disturbance**: (Northwest India mid-latitude troughs, winter precipitation)
+- **Heatwave**: (Maximum temperature exceedance, persistent heat events)
+- **Severe Wind**: (Gale force wind, 10m wind gusts)
+
+#### [NEW] [data/hazard_availability_matrix.json](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/data/hazard_availability_matrix.json)
+Machine-readable matrix specifying for each hazard:
+- `hazard_id` and `hazard_family`
+- `provider` (e.g. Open-Meteo GEFS 31-member ensemble, GFS, IMD/NCMRWF proxy)
+- `variables` and canonical `units` (Kelvin, Pascal, m/s, mm/24h)
+- `grid` resolution and domain
+- `issue_time` and `valid_time` cadence
+- `ensemble_size` (e.g. 31 members)
+- `missingness_threshold` (maximum tolerable missing ensemble members)
+- `latency_hours` (expected dissemination latency)
+- `reference_source` (ERA5, IMD Gridded, IMD Best Track)
+- `label_definition` and operational `thresholds`
+- `operational_status`: `OPERATIONAL`, `PROXY`, `ABSTAINED`, or `FUTURE`
+
+#### [NEW] [backend/app/contracts/hazard_contracts.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/backend/app/contracts/hazard_contracts.py)
+Pydantic v2 schemas and validation models for:
+- `HazardType`, `OperationalStatus`, `HazardContract`, `HazardAvailabilityMatrix`
+- Contract lookup and validation functions ensuring upstream weather ingestion complies with hazard specifications.
+
+---
+
+### 2. Target & Reference Manifests
+Formalize canonical targets and ground truth sources to prevent data leakage and ensure reproducible evaluation.
+
+#### [NEW] [data/target_manifest.json](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/data/target_manifest.json)
+- Canonical definition of `bust_95th_mad` (stratified 95th percentile absolute error threshold).
+- Hazard-specific target definitions:
+  - `precipitation_exceedance_20mm`, `precipitation_exceedance_50mm`
+  - `cyclone_track_error_100km`, `cyclone_intensity_error_15kt`
+  - `heatwave_tmax_exceedance_40c`, `heatwave_tmax_anomaly_4_5c`
+  - `severe_wind_gust_exceedance_17ms` (gale threshold)
+- Invariant: Targets are strictly calculated against verified post-valid-time ground truth and never accessible at issue time.
+
+#### [NEW] [data/reference_manifest.json](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/data/reference_manifest.json)
+- Authoritative reference sources:
+  - `ERA5_REANALYSIS` (ECMWF, 0.25° grid, 5-day latency, hourly)
+  - `IMD_GRIDDED_RAINFALL` (0.25° × 0.25°, daily 03:00 UTC, India domain)
+  - `IMD_GRIDDED_TEMP` (1.0° × 1.0° / 0.5° × 0.5°, daily maximum/minimum)
+  - `IMD_BEST_TRACK` (Tropical cyclones in North Indian Ocean)
+  - `STATION_OBS_GHCND` (Global Historical Climatology Network daily)
+- Truth sealing contracts and access protocol rules.
+
+---
+
+### 3. V3 Certification Artifact & Leakage Report
+
+#### [NEW] [models/v3/V3_CERTIFIED.json](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/models/v3/V3_CERTIFIED.json)
+Official certification document verifying:
+- Model SHA-256: `00a8410746f4a0eecbf7e76aaa0565143fc948d0e06aea65e7bcc4ce28a1c660`
+- Calibrator SHA-256: `9f448606ce4338ded92f238a551b3a9d8e6d2cb5902e8bc687bce5f5850af531`
+- Feature schema count: 50 canonical features
+- Baseline benchmark: PR-AUC 0.2110, Brier 0.0538, BSS +0.0770, ECE 0.0068, OOT rows 116,250
+- Gate 0 compliance status: `CERTIFIED`
+
+#### [NEW] [docs/leakage_report.md](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/docs/leakage_report.md)
+Comprehensive audit report documenting:
+- Temporal causality barriers (`availability_time <= issue_time`).
+- Post-valid-time truth sealing.
+- Temporal split isolation: Train (2022–2023), Val (2024-H1), Test (2024-H2).
+- Feature contract immutability (zero target leakage into features).
+- Git-LFS safety and un-hydrated stub prevention.
+
+---
+
+### 4. Hazard Contract Test Suite
+
+#### [NEW] [backend/tests/test_hazard_contracts.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/backend/tests/test_hazard_contracts.py)
+Automated pytest suite validating:
+- Integrity and completeness of `data/hazard_availability_matrix.json`.
+- Unit consistency (Kelvin, Pascal, m/s, mm/24h).
+- Strict non-negative dissemination latencies.
+- Target manifest consistency and non-leakage constraints.
+- Reference manifest truth sealing and temporal boundaries.
+- `V3_CERTIFIED.json` integrity against disk artifacts.
+
+---
+
+### 5. Phase Commands & Verification Plan
+
+#### Automated Commands
+1. Python environment and dependencies:
+   ```bash
+   python -m pip install -r requirements.txt
+   ```
+2. Core artifact integrity, parity, and leakage tests:
+   ```bash
+   python -m pytest backend/tests/test_v3_artifact_integrity.py backend/tests/test_v3_reference_parity.py backend/tests/test_leakage_integration.py backend/tests/test_hazard_contracts.py -q
+   ```
+3. Deployment readiness and Vercel entrypoint:
+   ```bash
+   python -m pytest backend/tests/test_deployment_readiness.py backend/tests/test_vercel_entrypoint.py -q
+   ```
+4. Frontend regression suite and production build:
+   ```bash
+   cd frontend && npm test -- --run && npm run build
+   ```
+
+#### Report & Git Push
+- Generate updated [docs/phase-a-report.md](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/docs/phase-a-report.md) with status `COMPLETE`.
+- Commit:
+  ```bash
+  git commit -m "docs: complete phase A - v3-certification-and-hazard-data-contracts"
+  git push origin main
+  ```

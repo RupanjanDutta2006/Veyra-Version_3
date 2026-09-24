@@ -1,0 +1,81 @@
+{
+  "manifest_id": "MANIFEST-SPATIAL-2026-V1",
+  "hazard_family": "SPATIAL_COMPOUND",
+  "gate": "Gate 8",
+  "priority": "P1",
+  "description": "Target manifest for Spatial, Compound and Common-Mode Reliability Specialist, covering network error propagation, spatial calibration, 2D risk surfaces, compound hazard sets, and common-mode failure indicators.",
+  "invariants": {
+    "non_causal_propagation": "Propagation models empirical spatio-temporal covariance of forecast errors, never physical causality.",
+    "anti_leakage": "All network features constrained to issue time t0. Station ground truth sealed behind 24h verification latency.",
+    "no_probability_averaging": "Compound hazard probabilities must be evaluated as explicit joint sets with copula bounds, never averaged into an unexplained composite.",
+    "rainfall_distinct_from_flood": "Precipitation forecast failure reliability is strictly distinct from hydrological flood probability.",
+    "unseen_region_generalization": "Leave-one-region-out (LORO) hold-out validation required for all spatial models."
+  },
+  "targets": [
+    {
+      "target_id": "SPATIAL-PROP-01",
+      "name": "Lagged Spatial Error Covariance Exceedance",
+      "metric_type": "CORRELATION_THRESHOLD",
+      "threshold_value": 0.40,
+      "threshold_unit": "pearson_r",
+      "lag_hours": 24,
+      "variable": "lagged_error_covariance",
+      "primary_reference": "IMD_STATION_NETWORK_ERROR_SERIES",
+      "description": "Empirical lagged error covariance between upstream and downstream network nodes exceeding r=0.40 at 24h lead lag."
+    },
+    {
+      "target_id": "SPATIAL-CALIB-01",
+      "name": "Regional Cluster Calibration Miscoverage",
+      "metric_type": "CALIBRATION_ERROR",
+      "threshold_value": 0.12,
+      "threshold_unit": "ece",
+      "variable": "cluster_expected_calibration_error",
+      "primary_reference": "IMD_REGIONAL_CLUSTER_VERIFICATION",
+      "description": "Maximum expected calibration error (ECE) across all 7 regional macro-clusters constrained below 0.12."
+    },
+    {
+      "target_id": "SPATIAL-SURF-01",
+      "name": "Continuous Spatial Risk Surface Interpolation Error",
+      "metric_type": "SURFACE_ERROR",
+      "threshold_value": 0.04,
+      "threshold_unit": "brier_score",
+      "variable": "surface_interpolation_brier",
+      "primary_reference": "IMD_GRIDDED_VERIFICATION_SURFACE",
+      "description": "Brier score of interpolated continuous 2D spatial failure probability surface evaluated against gridded verification."
+    },
+    {
+      "target_id": "COMPOUND-HEAT-WIND-01",
+      "name": "Compound Extreme Heat and Severe Convective Wind Failure",
+      "metric_type": "JOINT_THRESHOLD_EXCEEDANCE",
+      "threshold_value": 40.0,
+      "threshold_unit": "celsius",
+      "secondary_threshold_value": 17.2,
+      "secondary_threshold_unit": "m/s",
+      "variable": "compound_heat_wind_failure",
+      "primary_reference": "IMD_MAX_TEMP_AND_AWS_GUSTS",
+      "description": "Concurrent failure on both extreme maximum temperature (Tmax >= 40°C) and severe wind gale gust (V >= 17.2 m/s)."
+    },
+    {
+      "target_id": "COMPOUND-RAIN-WIND-01",
+      "name": "Compound Heavy Rain and Gale Gust Failure",
+      "metric_type": "JOINT_THRESHOLD_EXCEEDANCE",
+      "threshold_value": 64.5,
+      "threshold_unit": "mm/24h",
+      "secondary_threshold_value": 17.2,
+      "secondary_threshold_unit": "m/s",
+      "variable": "compound_rain_wind_failure",
+      "primary_reference": "IMD_GRIDDED_PRECIP_AND_AWS_GUSTS",
+      "description": "Concurrent failure on heavy precipitation (P >= 64.5 mm) and severe wind gust (V >= 17.2 m/s). Strictly decoupled from flood claims."
+    },
+    {
+      "target_id": "COMMON-MODE-01",
+      "name": "Multi-Station Synoptic Phase Lock Failure",
+      "metric_type": "MULTI_STATION_COINCIDENCE",
+      "threshold_value": 5,
+      "threshold_unit": "station_count",
+      "variable": "common_mode_phase_lock",
+      "primary_reference": "SYNOPTIC_CORRIDOR_NETWORK_SERIES",
+      "description": "Systemic NWP failure occurring simultaneously across >= 5 stations within the same synoptic corridor."
+    }
+  ]
+}

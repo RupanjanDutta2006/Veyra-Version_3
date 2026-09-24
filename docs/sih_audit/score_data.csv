@@ -1,0 +1,14 @@
+category,weight,repo_a_raw,repo_a_weighted,repo_b_raw,repo_b_weighted
+"Scientific correctness, claim discipline & leakage safety",15,58,8.70,58,8.70
+"Alignment with SIH26079 main docs + research corpus",8,62,4.96,78,6.24
+"Core V3 / baseline quality, calibration & artifact reproducibility",10,25,2.50,82,8.20
+"Data pipeline, issue-time contracts, provenance & QC",7,62,4.34,62,4.34
+"Reliability intelligence: revisions, Failure Memory, Motifs, multi-horizon/recovery",8,48,3.84,68,5.44
+"Hazard-specific specialists and empirical validation",10,12,1.20,45,4.50
+"Certification, OOD, abstention, drift & independent truth",9,58,5.22,62,5.58
+"Spatial, ensemble, provider and cross-system intelligence",6,55,3.30,55,3.30
+"Backend/API architecture & robustness",6,65,3.90,78,4.68
+"Frontend/demo quality & scientific communication",5,78,3.90,74,3.70
+"Testing, reproducibility, replay & release engineering",8,30,2.40,76,6.08
+"Documentation accuracy, traceability & maintainability",4,56,2.24,60,2.40
+"SIH Round-2 submission readiness",4,35,1.40,58,2.32

@@ -1,0 +1,107 @@
+# Phase A: Protect the Foundation — Implementation Plan
+
+Following the roadmap in [`.round2-roadmap/Phase A — Protect the foundation.md`](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/.round2-roadmap/Phase%20A%20%E2%80%94%20Protect%20the%20foundation.md) and addressing audit deficiencies from [`.docstest-round_1/.comparsion/Veyra Sentinel completion audit.txt`](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/.docstest-round_1/.comparsion/Veyra%20Sentinel%20completion%20audit.txt), Phase A locks down the fundamental layers of the repository before advancing to downstream modeling and spatial intelligence.
+
+---
+
+## User Review Required
+
+> [!IMPORTANT]
+> - **Git LFS vs Local Binaries**: In our local repository, the full 1.04MB V3 binary model (`00a8410746f4a0eecbf7e76aaa0565143fc948d0e06aea65e7bcc4ce28a1c660`) is present and passes all 38 backend integrity and reference parity tests. In fresh clones or CI environments lacking Git LFS, this file defaults to a 130-byte pointer stub (`a6f97f...`). We will add an automated artifact guard (`scripts/verify_artifacts.py`) and an immutable manifest (`models/v3/artifact_manifest.json`) to detect this and prevent silent degradation.
+> - **Frontend Test Assertions**: 32 of 58 Vitest tests in `frontend/src/test` are currently failing because the test fixtures were written against early UI prototypes (e.g. searching for exact text `"Calibrated Bust Probability"` instead of current `"Calibrated Bust Probability (q95 MAD)"`, or looking for deprecated badge titles). We will align the test assertions with the production components so that `npm test -- --run` achieves 58/58 (100%) pass rate.
+
+---
+
+## Deliverables & Proposed Changes
+
+### 1. Packaging & Clean Installation (`pip install -e .`)
+
+#### [MODIFY] [pyproject.toml](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/pyproject.toml)
+- Add `[tool.setuptools.packages.find]` with `where = ["."]` and `include = ["backend*"]` to eliminate setuptools flat-layout multi-package discovery errors.
+- Add `sqlalchemy>=2.0.0` to dependencies (`backend/app/data/provenance_db.py` relies on it).
+
+#### [MODIFY] [requirements.txt](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/requirements.txt)
+- Add `sqlalchemy>=2.0.0` so fresh virtual environments can install all test collection and provenance dependencies in a single command.
+
+#### [NEW] [scripts/verify_environment.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/scripts/verify_environment.py)
+- A self-contained verification script that validates importability of all core packages (`backend.app.main`, `sqlalchemy`, `lightgbm`, `sklearn`, `pandas`, `pydantic`), checks Python version `>= 3.10`, and asserts editable packaging configuration.
+
+---
+
+### 2. Model Artifact Chain & Git-LFS Guard
+
+#### [NEW] [models/v3/artifact_manifest.json](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/models/v3/artifact_manifest.json)
+- Cryptographic manifest specifying exact SHA-256 checksums, byte sizes, feature counts (50), and training/validation split provenance for:
+  - `lightgbm_v3_challenger.joblib` (`00a8410746f4a0eecbf7e76aaa0565143fc948d0e06aea65e7bcc4ce28a1c660`, 1,046,844 bytes)
+  - `probability_calibrator_v3.joblib` (`9f448606ce4338ded92f238a551b3a9d8e6d2cb5902e8bc687bce5f5850af531`, 1,180 bytes)
+  - `feature_names.json` (50 features)
+
+#### [NEW] [scripts/verify_artifacts.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/scripts/verify_artifacts.py)
+- CLI script to check artifact existence, verify SHA-256 hashes against `artifact_manifest.json`, and explicitly detect un-pulled Git-LFS pointer stubs (starting with `version https://git-lfs.github.com/spec/v1`), printing actionable recovery instructions (`git lfs pull`).
+
+#### [MODIFY] [backend/app/builder2/v3_model_adapter.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/backend/app/builder2/v3_model_adapter.py)
+- Enhance the model loading error handling to check if the file size is $< 1\text{ KB}$ and starts with Git-LFS header, providing a clear logger error: `"Detected Git-LFS pointer stub instead of binary weights. Run 'git lfs pull' to restore."`
+
+---
+
+### 3. Data Manifest & Split Contracts
+
+#### [NEW] [data/data_manifest.json](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/data/data_manifest.json)
+- Records data split definitions, temporal embargo boundaries (2000–2013 Train, 2014–2016 Val, 2017–2019 Test with 14-day & 21-day purge buffers), station inventory (25 certified Indian synoptic stations), and target variable contracts.
+
+---
+
+### 4. Frontend Vitest Test Suite Repair (0 Failures)
+
+#### [MODIFY] [frontend/src/test/Day24ProbabilisticIntelligence.test.tsx](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/frontend/src/test/Day24ProbabilisticIntelligence.test.tsx)
+- Update text queries to match current UI (`/Calibrated Bust Probability/i` or `Calibrated Bust Probability (q95 MAD)`).
+- Align operational trust and badge assertions with actual DOM elements rendered by `<PredictionResult />`.
+
+#### [MODIFY] [frontend/src/test/Dashboard.test.tsx](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/frontend/src/test/Dashboard.test.tsx)
+- Align mock props, navigation tabs, and container element queries with current `Dashboard.tsx` implementation.
+
+#### [MODIFY] [frontend/src/test/RiskTimeline.test.tsx](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/frontend/src/test/RiskTimeline.test.tsx)
+- Align mode-switching buttons (`Operational Risk`, `Model Confidence`, `Atmospheric Profile`), lead-time slider queries, and chart mock configurations.
+
+#### [MODIFY] [frontend/src/test/ParityVerification.test.tsx](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/frontend/src/test/ParityVerification.test.tsx)
+- Align model version and provenance response assertions with current backend payload shape.
+
+---
+
+### 5. Phase A Report & Completion Gate
+
+#### [NEW] [docs/phase-a-report.md](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/docs/phase-a-report.md)
+- Complete drop-in report per Phase A requirements:
+  - Status: COMPLETE
+  - Environment details, commit SHA, commands executed, and output logs
+  - Test totals: backend (38/38 passed), frontend (58/58 passed), build (0 errors)
+  - Metrics, leakage/negative controls, and next-phase authorization for Phase B.
+
+---
+
+## Verification Plan
+
+### Automated Execution (Phase A Commands)
+1. **Dependency check**:
+   ```bash
+   python -m pip install -r requirements.txt
+   python scripts/verify_environment.py
+   ```
+2. **Artifact & Backend Verification**:
+   ```bash
+   python scripts/verify_artifacts.py
+   python -m pytest backend/tests/test_v3_artifact_integrity.py backend/tests/test_v3_reference_parity.py backend/tests/test_leakage_integration.py -q
+   python -m pytest backend/tests/test_deployment_readiness.py backend/tests/test_vercel_entrypoint.py -q
+   ```
+3. **Frontend Verification**:
+   ```bash
+   cd frontend && npm test -- --run && npm run build
+   ```
+
+### Git Gate
+Upon zero-error completion of all tests and report generation:
+```bash
+git add pyproject.toml requirements.txt scripts/ models/v3/ data/ frontend/src/test/ docs/phase-a-report.md
+git commit -m "docs: complete phase A - protect the foundation"
+git push origin main
+```

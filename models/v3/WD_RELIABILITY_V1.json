@@ -1,0 +1,90 @@
+{
+  "model_id": "WD_RELIABILITY_V1",
+  "hazard": "WESTERN_DISTURBANCE",
+  "gate": "Gate 6",
+  "priority": "P1",
+  "certification_date": "2026-09-20T14:30:00Z",
+  "operational_status": "OPERATIONAL",
+  "description": "Western Disturbance Forecast Reliability Specialist diagnosing separate arrival timing, trough location, precipitation amount, spatial displacement, duration, and rain/snow partition failure modes across Western Himalayan high-altitude, foothill, and Indo-Gangetic plain terrain regimes.",
+  "invariants": {
+    "decomposed_failure_modes": "Arrival timing, trough location, precipitation amount, spatial displacement, duration, and rain/snow partition are evaluated separately; never collapsed into an opaque single score.",
+    "anti_leakage": "Uses strictly issue-time features available at t0; NCMRWF 500-hPa analyses and IMD gridded precipitation/snow observations sealed with 24h verification latency.",
+    "terrain_conditioned_validation": "Performance certified across Western Himalayan High-Altitude (>2500m), Foothill/Sub-Himalayan (500-2500m), and Indo-Gangetic Plains (<500m) regimes.",
+    "rain_snow_null_safety": "Rain/snow phase partition error is strictly null unless high-altitude ground observations and freezing level/surface temperature are available."
+  },
+  "targets_addressed": [
+    "WD-ARRIVAL-01",
+    "WD-TRACK-LOC-01",
+    "WD-PRECIP-AMT-01",
+    "WD-PRECIP-DISP-01",
+    "WD-DURATION-01",
+    "WD-RAIN-SNOW-01"
+  ],
+  "feature_families": [
+    "subtropical_westerly_jet_core_dynamics",
+    "500hpa_mid_tropospheric_trough_depth_and_tilt",
+    "induced_cyclonic_circulation_status",
+    "ensemble_trough_dispersion_and_geometry",
+    "ensemble_precipitation_spread",
+    "terrain_elevation_and_orographic_lift",
+    "thermal_freezing_level_and_phase_partition"
+  ],
+  "baseline_ladder_benchmarks": {
+    "climatology_wd_baseline": {
+      "pr_auc": 0.198,
+      "brier": 0.162,
+      "bss": 0.0,
+      "ece": 0.058
+    },
+    "ensemble_dispersion_proxy": {
+      "pr_auc": 0.245,
+      "brier": 0.138,
+      "bss": 0.148,
+      "ece": 0.043
+    },
+    "spread_logistic_regression": {
+      "pr_auc": 0.282,
+      "brier": 0.115,
+      "bss": 0.290,
+      "ece": 0.029
+    },
+    "wd_reliability_v1_specialist": {
+      "pr_auc": 0.338,
+      "brier": 0.093,
+      "bss": 0.426,
+      "ece": 0.017
+    },
+    "terrain_conditioned_conformal_challenger": {
+      "coverage_90": 0.908,
+      "coverage_80": 0.814
+    }
+  },
+  "regime_slices": {
+    "himalayan_high_altitude": {
+      "pr_auc": 0.358,
+      "brier": 0.089,
+      "bss": 0.448,
+      "sample_fraction": 0.40
+    },
+    "foothill_sub_himalayan": {
+      "pr_auc": 0.332,
+      "brier": 0.094,
+      "bss": 0.412,
+      "sample_fraction": 0.30
+    },
+    "indo_gangetic_plains": {
+      "pr_auc": 0.324,
+      "brier": 0.096,
+      "bss": 0.408,
+      "sample_fraction": 0.30
+    }
+  },
+  "held_out_evaluation": {
+    "total_evaluation_cycles": 200,
+    "bootstrap_method": "cycle_block",
+    "confidence_interval_pct": 95,
+    "pr_auc_ci": [0.312, 0.365],
+    "brier_ci": [0.086, 0.101],
+    "bss_ci": [0.380, 0.465]
+  }
+}

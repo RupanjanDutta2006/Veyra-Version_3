@@ -1,0 +1,135 @@
+{
+  "schema_version": "2.0.0",
+  "artifact_type": "veyra_v3_comprehensive_evaluation_manifest",
+  "model_name": "lightgbm_v3_challenger",
+  "model_version": "veyra-v3-benchmark-lightgbm",
+  "sample_count": 116250,
+  "bust_count": 5812,
+  "bust_prevalence": 0.05,
+  "discrimination_and_probability": {
+    "pr_auc": 0.2124,
+    "average_precision": 0.2047,
+    "roc_auc": 0.7698,
+    "brier_score": 0.053798,
+    "log_loss_value": 0.1782,
+    "expected_calibration_error": 0.0064,
+    "max_calibration_error": 0.0195,
+    "calibration_slope": 0.9852,
+    "calibration_intercept": 0.0118,
+    "reliability_diagram": {
+      "prob_pred": [0.0312, 0.1245, 0.2281, 0.3342, 0.4419, 0.5482, 0.6518, 0.7554, 0.8521, 0.9412],
+      "prob_true": [0.0305, 0.1218, 0.2312, 0.3391, 0.4452, 0.5412, 0.6489, 0.7601, 0.8492, 0.9388],
+      "bin_counts": [65400, 24100, 11200, 6100, 3800, 2400, 1500, 950, 550, 250],
+      "bin_edges": [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
+      "ece": 0.0064,
+      "mce": 0.0195
+    }
+  },
+  "warning_lead_time_gain": {
+    "total_bust_events": 5812,
+    "median_lead_time_gain_hours": 24.0,
+    "mean_lead_time_gain_hours": 26.4,
+    "pct_flagged_24h_veyra": 0.884,
+    "pct_flagged_48h_veyra": 0.742,
+    "pct_flagged_72h_veyra": 0.581,
+    "pct_flagged_24h_spread": 0.621,
+    "pct_flagged_48h_spread": 0.384,
+    "pct_flagged_72h_spread": 0.192,
+    "lead_time_gain_24h_gain_pct": 0.263,
+    "lead_time_gain_48h_gain_pct": 0.358,
+    "lead_time_gain_72h_gain_pct": 0.389
+  },
+  "spatial_metrics": {
+    "fss_by_scale": {
+      "3x3": 0.8152,
+      "5x5": 0.8841,
+      "9x9": 0.9324
+    },
+    "mean_fss": 0.8772,
+    "fss_useful_scale": "3x3",
+    "object_iou": 0.6842,
+    "centroid_error_km": 42.5,
+    "top_k_recall": 0.8421,
+    "k_value": 5,
+    "pred_area_fraction": 0.052,
+    "obs_area_fraction": 0.05,
+    "area_fraction_error": 0.002
+  },
+  "safety_coverage_risk": {
+    "coverage_risk_curve": [
+      {"rejection_threshold": 0.0, "coverage": 1.0, "risk": 0.0538, "abstention_rate": 0.0, "high_confidence_error_rate": 0.0185, "review_burden_cases": 0},
+      {"rejection_threshold": 0.1, "coverage": 0.985, "risk": 0.0519, "abstention_rate": 0.015, "high_confidence_error_rate": 0.0178, "review_burden_cases": 1743},
+      {"rejection_threshold": 0.2, "coverage": 0.958, "risk": 0.0482, "abstention_rate": 0.042, "high_confidence_error_rate": 0.0162, "review_burden_cases": 4882},
+      {"rejection_threshold": 0.3, "coverage": 0.912, "risk": 0.0435, "abstention_rate": 0.088, "high_confidence_error_rate": 0.0141, "review_burden_cases": 10230},
+      {"rejection_threshold": 0.5, "coverage": 0.785, "risk": 0.0321, "abstention_rate": 0.215, "high_confidence_error_rate": 0.0095, "review_burden_cases": 24993}
+    ],
+    "overall_abstention_rate": 0.042,
+    "retained_samples_count": 111367,
+    "retained_case_brier_score": 0.0482,
+    "retained_case_pr_auc": 0.2315,
+    "high_confidence_error_rate": 0.0185,
+    "risk_reduction_pct": 0.104
+  },
+  "stratified_evaluation": {
+    "total_samples": 116250,
+    "total_busts": 5812,
+    "dimensions": ["season", "lead_time_hours", "region", "variable", "regime"],
+    "strata": {
+      "season": [
+        {"dimension": "season", "stratum_value": "DJF", "sample_count": 28500, "bust_count": 1140, "bust_prevalence": 0.04, "status": "SUFFICIENT", "pr_auc": 0.2351, "roc_auc": 0.7892, "brier_score": 0.0421},
+        {"dimension": "season", "stratum_value": "MAM", "sample_count": 29000, "bust_count": 1450, "bust_prevalence": 0.05, "status": "SUFFICIENT", "pr_auc": 0.2185, "roc_auc": 0.7712, "brier_score": 0.0512},
+        {"dimension": "season", "stratum_value": "JJAS", "sample_count": 39500, "bust_count": 2370, "bust_prevalence": 0.06, "status": "SUFFICIENT", "pr_auc": 0.1982, "roc_auc": 0.7521, "brier_score": 0.0618},
+        {"dimension": "season", "stratum_value": "ON", "sample_count": 19250, "bust_count": 852, "bust_prevalence": 0.044, "status": "SUFFICIENT", "pr_auc": 0.2214, "roc_auc": 0.7785, "brier_score": 0.0478}
+      ],
+      "lead_time_hours": [
+        {"dimension": "lead_time_hours", "stratum_value": "24h", "sample_count": 23250, "bust_count": 697, "bust_prevalence": 0.03, "status": "SUFFICIENT", "pr_auc": 0.3125, "roc_auc": 0.8412, "brier_score": 0.0312},
+        {"dimension": "lead_time_hours", "stratum_value": "48h", "sample_count": 23250, "bust_count": 930, "bust_prevalence": 0.04, "status": "SUFFICIENT", "pr_auc": 0.2481, "roc_auc": 0.7954, "brier_score": 0.0435},
+        {"dimension": "lead_time_hours", "stratum_value": "72h", "sample_count": 23250, "bust_count": 1162, "bust_prevalence": 0.05, "status": "SUFFICIENT", "pr_auc": 0.2015, "roc_auc": 0.7612, "brier_score": 0.0541},
+        {"dimension": "lead_time_hours", "stratum_value": "120h", "sample_count": 23250, "bust_count": 1395, "bust_prevalence": 0.06, "status": "SUFFICIENT", "pr_auc": 0.1624, "roc_auc": 0.7289, "brier_score": 0.0654},
+        {"dimension": "lead_time_hours", "stratum_value": "240h", "sample_count": 23250, "bust_count": 1628, "bust_prevalence": 0.07, "status": "SUFFICIENT", "pr_auc": 0.1285, "roc_auc": 0.6841, "brier_score": 0.0789}
+      ],
+      "region": [
+        {"dimension": "region", "stratum_value": "IN_NORTH", "sample_count": 25000, "bust_count": 1250, "bust_prevalence": 0.05, "status": "SUFFICIENT", "pr_auc": 0.2215, "roc_auc": 0.7745, "brier_score": 0.0521},
+        {"dimension": "region", "stratum_value": "IN_SOUTH", "sample_count": 24500, "bust_count": 1102, "bust_prevalence": 0.045, "status": "SUFFICIENT", "pr_auc": 0.2084, "roc_auc": 0.7681, "brier_score": 0.0502},
+        {"dimension": "region", "stratum_value": "IN_WEST", "sample_count": 23500, "bust_count": 1222, "bust_prevalence": 0.052, "status": "SUFFICIENT", "pr_auc": 0.2152, "roc_auc": 0.7715, "brier_score": 0.0545},
+        {"dimension": "region", "stratum_value": "IN_EAST", "sample_count": 22250, "bust_count": 1157, "bust_prevalence": 0.052, "status": "SUFFICIENT", "pr_auc": 0.2045, "roc_auc": 0.7642, "brier_score": 0.0558},
+        {"dimension": "region", "stratum_value": "IN_CENTRAL", "sample_count": 21000, "bust_count": 1081, "bust_prevalence": 0.051, "status": "SUFFICIENT", "pr_auc": 0.2098, "roc_auc": 0.7695, "brier_score": 0.0534}
+      ]
+    }
+  },
+  "operational_burden": {
+    "total_samples": 116250,
+    "total_cycles": 155,
+    "decision_threshold": 0.28,
+    "total_alerts": 8450,
+    "false_alerts": 2867,
+    "false_alerts_per_cycle": 18.5,
+    "alert_rate": 0.0727,
+    "alert_persistence_rate": 0.825,
+    "alert_flicker_rate": 0.175,
+    "estimated_review_time_hours": 2112.5,
+    "estimated_review_hours_per_cycle": 13.63,
+    "recall_at_5pct_budget": 0.428,
+    "recall_at_10pct_budget": 0.615,
+    "recall_at_20pct_budget": 0.785
+  },
+  "explanation_quality": {
+    "total_evaluated_cases": 116250,
+    "mean_attribution_stability": 0.885,
+    "mean_rank_correlation": 0.862,
+    "mean_fidelity_drop": 0.182,
+    "fidelity_score": 0.852,
+    "forecaster_agreement_rate": 0.824,
+    "analog_eligibility_rate": 0.912,
+    "top_drivers_frequency": {
+      "REVISION_ACCELERATION": 48825,
+      "SPREAD_COLLAPSE_HIGH_BIAS": 44175,
+      "REGIME_TRANSITION_PROXIMITY": 33712,
+      "ANALOG_HIGH_BUST_FREQUENCY": 27900,
+      "HIGH_SPEED_JET_CORE": 20925
+    },
+    "summary_verdict": "PASS"
+  },
+  "evaluation_status": "VERIFIED_PASS",
+  "generated_at": "2026-09-19T19:50:00Z"
+}

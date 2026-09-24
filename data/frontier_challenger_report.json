@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "last_updated": "2026-09-20T20:01:00Z",
+  "blueprint_gate": "Gate 11 / Phase L",
+  "invariants": {
+    "no_replacement_without_incremental_evidence": true,
+    "generative_fields_are_simulations": true,
+    "zero_invented_values": true,
+    "retain_certified_incumbents": true
+  },
+  "frontier_challengers": {
+    "FRONTIER_GRAPH_DIFFUSION_V0": {
+      "model_id": "FRONTIER_GRAPH_DIFFUSION_V0",
+      "model_version": "0.1.0",
+      "architecture": "Spatio-Temporal Graph Diffusion Network (DDPM, T=50 steps, 25 stations)",
+      "target_domain": "SPATIAL_NETWORK",
+      "certified_incumbent_model": "SPATIAL_RELIABILITY_V1",
+      "status": "EXPERIMENTAL",
+      "metrics": {
+        "challenger_brier": 0.1450,
+        "certified_incumbent_brier": 0.1180,
+        "delta_brier": -0.0270,
+        "information_gain_kl_bits": 0.012,
+        "inference_latency_ms": 420.0,
+        "certified_latency_ms": 4.2,
+        "reproducibility_hash_verified": true
+      },
+      "gate_decision": "REJECTED_FOR_PRODUCTION_RETAIN_CERTIFIED",
+      "explanation": "Challenger exhibits 100x latency overhead and worse Brier calibration (+0.0270 error) compared to SPATIAL_RELIABILITY_V1. Retained strictly as an experimental simulation component."
+    },
+    "FRONTIER_TRANSFORMER_V0": {
+      "model_id": "FRONTIER_TRANSFORMER_V0",
+      "model_version": "0.1.0",
+      "architecture": "Multi-Horizon Self-Attention Trajectory Transformer (4 layers, 8 heads, 16 horizons)",
+      "target_domain": "TRAJECTORY_DYNAMICS",
+      "certified_incumbent_model": "V3_CERTIFIED",
+      "status": "EXPERIMENTAL",
+      "metrics": {
+        "challenger_brier": 0.1280,
+        "certified_incumbent_brier": 0.0820,
+        "delta_brier": -0.0460,
+        "information_gain_kl_bits": 0.018,
+        "inference_latency_ms": 115.0,
+        "certified_latency_ms": 1.8,
+        "reproducibility_hash_verified": true
+      },
+      "gate_decision": "REJECTED_FOR_PRODUCTION_RETAIN_CERTIFIED",
+      "explanation": "Challenger fails to beat V3_CERTIFIED on Brier calibration and introduces 60x latency penalty. Retained as diagnostic simulation tool."
+    }
+  }
+}

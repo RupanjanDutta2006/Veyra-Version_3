@@ -1,0 +1,155 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "last_updated": "2026-09-20T19:38:00Z",
+  "blueprint_gate": "Gate 9 / Phase J",
+  "invariants": {
+    "drift_monitoring_cadence": "weekly_rolling_cycle",
+    "psi_threshold_moderate": 0.10,
+    "psi_threshold_severe": 0.25,
+    "mahalanobis_threshold_moderate": 15.0,
+    "mahalanobis_threshold_extreme": 25.0,
+    "unsupported_drift_action": "ABSTAIN",
+    "zero_invented_values": true
+  },
+  "hazard_baselines": {
+    "PRECIPITATION": {
+      "features": {
+        "cape_proxy_jkg": { "mean": 1420.0, "std": 680.0, "p10": 450.0, "p50": 1350.0, "p90": 2650.0 },
+        "precipitable_water_mm": { "mean": 48.5, "std": 14.2, "p10": 28.0, "p50": 49.0, "p90": 67.0 },
+        "ensemble_spread_precip_mm": { "mean": 16.4, "std": 11.8, "p10": 4.5, "p50": 13.5, "p90": 34.0 },
+        "ensemble_mean_precip_mm": { "mean": 24.2, "std": 28.5, "p10": 1.2, "p50": 14.0, "p90": 62.0 }
+      },
+      "current_drift_metrics": {
+        "overall_psi": 0.048,
+        "max_feature_psi": { "feature": "cape_proxy_jkg", "psi": 0.072 },
+        "wasserstein_distance_avg": 0.054,
+        "ks_test_min_pvalue": 0.28,
+        "drift_status": "IN_BOUNDS"
+      }
+    },
+    "CYCLONE": {
+      "features": {
+        "vertical_wind_shear_ms": { "mean": 16.2, "std": 6.8, "p10": 7.5, "p50": 15.8, "p90": 25.4 },
+        "ensemble_track_spread_km": { "mean": 82.5, "std": 38.0, "p10": 35.0, "p50": 78.0, "p90": 142.0 },
+        "forward_speed_kmh": { "mean": 18.4, "std": 6.2, "p10": 10.5, "p50": 17.5, "p90": 26.8 },
+        "ensemble_intensity_spread_ms": { "mean": 5.2, "std": 2.1, "p10": 2.8, "p50": 4.9, "p90": 8.1 }
+      },
+      "current_drift_metrics": {
+        "overall_psi": 0.062,
+        "max_feature_psi": { "feature": "ensemble_track_spread_km", "psi": 0.088 },
+        "wasserstein_distance_avg": 0.068,
+        "ks_test_min_pvalue": 0.21,
+        "drift_status": "IN_BOUNDS"
+      }
+    },
+    "MONSOON_LPS": {
+      "features": {
+        "vorticity_850hpa_s1": { "mean": 3.8e-5, "std": 1.6e-5, "p10": 1.8e-5, "p50": 3.6e-5, "p90": 6.1e-5 },
+        "monsoon_trough_lat_anomaly_deg": { "mean": 0.12, "std": 1.85, "p10": -2.2, "p50": 0.1, "p90": 2.4 },
+        "cross_equatorial_flow_ms": { "mean": 14.5, "std": 4.2, "p10": 8.8, "p50": 14.2, "p90": 20.1 }
+      },
+      "current_drift_metrics": {
+        "overall_psi": 0.055,
+        "max_feature_psi": { "feature": "monsoon_trough_lat_anomaly_deg", "psi": 0.079 },
+        "wasserstein_distance_avg": 0.059,
+        "ks_test_min_pvalue": 0.24,
+        "drift_status": "IN_BOUNDS"
+      }
+    },
+    "WESTERN_DISTURBANCE": {
+      "features": {
+        "geopotential_anomaly_500hpa_m": { "mean": -42.0, "std": 38.0, "p10": -95.0, "p50": -38.0, "p90": 8.0 },
+        "subtropical_jet_speed_ms": { "mean": 44.5, "std": 12.4, "p10": 28.0, "p50": 43.5, "p90": 61.0 },
+        "wd_integrated_vapor_transport_kgms": { "mean": 185.0, "std": 74.0, "p10": 95.0, "p50": 175.0, "p90": 290.0 }
+      },
+      "current_drift_metrics": {
+        "overall_psi": 0.059,
+        "max_feature_psi": { "feature": "geopotential_anomaly_500hpa_m", "psi": 0.084 },
+        "wasserstein_distance_avg": 0.063,
+        "ks_test_min_pvalue": 0.19,
+        "drift_status": "IN_BOUNDS"
+      }
+    },
+    "HEATWAVE": {
+      "features": {
+        "temp_2m_anomaly_k": { "mean": 3.8, "std": 2.1, "p10": 1.2, "p50": 3.6, "p90": 6.8 },
+        "soil_moisture_deficit_pct": { "mean": 42.0, "std": 18.5, "p10": 18.0, "p50": 41.0, "p90": 68.0 },
+        "h500_height_anomaly_m": { "mean": 58.0, "std": 32.0, "p10": 18.0, "p50": 55.0, "p90": 102.0 }
+      },
+      "current_drift_metrics": {
+        "overall_psi": 0.051,
+        "max_feature_psi": { "feature": "temp_2m_anomaly_k", "psi": 0.076 },
+        "wasserstein_distance_avg": 0.057,
+        "ks_test_min_pvalue": 0.26,
+        "drift_status": "IN_BOUNDS"
+      }
+    },
+    "SEVERE_WIND": {
+      "features": {
+        "gust_factor_ratio": { "mean": 1.48, "std": 0.22, "p10": 1.22, "p50": 1.45, "p90": 1.78 },
+        "downdraft_cape_jkg": { "mean": 720.0, "std": 280.0, "p10": 340.0, "p50": 690.0, "p90": 1120.0 },
+        "low_level_jet_speed_ms": { "mean": 16.8, "std": 5.4, "p10": 9.5, "p50": 16.2, "p90": 24.2 }
+      },
+      "current_drift_metrics": {
+        "overall_psi": 0.058,
+        "max_feature_psi": { "feature": "gust_factor_ratio", "psi": 0.081 },
+        "wasserstein_distance_avg": 0.062,
+        "ks_test_min_pvalue": 0.23,
+        "drift_status": "IN_BOUNDS"
+      }
+    }
+  },
+  "historical_drift_audit_log": [
+    {
+      "cycle_id": "CYCLE-2026-W34",
+      "timestamp": "2026-08-23T00:00:00Z",
+      "hazard": "MONSOON_LPS",
+      "overall_psi": 0.062,
+      "max_psi": 0.088,
+      "wasserstein_dist": 0.065,
+      "status": "IN_BOUNDS",
+      "action": "NONE"
+    },
+    {
+      "cycle_id": "CYCLE-2026-W35",
+      "timestamp": "2026-08-30T00:00:00Z",
+      "hazard": "PRECIPITATION",
+      "overall_psi": 0.071,
+      "max_psi": 0.096,
+      "wasserstein_dist": 0.072,
+      "status": "IN_BOUNDS",
+      "action": "NONE"
+    },
+    {
+      "cycle_id": "CYCLE-2026-W36",
+      "timestamp": "2026-09-06T00:00:00Z",
+      "hazard": "CYCLONE",
+      "overall_psi": 0.118,
+      "max_psi": 0.142,
+      "wasserstein_dist": 0.115,
+      "status": "MODERATE_DRIFT",
+      "action": "ALERT_OPERATORS_APPLY_CONSERVATIVE_MARGIN"
+    },
+    {
+      "cycle_id": "CYCLE-2026-W37",
+      "timestamp": "2026-09-13T00:00:00Z",
+      "hazard": "HEATWAVE",
+      "overall_psi": 0.048,
+      "max_psi": 0.068,
+      "wasserstein_dist": 0.051,
+      "status": "IN_BOUNDS",
+      "action": "NONE"
+    },
+    {
+      "cycle_id": "CYCLE-2026-W38",
+      "timestamp": "2026-09-20T00:00:00Z",
+      "hazard": "SEVERE_WIND",
+      "overall_psi": 0.058,
+      "max_psi": 0.081,
+      "wasserstein_dist": 0.062,
+      "status": "IN_BOUNDS",
+      "action": "NONE"
+    }
+  ]
+}

@@ -1,0 +1,145 @@
+{
+  "catalogue_id": "CATALOGUE-MONSOON-EVENTS-V1",
+  "hazard_family": "MONSOON_LPS",
+  "gate": "Gate 5",
+  "description": "Historical benchmark catalogue of North Indian Ocean monsoon low-pressure systems, depressions, deep depressions, and active/break regime episodes.",
+  "invariants": {
+    "reference_standard": "IMD RSMC New Delhi synoptic archives and IMD 0.25-degree daily gridded precipitation.",
+    "anti_leakage": "Best-track positions, central pressures, and gridded rainfall fields sealed behind 24h verification latency."
+  },
+  "events": [
+    {
+      "event_id": "MONSOON-2018-BOB-01",
+      "name": "August 2018 Monsoon Depression & Kerala Surge",
+      "system_type": "DEPRESSION",
+      "regime": "ACTIVE_MONSOON",
+      "period": "2018-08-07 to 2018-08-18",
+      "peak_pressure_hpa": 990.0,
+      "max_rain_24h_mm": 310.0,
+      "tracks": {
+        "genesis_lat": 18.5,
+        "genesis_lon": 88.0,
+        "landfall_lat": 20.8,
+        "landfall_lon": 86.9,
+        "dissipation_lat": 24.5,
+        "dissipation_lon": 76.0
+      },
+      "synoptic_narrative": "A depression formed over northwest Bay of Bengal and moved west-northwestwards across Odisha, Chhattisgarh, and Madhya Pradesh, triggering exceptionally active monsoon conditions and severe flooding in Central India and Kerala.",
+      "observed_error_modes": ["RAINFALL_CENTROID_DISPLACEMENT", "PROPAGATION_SPEED_OVERESTIMATION"]
+    },
+    {
+      "event_id": "MONSOON-2019-BOB-02",
+      "name": "August 2019 Deep Depression over Bay of Bengal",
+      "system_type": "DEEP_DEPRESSION",
+      "regime": "ACTIVE_MONSOON",
+      "period": "2019-08-06 to 2019-08-11",
+      "peak_pressure_hpa": 988.0,
+      "max_rain_24h_mm": 280.0,
+      "tracks": {
+        "genesis_lat": 20.5,
+        "genesis_lon": 88.5,
+        "landfall_lat": 21.5,
+        "landfall_lon": 87.0,
+        "dissipation_lat": 23.0,
+        "dissipation_lon": 72.0
+      },
+      "synoptic_narrative": "Deep depression traversed from north Bay of Bengal across West Bengal, Odisha, and Central India all the way to Gujarat, generating wide-scale torrential precipitation along the monsoon trough.",
+      "observed_error_modes": ["SYSTEM_LOCATION_ERROR_48H", "HEAVY_RAINFALL_INTENSITY_UNDERESTIMATION"]
+    },
+    {
+      "event_id": "MONSOON-2020-BOB-03",
+      "name": "September 2020 Monsoon Depression",
+      "system_type": "MONSOON_DEPRESSION",
+      "regime": "ACTIVE_MONSOON",
+      "period": "2020-09-19 to 2020-09-24",
+      "peak_pressure_hpa": 994.0,
+      "max_rain_24h_mm": 220.0,
+      "tracks": {
+        "genesis_lat": 17.5,
+        "genesis_lon": 86.5,
+        "landfall_lat": 19.2,
+        "landfall_lon": 84.8,
+        "dissipation_lat": 22.0,
+        "dissipation_lon": 78.5
+      },
+      "synoptic_narrative": "Late-monsoon depression over west-central Bay of Bengal produced heavy rainfall over coastal Andhra Pradesh, Telangana, and Maharashtra.",
+      "observed_error_modes": ["SYSTEM_DEEPENING_ERROR", "RAINFALL_PLACEMENT_DISPLACEMENT"]
+    },
+    {
+      "event_id": "MONSOON-2021-REGIME-01",
+      "name": "July 2021 Break-to-Active Transition Spell",
+      "system_type": "LOW_PRESSURE_AREA",
+      "regime": "TRANSITION_TO_ACTIVE",
+      "period": "2021-07-08 to 2021-07-16",
+      "peak_pressure_hpa": 998.0,
+      "max_rain_24h_mm": 175.0,
+      "tracks": {
+        "genesis_lat": 21.0,
+        "genesis_lon": 89.0,
+        "landfall_lat": 21.8,
+        "landfall_lon": 87.5,
+        "dissipation_lat": 25.0,
+        "dissipation_lon": 80.0
+      },
+      "synoptic_narrative": "Prolonged break monsoon conditions with trough at Himalayan foothills terminated rapidly as a low-pressure area organized over north Bay of Bengal, restoring the monsoon trough to normal position.",
+      "observed_error_modes": ["REGIME_TRANSITION_TIMING_ERROR", "PRECIPITATION_PLACEMENT_ERROR"]
+    },
+    {
+      "event_id": "MONSOON-2022-BOB-05",
+      "name": "August 2022 Deep Depression across Central India to Rajasthan",
+      "system_type": "DEEP_DEPRESSION",
+      "regime": "ACTIVE_MONSOON",
+      "period": "2022-08-19 to 2022-08-25",
+      "peak_pressure_hpa": 986.0,
+      "max_rain_24h_mm": 340.0,
+      "tracks": {
+        "genesis_lat": 20.2,
+        "genesis_lon": 88.2,
+        "landfall_lat": 21.6,
+        "landfall_lon": 87.1,
+        "dissipation_lat": 25.5,
+        "dissipation_lon": 71.5
+      },
+      "synoptic_narrative": "Fast-moving deep depression crossed West Bengal/Odisha coast and tracked rapidly through MP, causing record precipitation and flooding across southern Rajasthan and northern Gujarat.",
+      "observed_error_modes": ["PROPAGATION_SPEED_ERROR", "RAINFALL_INTENSITY_UNDERESTIMATION"]
+    },
+    {
+      "event_id": "MONSOON-2023-REGIME-02",
+      "name": "August 2023 Extended Break Monsoon Episode",
+      "system_type": "LOW_PRESSURE_AREA",
+      "regime": "BREAK_MONSOON",
+      "period": "2023-08-05 to 2023-08-18",
+      "peak_pressure_hpa": 1004.0,
+      "max_rain_24h_mm": 65.0,
+      "tracks": {
+        "genesis_lat": 26.0,
+        "genesis_lon": 85.0,
+        "landfall_lat": 27.0,
+        "landfall_lon": 86.0,
+        "dissipation_lat": 28.0,
+        "dissipation_lon": 87.0
+      },
+      "synoptic_narrative": "Severe August break monsoon episode with anomalous northward shift of the monsoon trough to the foothills of the Himalayas, leading to acute rainfall deficits across central and peninsular India.",
+      "observed_error_modes": ["FALSE_TRANSITION_TO_ACTIVE_PREDICTION"]
+    },
+    {
+      "event_id": "MONSOON-2024-BOB-01",
+      "name": "July-August 2024 Monsoon Depression Cluster",
+      "system_type": "MONSOON_DEPRESSION",
+      "regime": "ACTIVE_MONSOON",
+      "period": "2024-07-28 to 2024-08-08",
+      "peak_pressure_hpa": 992.0,
+      "max_rain_24h_mm": 265.0,
+      "tracks": {
+        "genesis_lat": 19.8,
+        "genesis_lon": 87.4,
+        "landfall_lat": 20.5,
+        "landfall_lon": 85.9,
+        "dissipation_lat": 23.5,
+        "dissipation_lon": 70.0
+      },
+      "synoptic_narrative": "Series of monsoon low-pressure systems and a depression propagating in quick succession along the monsoon trough, producing sustained torrential rain over Vidarbha, Gujarat, and Saurashtra.",
+      "observed_error_modes": ["SYSTEM_LOCATION_ERROR_72H", "RAINFALL_CENTROID_DISPLACEMENT"]
+    }
+  ]
+}

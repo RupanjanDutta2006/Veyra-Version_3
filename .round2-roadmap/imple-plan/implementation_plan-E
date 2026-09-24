@@ -1,0 +1,139 @@
+# Implementation Plan - Phase E: Tropical Cyclone Reliability Specialist (Gate 4 / P1)
+
+Phase E implements the **Tropical Cyclone Reliability Specialist (`CYCLONE_RELIABILITY_V1`)**, diagnosing medium-range NWP cyclone forecast failure without collapsing it into one opaque score. It explicitly decomposes cyclone forecast reliability into:
+1. **Track error threshold exceedance** (position error $> 100$ km at 48h, $> 180$ km at 72h)
+2. **Intensity error threshold exceedance** ($> 15$ knots / $7.7$ m/s)
+3. **Rapid Intensification (RI) failure** (failure to predict $\ge 30$ kt / 24h deepening or false alarm)
+4. **Landfall location error** (displacement $> 80$ km)
+5. **Landfall timing error** (arrival offset $> 6$ hours)
+6. **Track uncertainty & conformal uncertainty radius** (situation-dependent calibrated uncertainty bounds)
+
+## User Review Required
+
+> [!IMPORTANT]
+> - **Decomposed Failure Modes**: Cyclone reliability will NOT be collapsed into one opaque score. Track, intensity, rapid intensification, landfall timing, and landfall position are independently predicted and reported.
+> - **Anti-Leakage & Ocean Variables**: Strictly issue-time features at $t_0$. No post-valid-time best-track observations (IMD / JTWC) or unavailable deep-ocean thermal fields enter issue-time inference.
+> - **Strict Null Safety**: Landfall outputs are strictly `null` if the cyclone is not forecast to make landfall or if coastal proximity is unsupported.
+
+## Proposed Changes
+
+Grouped by component:
+
+### 1. Data Contracts, Target Manifests & Historical Event Catalogue
+
+#### [NEW] [cyclone_target_manifest.json](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/data/cyclone_target_manifest.json)
+- Define canonical cyclone target definitions:
+  - `CYCLONE-TRACK-01`: Track position error $> 100$ km at 48h ($> 180$ km at 72h)
+  - `CYCLONE-INTENSITY-01`: Intensity error $|V_{max,fc} - V_{max,obs}| > 7.7$ m/s (15 kt)
+  - `CYCLONE-RI-01`: Rapid intensification failure (false alarm or miss on $\ge 30$ kt/24h increase)
+  - `CYCLONE-LANDFALL-LOC-01`: Landfall distance error $> 80$ km
+  - `CYCLONE-LANDFALL-TIME-01`: Landfall timing error $|T_{fc} - T_{obs}| > 6$ hours
+  - `CYCLONE-CONFORMAL-TRACK-01`: Conformal track error quantile coverage at 80% and 90% confidence.
+
+#### [NEW] [cyclone_event_catalogue.json](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/data/cyclone_event_catalogue.json)
+- Historical North Indian Ocean (Bay of Bengal & Arabian Sea) cyclone benchmark episodes (e.g. Fani 2019, Amphan 2020, Tauktae 2021, Gulab 2021, Mandous 2022, Biparjoy 2023, Michaung 2023, Remal 2024, Dana 2024) with verified best-track positions, intensities, and NWP forecast errors.
+
+#### [NEW] [cyclone_contract.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/backend/app/contracts/cyclone_contract.py)
+- Pydantic v2 schemas:
+  - `CycloneBasin` (BAY_OF_BENGAL, ARABIAN_SEA)
+  - `CycloneCategory` (DEPRESSION, DEEP_DEPRESSION, CYCLONIC_STORM, SEVERE_CS, VERY_SEVERE_CS, EXTREMELY_SEVERE_CS, SUPER_CS)
+  - `CycloneIssueFeatures`: lat/lon, forward speed, ensemble track spread, track clustering tendency, vertical wind shear (200-850 hPa), 500-hPa steering flow, central pressure tendency, distance to coast, forecast revision delta.
+  - `CycloneReliabilityOutput`:
+    - `hazard`: "CYCLONE"
+    - `track_failure_probability`: float | None
+    - `intensity_failure_probability`: float | None
+    - `rapid_intensification_failure_probability`: float | None
+    - `landfall_location_failure_probability`: float | None
+    - `landfall_timing_failure_probability`: float | None
+    - `conformal_track_uncertainty_radius_km`: float | None
+    - `overall_reliability`: float | None
+    - `evidence`: List[str]
+    - `ood`: bool | None
+    - `provenance`: Dict[str, Any]
+
+#### [NEW] [CYCLONE_RELIABILITY_V1.json](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/models/v3/CYCLONE_RELIABILITY_V1.json)
+- Certified model specification for `CYCLONE_RELIABILITY_V1` with baseline ladder benchmarks, feature sets, and operational status.
+
+---
+
+### 2. Specialist Engine & Baseline Ladder
+
+#### [NEW] [cyclone_specialist.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/backend/app/builder2/cyclone_specialist.py)
+- `CycloneReliabilitySpecialist`:
+  - Implements the baseline ladder:
+    1. Historical track difficulty / climatology baseline
+    2. Ensemble track spread baseline
+    3. Spread-to-track-bust logistic regression
+    4. V3 + cyclone features (steering flow, shear, pressure tendency)
+    5. Rapid intensification specialist (calibrated for high-shear vs low-shear transitions)
+    6. Conformal track uncertainty challenger (calibrated radius at 80% and 90% coverage)
+    7. Landfall timing & location displacement estimators (strictly null when offshore/no-landfall)
+  - Integrates into `ReliabilityState` with hazard curves, survival curves, and recovery dynamics.
+  - OOD detection and selective prediction abstention logic.
+
+---
+
+### 3. Evaluation Scripts Extension
+
+#### [MODIFY] [evaluate_hazard_engines.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/scripts/evaluate_hazard_engines.py)
+- Extend to support `--hazards cyclone --bootstrap cycle`.
+- Evaluate `CycloneReliabilitySpecialist` against the baseline ladder, computing PR-AUC, Brier, BSS, ECE, conformal coverage, and cycle-block bootstrap confidence intervals.
+
+#### [MODIFY] [evaluate_conditional_coverage.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/scripts/evaluate_conditional_coverage.py)
+- Extend to support `--hazard cyclone --bootstrap cycle`.
+- Evaluate risk-coverage trade-offs for cyclone track and intensity failure under selective abstention.
+
+---
+
+### 4. Tests
+
+#### [NEW] [test_cyclone_contract.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/backend/tests/test_cyclone_contract.py)
+- Validates cyclone schemas, feature constraints, null-safety on non-landfall cases, and basin enums.
+
+#### [NEW] [test_cyclone_targets.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/backend/tests/test_cyclone_targets.py)
+- Validates `data/cyclone_target_manifest.json`, event catalogue integrity, track error thresholds, intensity error thresholds, RI failure, and anti-leakage invariants.
+
+#### [MODIFY] [test_hazard_specific_engines.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/backend/tests/test_hazard_specific_engines.py)
+- Add tests evaluating `CycloneReliabilitySpecialist`:
+  - Baseline ladder progression
+  - Separate track, intensity, RI, and landfall predictions
+  - Conformal uncertainty radius
+  - Non-landfall null safety
+  - OOD abstention and `ReliabilityState` generation.
+
+---
+
+### 5. Documentation & Deliverables
+
+#### [NEW] [phase-e-report.md](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/docs/phase-e-report.md)
+- Complete drop-in report meeting all Gate 4 criteria:
+  - Status: COMPLETE
+  - Environment, commands, test outputs
+  - Baseline ladder comparisons (PR-AUC, Brier, BSS, ECE, Conformal Coverage)
+  - Subgroup metrics (basin: Bay of Bengal vs Arabian Sea; lead: 24h, 48h, 72h, 96h, 120h; intensity category)
+  - Leakage audit, negative control, rollback decision, and next-phase authorization.
+
+## Verification Plan
+
+### Automated Tests
+Run phase commands:
+```bash
+python -m pytest backend/tests/test_cyclone_contract.py backend/tests/test_cyclone_targets.py backend/tests/test_hazard_specific_engines.py -q
+python scripts/evaluate_hazard_engines.py --hazards cyclone --bootstrap cycle
+python scripts/evaluate_conditional_coverage.py --hazard cyclone --bootstrap cycle
+```
+
+Verify full repository test suite and frontend build:
+```bash
+python -m pytest backend/tests/ -q
+cd frontend
+npm test -- --run
+npm run build
+```
+
+### Git Commit & Push
+```bash
+git add data/cyclone_target_manifest.json data/cyclone_event_catalogue.json backend/app/contracts/cyclone_contract.py models/v3/CYCLONE_RELIABILITY_V1.json backend/app/builder2/cyclone_specialist.py scripts/evaluate_hazard_engines.py scripts/evaluate_conditional_coverage.py backend/tests/test_cyclone_contract.py backend/tests/test_cyclone_targets.py backend/tests/test_hazard_specific_engines.py docs/phase-e-report.md
+git commit -m "docs: complete phase E - tropical-cyclone-reliability-specialist"
+git push origin main
+```

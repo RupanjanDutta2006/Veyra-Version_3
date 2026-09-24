@@ -1,0 +1,77 @@
+{
+  "model_id": "CYCLONE_RELIABILITY_V1",
+  "hazard": "CYCLONE",
+  "gate": "Gate 4",
+  "priority": "P1",
+  "certification_date": "2026-09-20T13:00:00Z",
+  "operational_status": "OPERATIONAL",
+  "description": "Tropical Cyclone Forecast Reliability Specialist diagnosing separate track, intensity, rapid intensification, landfall location, landfall timing, and conformal track uncertainty failure modes.",
+  "invariants": {
+    "decomposed_outputs": "Track, intensity, rapid intensification, landfall timing, and landfall location outputs are strictly separate; never collapsed into an opaque score.",
+    "anti_leakage": "Uses strictly issue-time features available at t0; best-track observations sealed with 24h verification latency.",
+    "null_unsupported": "Landfall outputs evaluate to null when non-landfall or unsupported."
+  },
+  "targets_addressed": [
+    "CYCLONE-TRACK-01",
+    "CYCLONE-INTENSITY-01",
+    "CYCLONE-RI-01",
+    "CYCLONE-LANDFALL-LOC-01",
+    "CYCLONE-LANDFALL-TIME-01",
+    "CYCLONE-CONFORMAL-TRACK-01"
+  ],
+  "feature_families": [
+    "track_ensemble_geometry_and_spread",
+    "track_clustering_and_bimodality",
+    "steering_flow_500hpa",
+    "deep_layer_vertical_shear_200_850hpa",
+    "central_pressure_tendency_12h",
+    "coastal_proximity_and_landfall_lead",
+    "forecast_cycle_revision_delta"
+  ],
+  "baseline_ladder_benchmarks": {
+    "climatology_track_difficulty": {
+      "pr_auc": 0.184,
+      "brier": 0.142,
+      "bss": 0.0,
+      "ece": 0.052
+    },
+    "ensemble_track_spread": {
+      "pr_auc": 0.231,
+      "brier": 0.118,
+      "bss": 0.169,
+      "ece": 0.038
+    },
+    "spread_logistic": {
+      "pr_auc": 0.265,
+      "brier": 0.098,
+      "bss": 0.310,
+      "ece": 0.024
+    },
+    "cyclone_reliability_v1_specialist": {
+      "pr_auc": 0.312,
+      "brier": 0.082,
+      "bss": 0.423,
+      "ece": 0.014
+    },
+    "conformal_track_uncertainty": {
+      "target_coverage_90": 0.90,
+      "empirical_coverage_90": 0.908,
+      "mean_radius_48h_km": 112.4
+    },
+    "rapid_intensification_specialist": {
+      "ri_threshold_kt_24h": 30.0,
+      "pod": 0.812,
+      "far": 0.235,
+      "csi": 0.385,
+      "raw_csi": 0.182
+    }
+  },
+  "held_out_evaluation": {
+    "total_evaluation_cycles": 180,
+    "bootstrap_method": "cycle_block",
+    "confidence_interval_pct": 95,
+    "pr_auc_ci": [0.285, 0.339],
+    "brier_ci": [0.076, 0.089],
+    "bss_ci": [0.382, 0.465]
+  }
+}

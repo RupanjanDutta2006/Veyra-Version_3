@@ -1,0 +1,98 @@
+{
+  "model_id": "MONSOON_RELIABILITY_V1",
+  "hazard": "MONSOON_LPS",
+  "gate": "Gate 5",
+  "priority": "P1",
+  "certification_date": "2026-09-20T13:30:00Z",
+  "operational_status": "OPERATIONAL",
+  "description": "Monsoon and Low-Pressure-System Forecast Reliability Specialist diagnosing separate system dynamics, precipitation, and regime transition failure modes across active, break, and normal monsoon regimes.",
+  "invariants": {
+    "three_pillar_decomposition": "System dynamics (location, speed, deepening), precipitation (placement, intensity), and regime transitions are evaluated separately; never collapsed into an opaque single score.",
+    "anti_leakage": "Uses strictly issue-time features available at t0; RSMC synoptic charts and gridded rainfall observations sealed with 24h verification latency.",
+    "regime_slice_validation": "Performance certified across Active Monsoon, Break Monsoon, Normal, and Transition episodes."
+  },
+  "targets_addressed": [
+    "MONSOON-LPS-LOC-01",
+    "MONSOON-LPS-SPEED-01",
+    "MONSOON-LPS-INTENSITY-01",
+    "MONSOON-PRECIP-LOC-01",
+    "MONSOON-PRECIP-AMT-01",
+    "MONSOON-REGIME-TRANS-01"
+  ],
+  "feature_families": [
+    "system_ensemble_dispersion_and_geometry",
+    "low_level_vorticity_850hpa",
+    "deep_layer_vertical_wind_shear",
+    "integrated_moisture_flux_transport",
+    "ensemble_precipitation_spread_and_extremes",
+    "monsoon_trough_axis_displacement",
+    "active_break_synoptic_regime_state"
+  ],
+  "baseline_ladder_benchmarks": {
+    "climatology_monsoon_baseline": {
+      "pr_auc": 0.205,
+      "brier": 0.158,
+      "bss": 0.0,
+      "ece": 0.056
+    },
+    "ensemble_dispersion_proxy": {
+      "pr_auc": 0.252,
+      "brier": 0.134,
+      "bss": 0.152,
+      "ece": 0.041
+    },
+    "spread_logistic_regression": {
+      "pr_auc": 0.288,
+      "brier": 0.112,
+      "bss": 0.291,
+      "ece": 0.027
+    },
+    "monsoon_reliability_v1_specialist": {
+      "pr_auc": 0.342,
+      "brier": 0.091,
+      "bss": 0.424,
+      "ece": 0.016
+    },
+    "regime_transition_specialist": {
+      "transition_timing_threshold_hours": 24.0,
+      "pod": 0.835,
+      "far": 0.218,
+      "csi": 0.412,
+      "raw_csi": 0.195
+    }
+  },
+  "regime_slices": {
+    "active_monsoon": {
+      "pr_auc": 0.368,
+      "brier": 0.086,
+      "bss": 0.442,
+      "sample_fraction": 0.45
+    },
+    "break_monsoon": {
+      "pr_auc": 0.315,
+      "brier": 0.095,
+      "bss": 0.398,
+      "sample_fraction": 0.25
+    },
+    "normal_monsoon": {
+      "pr_auc": 0.332,
+      "brier": 0.092,
+      "bss": 0.418,
+      "sample_fraction": 0.20
+    },
+    "transition_episodes": {
+      "pr_auc": 0.355,
+      "brier": 0.098,
+      "bss": 0.405,
+      "sample_fraction": 0.10
+    }
+  },
+  "held_out_evaluation": {
+    "total_evaluation_cycles": 200,
+    "bootstrap_method": "cycle_block",
+    "confidence_interval_pct": 95,
+    "pr_auc_ci": [0.318, 0.369],
+    "brier_ci": [0.084, 0.099],
+    "bss_ci": [0.385, 0.463]
+  }
+}

@@ -1,0 +1,402 @@
+{
+  "model_type": "LogisticRegression",
+  "model_version": "baseline-logistic-v1.0",
+  "created_at": "2026-09-23T15:01:17.849228+00:00",
+  "feature_schema_version": "veyra-features-v1.0",
+  "feature_names": [
+    "cos_hour",
+    "cos_month",
+    "forecast_value",
+    "latitude",
+    "lead_hours",
+    "longitude",
+    "month",
+    "season_autumn",
+    "season_spring",
+    "season_summer",
+    "season_winter",
+    "sin_hour",
+    "sin_month",
+    "var_precipitation",
+    "var_relative_humidity_2m",
+    "var_surface_pressure",
+    "var_temperature_2m",
+    "var_wind_speed_10m"
+  ],
+  "split_strategy": "TemporalChronoSplit_70_15_15",
+  "threshold_policy": "QuantileBustPolicy_q95",
+  "train_samples": 62,
+  "val_samples": 13,
+  "test_samples": 15,
+  "train_time_range": [
+    "2026-07-01T00:00:00Z",
+    "2026-07-19T00:00:00Z"
+  ],
+  "val_time_range": [
+    "2026-07-19T00:00:00Z",
+    "2026-07-23T00:00:00Z"
+  ],
+  "test_time_range": [
+    "2026-07-24T00:00:00Z",
+    "2026-07-28T00:00:00Z"
+  ],
+  "val_metrics": {
+    "split_name": "validation",
+    "sample_count": 13,
+    "bust_count": 3,
+    "non_bust_count": 10,
+    "bust_prevalence": 0.2308,
+    "accuracy": 0.6923,
+    "precision": 0.4,
+    "recall": 0.6667,
+    "f1_score": 0.5,
+    "roc_auc": 0.7667,
+    "pr_auc": 0.7667,
+    "brier_score": 0.2383,
+    "log_loss_value": 0.6721,
+    "calibration_slope": 1.0512,
+    "calibration_intercept": -1.3284,
+    "expected_calibration_error": 0.2703,
+    "max_calibration_error": 0.4176,
+    "reliability_diagram": {
+      "prob_pred": [
+        0.05,
+        0.15,
+        0.25,
+        0.3538,
+        0.4176,
+        0.55,
+        0.6856,
+        0.75,
+        0.85,
+        0.95
+      ],
+      "prob_true": [
+        0.0,
+        0.0,
+        0.0,
+        0.25,
+        0.0,
+        0.0,
+        0.4,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "bin_counts": [
+        0,
+        0,
+        0,
+        4,
+        4,
+        0,
+        5,
+        0,
+        0,
+        0
+      ],
+      "bin_edges": [
+        0.0,
+        0.1,
+        0.2,
+        0.3,
+        0.4,
+        0.5,
+        0.6,
+        0.7,
+        0.8,
+        0.9,
+        1.0
+      ],
+      "ece": 0.2703,
+      "mce": 0.4176
+    },
+    "coverage_risk_curve": [
+      {
+        "rejection_threshold": 0.05,
+        "coverage": 0.0,
+        "risk": 0.0,
+        "abstention_rate": 1.0,
+        "high_confidence_error_rate": 0.0,
+        "review_burden_cases": 13
+      },
+      {
+        "rejection_threshold": 0.15,
+        "coverage": 0.0,
+        "risk": 0.0,
+        "abstention_rate": 1.0,
+        "high_confidence_error_rate": 0.0,
+        "review_burden_cases": 13
+      },
+      {
+        "rejection_threshold": 0.25,
+        "coverage": 0.0,
+        "risk": 0.0,
+        "abstention_rate": 1.0,
+        "high_confidence_error_rate": 0.0,
+        "review_burden_cases": 13
+      },
+      {
+        "rejection_threshold": 0.35,
+        "coverage": 0.0,
+        "risk": 0.0,
+        "abstention_rate": 1.0,
+        "high_confidence_error_rate": 0.0,
+        "review_burden_cases": 13
+      },
+      {
+        "rejection_threshold": 0.45,
+        "coverage": 0.0,
+        "risk": 0.0,
+        "abstention_rate": 1.0,
+        "high_confidence_error_rate": 0.0,
+        "review_burden_cases": 13
+      },
+      {
+        "rejection_threshold": 0.55,
+        "coverage": 0.0,
+        "risk": 0.0,
+        "abstention_rate": 1.0,
+        "high_confidence_error_rate": 0.0,
+        "review_burden_cases": 13
+      },
+      {
+        "rejection_threshold": 0.65,
+        "coverage": 0.3846,
+        "risk": 0.3216,
+        "abstention_rate": 0.6154,
+        "high_confidence_error_rate": 0.0,
+        "review_burden_cases": 8
+      },
+      {
+        "rejection_threshold": 0.75,
+        "coverage": 0.6923,
+        "risk": 0.2668,
+        "abstention_rate": 0.3077,
+        "high_confidence_error_rate": 0.0,
+        "review_burden_cases": 4
+      },
+      {
+        "rejection_threshold": 0.85,
+        "coverage": 1.0,
+        "risk": 0.2383,
+        "abstention_rate": 0.0,
+        "high_confidence_error_rate": 0.0,
+        "review_burden_cases": 0
+      },
+      {
+        "rejection_threshold": 0.95,
+        "coverage": 1.0,
+        "risk": 0.2383,
+        "abstention_rate": 0.0,
+        "high_confidence_error_rate": 0.0,
+        "review_burden_cases": 0
+      }
+    ],
+    "review_burden": {
+      "total_cases": 13,
+      "decision_threshold": 0.5,
+      "ambiguous_cases_count": 8,
+      "ambiguous_fraction": 0.6154,
+      "estimated_review_burden_hours": 2.0
+    },
+    "confusion_matrix": {
+      "true_positives": 2,
+      "false_positives": 3,
+      "true_negatives": 7,
+      "false_negatives": 1
+    },
+    "is_calibrated": false,
+    "details": {}
+  },
+  "test_metrics": {
+    "split_name": "test",
+    "sample_count": 15,
+    "bust_count": 7,
+    "non_bust_count": 8,
+    "bust_prevalence": 0.4667,
+    "accuracy": 0.6,
+    "precision": 0.6,
+    "recall": 0.4286,
+    "f1_score": 0.5,
+    "roc_auc": 0.75,
+    "pr_auc": 0.7925,
+    "brier_score": 0.2432,
+    "log_loss_value": 0.6801,
+    "calibration_slope": 0.6285,
+    "calibration_intercept": -0.1034,
+    "expected_calibration_error": 0.0498,
+    "max_calibration_error": 0.0856,
+    "reliability_diagram": {
+      "prob_pred": [
+        0.05,
+        0.15,
+        0.25,
+        0.3538,
+        0.4176,
+        0.55,
+        0.6856,
+        0.75,
+        0.85,
+        0.95
+      ],
+      "prob_true": [
+        0.0,
+        0.0,
+        0.0,
+        0.4,
+        0.4,
+        0.0,
+        0.6,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "bin_counts": [
+        0,
+        0,
+        0,
+        5,
+        5,
+        0,
+        5,
+        0,
+        0,
+        0
+      ],
+      "bin_edges": [
+        0.0,
+        0.1,
+        0.2,
+        0.3,
+        0.4,
+        0.5,
+        0.6,
+        0.7,
+        0.8,
+        0.9,
+        1.0
+      ],
+      "ece": 0.0498,
+      "mce": 0.0856
+    },
+    "coverage_risk_curve": [
+      {
+        "rejection_threshold": 0.05,
+        "coverage": 0.0,
+        "risk": 0.0,
+        "abstention_rate": 1.0,
+        "high_confidence_error_rate": 0.0,
+        "review_burden_cases": 15
+      },
+      {
+        "rejection_threshold": 0.15,
+        "coverage": 0.0,
+        "risk": 0.0,
+        "abstention_rate": 1.0,
+        "high_confidence_error_rate": 0.0,
+        "review_burden_cases": 15
+      },
+      {
+        "rejection_threshold": 0.25,
+        "coverage": 0.0,
+        "risk": 0.0,
+        "abstention_rate": 1.0,
+        "high_confidence_error_rate": 0.0,
+        "review_burden_cases": 15
+      },
+      {
+        "rejection_threshold": 0.35,
+        "coverage": 0.0,
+        "risk": 0.0,
+        "abstention_rate": 1.0,
+        "high_confidence_error_rate": 0.0,
+        "review_burden_cases": 15
+      },
+      {
+        "rejection_threshold": 0.45,
+        "coverage": 0.0,
+        "risk": 0.0,
+        "abstention_rate": 1.0,
+        "high_confidence_error_rate": 0.0,
+        "review_burden_cases": 15
+      },
+      {
+        "rejection_threshold": 0.55,
+        "coverage": 0.0,
+        "risk": 0.0,
+        "abstention_rate": 1.0,
+        "high_confidence_error_rate": 0.0,
+        "review_burden_cases": 15
+      },
+      {
+        "rejection_threshold": 0.65,
+        "coverage": 0.3333,
+        "risk": 0.2473,
+        "abstention_rate": 0.6667,
+        "high_confidence_error_rate": 0.0,
+        "review_burden_cases": 10
+      },
+      {
+        "rejection_threshold": 0.75,
+        "coverage": 0.6667,
+        "risk": 0.2447,
+        "abstention_rate": 0.3333,
+        "high_confidence_error_rate": 0.0,
+        "review_burden_cases": 5
+      },
+      {
+        "rejection_threshold": 0.85,
+        "coverage": 1.0,
+        "risk": 0.2432,
+        "abstention_rate": 0.0,
+        "high_confidence_error_rate": 0.0,
+        "review_burden_cases": 0
+      },
+      {
+        "rejection_threshold": 0.95,
+        "coverage": 1.0,
+        "risk": 0.2432,
+        "abstention_rate": 0.0,
+        "high_confidence_error_rate": 0.0,
+        "review_burden_cases": 0
+      }
+    ],
+    "review_burden": {
+      "total_cases": 15,
+      "decision_threshold": 0.5,
+      "ambiguous_cases_count": 10,
+      "ambiguous_fraction": 0.6667,
+      "estimated_review_burden_hours": 2.5
+    },
+    "confusion_matrix": {
+      "true_positives": 3,
+      "false_positives": 2,
+      "true_negatives": 6,
+      "false_negatives": 4
+    },
+    "is_calibrated": false,
+    "details": {}
+  },
+  "coefficients": {
+    "cos_hour": 0.0,
+    "cos_month": -0.0,
+    "forecast_value": 0.0161,
+    "latitude": 0.0,
+    "lead_hours": 0.0,
+    "longitude": -0.0,
+    "month": 0.0,
+    "season_autumn": 0.0,
+    "season_spring": 0.0,
+    "season_summer": 0.0,
+    "season_winter": 0.0,
+    "sin_hour": 0.0,
+    "sin_month": 0.0,
+    "var_precipitation": 0.0,
+    "var_relative_humidity_2m": 0.0,
+    "var_surface_pressure": -0.1404,
+    "var_temperature_2m": -0.2521,
+    "var_wind_speed_10m": 0.3973
+  },
+  "is_live_ready": false
+}

@@ -1,0 +1,54 @@
+# Implementation Plan - Phase L: Frontier challengers and reliability digital twin (Gate 11 / P2)
+
+## Status: COMPLETED
+Certified: 2026-09-20  
+Blueprint Gate: Gate 11  
+Priority: P2  
+
+---
+
+## 1. Overview & Problem Definition
+
+Phase L implements **Frontier challengers, information gain analysis, generative simulations, evidence graphs with self-criticism, counterfactual crash testing, and Reliability Digital Twin replay (Gate 11 / P2)** across all meteorological hazard families in Veyra:
+- `PRECIPITATION`
+- `CYCLONE`
+- `MONSOON_LPS`
+- `WESTERN_DISTURBANCE`
+- `HEATWAVE`
+- `SEVERE_WIND`
+
+In accordance with Veyra's non-negotiable architectural principles:
+- **Never Replace Certified Specialists without Incremental Evidence**: Frontier architectures (`FRONTIER_GRAPH_DIFFUSION_V0`, `FRONTIER_TRANSFORMER_V0`) are evaluated against certified incumbents. Due to prohibitive latency overhead (>13x penalty), frontier candidates are rejected for production and archived as `EXPERIMENTAL`. Certified specialists are RETAINED.
+- **Generative Simulations are Marked**: Generated spatial reliability fields are explicitly tagged with `is_simulation: true` and status `EXPERIMENTAL`, never presented as operational truth.
+- **Self-Critic Physical Consistency**: The physical evidence DAG verifies that predicted failure probabilities do not contradict upstream atmospheric precursor signals (e.g. no 70%+ convective bust risk when CAPE < 300 J/kg and PWAT < 25 mm).
+- **Counterfactual Monotonicity & Crash Safety**: Increasing ensemble spread multiplier or forecast lead horizon produces strictly non-decreasing failure risk. Extreme out-of-bounds perturbations trigger safe abstention (`OOD_EXCEEDED`, `PHYSICAL_INCONSISTENCY`) with zero NaN/Inf values.
+- **Reliability Digital Twin Replay**: Cycle-by-cycle replay of historical severe weather episodes (T-120h to T-0h) demonstrates 96h early warning lead advantage for `certified-veyra` over raw NWP and baseline V3.
+
+---
+
+## 2. Deliverables Checklist
+
+- [x] Frontier Challenger Report (`data/frontier_challenger_report.json`)
+- [x] Counterfactual Crash Test Report (`data/counterfactual_crash_test_report.json`)
+- [x] Frontier Challenger & Simulation Engine (`backend/app/builder2/frontier_engine.py`)
+- [x] Evidence Graph & Self-Critic Engine (`backend/app/builder2/evidence_graph_engine.py`)
+- [x] Counterfactual Sensitivity & Crash Engine (`backend/app/builder2/counterfactual_engine.py`)
+- [x] Reliability Digital Twin Engine (`backend/app/builder2/digital_twin_engine.py`)
+- [x] Frontier Ablation Script (`scripts/run_frontier_ablation.py`)
+- [x] Digital Twin Replay Script (`scripts/replay_digital_twin.py`)
+- [x] `backend/tests/test_frontier_challengers.py`
+- [x] `backend/tests/test_evidence_graph.py`
+- [x] `backend/tests/test_counterfactual_reliability.py`
+- [x] `docs/phase-l-report.md`
+- [x] `.round2-roadmap/imple-plan/implementation_plan-L`
+
+---
+
+## 3. Verification Commands & Results
+
+1. `python -m pytest backend/tests/test_frontier_challengers.py backend/tests/test_evidence_graph.py backend/tests/test_counterfactual_reliability.py -q` -> 12 passed in 0.53s (Exit Code 0).
+2. `python scripts/run_frontier_ablation.py --base all-certified-hazards --bootstrap cycle` -> Frontier candidates evaluated; rejected for production due to >10x latency overhead; certified incumbents retained (Exit Code 0).
+3. `python scripts/replay_digital_twin.py --event historical --compare raw,v3,certified-veyra,frontier` -> Multi-tier digital twin replay executed; `certified-veyra` demonstrated 96h lead advantage with 0.1018 Brier score and 14.2ms latency (Exit Code 0).
+4. `python -m pytest backend/tests/ -q` -> 755 passed (Exit Code 0).
+5. `cd frontend && npm test -- --run` -> 58 passed in 7.5s (Exit Code 0).
+6. `cd frontend && npm run build` -> built cleanly in 10.5s (Exit Code 0).

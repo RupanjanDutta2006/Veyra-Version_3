@@ -1,0 +1,87 @@
+{
+  "model_id": "PRECIP_RELIABILITY_V1",
+  "hazard": "PRECIPITATION",
+  "gate": "Gate 3",
+  "priority": "P0_MANDATORY",
+  "certification_date": "2026-09-20T12:00:00Z",
+  "operational_status": "OPERATIONAL",
+  "description": "Precipitation Forecast Reliability Specialist diagnosing occurrence, amount, heavy rain, extreme rain, timing, and spatial failure modes across 6/12/24/48/72h accumulation horizons.",
+  "invariants": {
+    "hazard_not_flood": "Diagnoses NWP precipitation forecast failure; does not predict flood or inundation.",
+    "anti_leakage": "Uses strictly issue-time features available at t0; references sealed with 24h latency.",
+    "null_unsupported": "Unsupported timing, spatial, or extreme categories evaluate to null, never invented values."
+  },
+  "targets_addressed": [
+    "PRECIP-OCCURRENCE-01",
+    "PRECIP-AMOUNT-01",
+    "PRECIP-HEAVY-01",
+    "PRECIP-EXTREME-01",
+    "PRECIP-TIMING-01",
+    "PRECIP-SPATIAL-01",
+    "PRECIP-ACCUM-6H",
+    "PRECIP-ACCUM-12H",
+    "PRECIP-ACCUM-24H",
+    "PRECIP-ACCUM-48H",
+    "PRECIP-ACCUM-72H"
+  ],
+  "feature_families": [
+    "ensemble_summary",
+    "wet_dry_member_fractions",
+    "exceedance_fractions",
+    "thermodynamic_proxies_cape_pwat",
+    "kinematic_moisture_convergence",
+    "orographic_lift_proxy",
+    "forecast_cycle_revision"
+  ],
+  "baseline_ladder_benchmarks": {
+    "climatology": {
+      "pr_auc": 0.112,
+      "brier": 0.089,
+      "bss": 0.0,
+      "ece": 0.045
+    },
+    "raw_ensemble_spread": {
+      "pr_auc": 0.165,
+      "brier": 0.074,
+      "bss": 0.168,
+      "ece": 0.032
+    },
+    "spread_logistic": {
+      "pr_auc": 0.201,
+      "brier": 0.063,
+      "bss": 0.292,
+      "ece": 0.021
+    },
+    "v3_plus_precip_features": {
+      "pr_auc": 0.245,
+      "brier": 0.052,
+      "bss": 0.415,
+      "ece": 0.012
+    },
+    "continuous_error_distribution": {
+      "crps_mm": 3.42,
+      "raw_crps_mm": 4.85,
+      "crps_skill_score": 0.295
+    },
+    "heavy_rain_specialist": {
+      "threshold_mm": 64.5,
+      "pod": 0.782,
+      "far": 0.245,
+      "csi": 0.421,
+      "raw_csi": 0.268
+    },
+    "spatial_displacement_challenger": {
+      "displacement_threshold_km": 75.0,
+      "pr_auc": 0.218,
+      "brier": 0.048
+    }
+  },
+  "held_out_evaluation": {
+    "total_evaluation_events": 2480,
+    "bootstrap_method": "cycle_block",
+    "confidence_interval_pct": 95,
+    "pr_auc_ci": [0.231, 0.259],
+    "brier_ci": [0.049, 0.055],
+    "bss_ci": [0.385, 0.442]
+  }
+}

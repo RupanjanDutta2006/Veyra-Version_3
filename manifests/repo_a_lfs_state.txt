@@ -1,0 +1,14 @@
+﻿Git LFS Observation for Repository A (b9f52d3eeec8676e06b1879f05b404605e2501be):
+Git LFS tracked files:
+00a8410746 * models/v3/lightgbm_v3_challenger.joblib
+9f448606ce * models/v3/probability_calibrator_v3.joblib
+
+Local clone status:
+Git LFS smudge filter resolved both objects from GitHub LFS remote during clone.
+Payload SHA256:
+- models/v3/lightgbm_v3_challenger.joblib: 00a8410746f4a0eecbf7e76aaa0565143fc948d0e06aea65e7bcc4ce28a1c660 (1,046,844 bytes)
+- models/v3/probability_calibrator_v3.joblib: 9f448606ce4338ded92f238a551b3a9d8e6d2cb5902e8bc687bce5f5850af531 (2,791 bytes)
+
+Comparison with Repository B:
+Payloads in Repo A (smudge resolved) and Repo B (direct git binary) are 100% IDENTICAL byte-for-byte.
+Note: In environments without Git LFS, Repo A presents as pointer text (oid sha256:00a84107... and 9f448606...), causing joblib load failure. Repo B embeds binaries directly.

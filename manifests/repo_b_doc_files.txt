@@ -1,0 +1,65 @@
+./.round2-roadmap/oldone/Phase A — Protect the foundation.md
+./.round2-roadmap/oldone/Phase B — Scientific benchmark ladder.md
+./.round2-roadmap/oldone/Phase C — Failure Memory.md
+./.round2-roadmap/oldone/Phase D — Failure dynamics_ motifs, hazard and recovery.md
+./.round2-roadmap/oldone/Phase E — Atmospheric intelligence.md
+./.round2-roadmap/oldone/Phase F — Ensemble intelligence.md
+./.round2-roadmap/oldone/Phase G — Spatial intelligence.md
+./.round2-roadmap/oldone/Phase H — Safety and self-audit.md
+./.round2-roadmap/oldone/Phase I — Statistical governance.md
+./.round2-roadmap/oldone/Phase J — Multi-system intelligence.md
+./.round2-roadmap/oldone/Phase K — Independent truth challenge.md
+./.round2-roadmap/oldone/Phase L — Frontier intelligence and digital twin.md
+./.round2-roadmap/oldone/Veyra roadmap — drop-in phase files.md
+./.round2-roadmap/updatedone/Phase A — V3 certification and hazard data contracts.md
+./.round2-roadmap/updatedone/Phase B — Reliability core and benchmark ladder.md
+./.round2-roadmap/updatedone/Phase C — Multi-horizon hazard, motifs and recovery.md
+./.round2-roadmap/updatedone/Phase D — Precipitation reliability specialist.md
+./.round2-roadmap/updatedone/Phase E — Tropical cyclone reliability specialist.md
+./.round2-roadmap/updatedone/Phase F — Monsoon and low-pressure-system reliability.md
+./.round2-roadmap/updatedone/Phase G — Western disturbance reliability.md
+./.round2-roadmap/updatedone/Phase H — Heatwave and data-dependent severe-wind specialists.md
+./.round2-roadmap/updatedone/Phase I — Spatial, compound and common-mode reliability.md
+./.round2-roadmap/updatedone/Phase J — Hazard-specific calibration, OOD, drift and independent truth.md
+./.round2-roadmap/updatedone/Phase K — Cross-system transfer, operations and promotion.md
+./.round2-roadmap/updatedone/Phase L — Frontier challengers and reliability digital twin.md
+./.round2-roadmap/updatedone/VEYRA --- Hazard-Specific Forecast Reliability Implementation Blueprint.md
+./.round2-roadmap/updatedone/VEYRA_Hazard_Specific_Reliability_Implementation_Blueprint.md
+./.round2-roadmap/updatedone/Veyra hazard-first roadmap — drop-in phase files.md
+./ARCHITECTURE.md
+./README.md
+./REPRODUCIBILITY_PACKAGE.md
+./backend/app/runtimes/LICENSE.txt
+./demo/replay_case/REPLAY_INSTRUCTIONS.md
+./docs/HORIZON_REQUEST_CONTRACT.md
+./docs/IMD_INTEGRATION_ARTIFACT.md
+./docs/leakage_report.md
+./docs/phase-1/BUILDER_1.md
+./docs/phase-1/BUILDER_2.md
+./docs/phase-1/MERGE.md
+./docs/phase-2/PHASE_2_DAY_8.md
+./docs/phase-2/PHASE_2_DAY_9.md
+./docs/phase-a-report.md
+./docs/phase-b-report.md
+./docs/phase-c-report.md
+./docs/phase-d-report.md
+./docs/phase-e-report.md
+./docs/phase-f-report.md
+./docs/phase-g-report.md
+./docs/phase-h-report.md
+./docs/phase-i-report.md
+./docs/phase-j-report.md
+./docs/phase-k-report.md
+./docs/phase-l-report.md
+./lib/LICENSE.txt
+./requirements.txt
+./round2-report/phase10_completion_report.md
+./round2-report/phase1_completion_report.md
+./round2-report/phase2_completion_report.md
+./round2-report/phase3_completion_report.md
+./round2-report/phase4_completion_report.md
+./round2-report/phase5_completion_report.md
+./round2-report/phase6_completion_report.md
+./round2-report/phase7_completion_report.md
+./round2-report/phase8_completion_report.md
+./round2-report/phase9_completion_report.md

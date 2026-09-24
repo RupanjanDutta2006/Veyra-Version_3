@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "last_updated": "2026-09-20T11:40:00Z",
+  "gate": "Gate 0",
+  "description": "Veyra Canonical Ground Truth Reference Manifest for Meteorological Forecast Verification.",
+  "invariants": {
+    "truth_sealing": "All reference ground truth data is cryptographically sealed until verification timestamp (valid_time + latency_days).",
+    "no_backfilling_leakage": "Reanalysis or post-processed reference data cannot be backfilled to simulate real-time availability.",
+    "provenance_traceability": "Every evaluated prediction must record its reference source ID and verification timestamp."
+  },
+  "references": [
+    {
+      "reference_id": "REF-ERA5-01",
+      "name": "ERA5 Atmospheric Reanalysis",
+      "provider": "ECMWF / Copernicus Climate Change Service (C3S)",
+      "variables": [
+        "temperature_2m",
+        "surface_pressure",
+        "total_precipitation",
+        "wind_speed_10m",
+        "wind_gust_10m",
+        "geopotential_500hpa",
+        "relative_vorticity_850hpa"
+      ],
+      "spatial_resolution_deg": 0.25,
+      "temporal_resolution": "hourly",
+      "coverage": {
+        "spatial": "Global [-90 to 90N, -180 to 180E]",
+        "temporal_start": "1940-01-01",
+        "temporal_end": "Present (rolling ~5-day latency)"
+      },
+      "dissemination_latency_days": 5,
+      "canonical_units": {
+        "temperature_2m": "K",
+        "surface_pressure": "Pa",
+        "total_precipitation": "m (converted to mm)",
+        "wind_speed_10m": "m/s",
+        "wind_gust_10m": "m/s"
+      },
+      "access_protocol": "Copernicus CDS API / WeatherBench2 Cloud Zarr",
+      "verification_role": "Primary baseline for global thermodynamic & kinematic variables"
+    },
+    {
+      "reference_id": "REF-IMD-RAIN-01",
+      "name": "IMD High-Resolution Gridded Daily Rainfall",
+      "provider": "India Meteorological Department (IMD) Pune / National Climate Centre",
+      "variables": ["daily_rainfall"],
+      "spatial_resolution_deg": 0.25,
+      "temporal_resolution": "daily (accumulated 08:30 IST to 08:30 IST / 03:00 UTC)",
+      "coverage": {
+        "spatial": "India Landmass [6.5-38.5N, 66.5-100.0E]",
+        "temporal_start": "1901-01-01",
+        "temporal_end": "Present (daily near-real-time updates)"
+      },
+      "dissemination_latency_days": 1,
+      "canonical_units": {
+        "daily_rainfall": "mm/24h"
+      },
+      "access_protocol": "IMD Gridded Binary / NetCDF Archive",
+      "verification_role": "Authoritative ground truth for Indian rainfall verification"
+    },
+    {
+      "reference_id": "REF-IMD-TEMP-01",
+      "name": "IMD Gridded Daily Maximum and Minimum Temperature",
+      "provider": "India Meteorological Department (IMD)",
+      "variables": ["maximum_temperature", "minimum_temperature"],
+      "spatial_resolution_deg": 0.5,
+      "temporal_resolution": "daily",
+      "coverage": {
+        "spatial": "India Landmass [6.5-38.5N, 66.5-100.0E]",
+        "temporal_start": "1951-01-01",
+        "temporal_end": "Present"
+      },
+      "dissemination_latency_days": 1,
+      "canonical_units": {
+        "maximum_temperature": "K",
+        "minimum_temperature": "K"
+      },
+      "access_protocol": "IMD Binary Archive / Python NetCDF Conversion",
+      "verification_role": "Authoritative ground truth for heatwave & cold wave verification"
+    },
+    {
+      "reference_id": "REF-IMD-TC-01",
+      "name": "IMD RSMC Official Best Track Cyclone Archive",
+      "provider": "RSMC for Tropical Cyclones Over North Indian Ocean (IMD New Delhi)",
+      "variables": [
+        "cyclone_center_latitude",
+        "cyclone_center_longitude",
+        "estimated_central_pressure",
+        "maximum_sustained_wind_speed",
+        "system_classification"
+      ],
+      "spatial_resolution_deg": 0.1,
+      "temporal_resolution": "3-hourly / 6-hourly during active systems",
+      "coverage": {
+        "spatial": "North Indian Ocean (Bay of Bengal & Arabian Sea) [0-30N, 50-100E]",
+        "temporal_start": "1990-01-01",
+        "temporal_end": "Present (post-season final best track)"
+      },
+      "dissemination_latency_days": 14,
+      "canonical_units": {
+        "cyclone_center_latitude": "degrees_north",
+        "cyclone_center_longitude": "degrees_east",
+        "estimated_central_pressure": "Pa",
+        "maximum_sustained_wind_speed": "m/s"
+      },
+      "access_protocol": "RSMC Annual Reports / CSV Best Track Archive",
+      "verification_role": "Authoritative reference for tropical cyclone track and intensity"
+    },
+    {
+      "reference_id": "REF-GHCND-01",
+      "name": "Global Historical Climatology Network - Daily (GHCN-D)",
+      "provider": "NOAA National Centers for Environmental Information (NCEI)",
+      "variables": ["PRCP", "TMAX", "TMIN", "AWND"],
+      "spatial_resolution_deg": 0.01,
+      "temporal_resolution": "daily",
+      "coverage": {
+        "spatial": "Global Station Network (including ~120 Indian meteorological stations)",
+        "temporal_start": "1880-01-01",
+        "temporal_end": "Present (daily updates)"
+      },
+      "dissemination_latency_days": 2,
+      "canonical_units": {
+        "PRCP": "mm/24h",
+        "TMAX": "K",
+        "TMIN": "K",
+        "AWND": "m/s"
+      },
+      "access_protocol": "NOAA NCEI HTTPS / FTP Archive",
+      "verification_role": "Point-observation independent verification against gridded products"
+    }
+  ]
+}

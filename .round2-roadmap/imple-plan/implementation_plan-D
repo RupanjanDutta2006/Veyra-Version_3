@@ -1,0 +1,137 @@
+# Implementation Plan - Phase D: Precipitation Reliability Specialist (Gate 3 / P0)
+
+Precipitation is explicitly central to the SIH problem statement and requires a real benchmarked reliability specialist rather than a UI label.
+Phase D implements precipitation forecast failure estimation across occurrence, amount, threshold, heavy rain, extreme rain, timing, and spatial displacement across distinct accumulation windows (6h, 12h, 24h, 48h, 72h).
+
+## User Review Required
+
+> [!IMPORTANT]
+> - **Precipitation ≠ Flood**: The specialist diagnoses NWP precipitation forecast reliability; it does NOT predict flooding. Unsupported amount, timing, spatial, or extreme fields remain `null`.
+> - **Anti-Leakage**: All precipitation features are strictly constrained to information available at issue time $t_0$. Ground truth observations (IMD gridded rainfall, GPM/IMERG) and post-valid-time corrections are sealed behind verification latency.
+> - **Baseline Progression**: Every level of the baseline ladder (Climatology, Raw Ensemble, Spread Logistic, V3 + Precip Features, Continuous Error, Heavy-Rain Specialist, Spatial Challenger) is systematically benchmarked.
+
+## Proposed Changes
+
+Grouped by component:
+
+### 1. Data Contracts & Manifests
+
+#### [NEW] [precipitation_target_manifest.json](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/data/precipitation_target_manifest.json)
+- Define canonical precipitation target definitions across accumulation intervals (6h, 12h, 24h, 48h, 72h).
+- Standard IMD rainfall intensity thresholds:
+  - Light (>2.5 mm)
+  - Moderate (>15.6 mm)
+  - Heavy (>64.5 mm)
+  - Very Heavy (>115.5 mm)
+  - Extremely Heavy (>204.4 mm)
+- Target metrics:
+  - Occurrence failure: False Alarm ($F \ge 2.5\text{mm}, O < 2.5\text{mm}$) and Miss ($F < 2.5\text{mm}, O \ge 2.5\text{mm}$)
+  - Amount error: $|F - O| > \text{threshold}$ and continuous signed/absolute error
+  - Heavy rain failure: Missed heavy rain ($O \ge 64.5\text{mm}, F < 64.5\text{mm}$) and False Alarm ($F \ge 64.5\text{mm}, O < 64.5\text{mm}$)
+  - Extreme rain failure: $O \ge 204.4\text{mm}$ or $F \ge 204.4\text{mm}$
+  - Timing displacement: Peak rainfall hour error $|\tau_F - \tau_O| > 6\text{h}$
+  - Spatial displacement: Centroid position offset $D_{\text{centroid}} > 75\text{km}$
+
+#### [NEW] [precipitation_contract.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/backend/app/contracts/precipitation_contract.py)
+- Pydantic v2 schemas:
+  - `PrecipitationThresholdCategory` (NONE, LIGHT, MODERATE, HEAVY, VERY_HEAVY, EXTREMELY_HEAVY)
+  - `PrecipitationAccumulationWindow` (H6, H12, H24, H48, H72)
+  - `PrecipitationOccurrenceFailureType` (NONE, FALSE_ALARM, MISS)
+  - `PrecipitationIssueFeatures` (ensemble mean, spread, quantiles, wet/dry member fractions, CAPE proxy, precipitable water proxy, low-level moisture convergence, orographic lift proxy)
+  - `PrecipitationReliabilityOutput`:
+    - `hazard`: "PRECIPITATION"
+    - `occurrence_failure_probability`: float | None
+    - `amount_failure_probability`: float | None
+    - `heavy_rain_failure_probability`: float | None
+    - `extreme_rain_failure_probability`: float | None
+    - `timing_failure_probability`: float | None
+    - `spatial_displacement_probability`: float | None
+    - `overall_reliability`: float | None
+    - `evidence`: List[str]
+    - `ood`: bool | None
+    - `provenance`: Dict[str, Any]
+  - Strict null-safety: unsupported quantities evaluate to `None`, never invented values.
+
+#### [NEW] [PRECIP_RELIABILITY_V1.json](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/models/v3/PRECIP_RELIABILITY_V1.json)
+- Certified model specification for `PRECIP_RELIABILITY_V1`, including baseline ladder performance, feature lists, verification checksums, and operational deployment status.
+
+---
+
+### 2. Specialist Engine & Baseline Ladder
+
+#### [NEW] [precipitation_specialist.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/backend/app/builder2/precipitation_specialist.py)
+- `PrecipitationReliabilitySpecialist`:
+  - Implements the complete baseline ladder:
+    1. Climatology baseline (historical seasonal/regional rain frequency)
+    2. Raw ensemble baseline (spread-based uncertainty)
+    3. Spread-to-bust logistic regression
+    4. V3 incumbent + precipitation thermodynamic/kinematic features
+    5. Continuous error distribution estimator (Gaussian / log-normal parameters)
+    6. Heavy-rain specialist (calibrated for high-impact tails >64.5mm)
+    7. Sequence/spatial challenger
+  - Integrates into `ReliabilityState` with hazard curves, survival curves, and recovery dynamics.
+  - OOD detection and selective prediction abstention logic.
+
+---
+
+### 3. Evaluation Scripts
+
+#### [NEW] [evaluate_hazard_engines.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/scripts/evaluate_hazard_engines.py)
+- Supports `--hazards precipitation --bootstrap cycle`.
+- Evaluates specialist models vs baselines on held-out cycles.
+- Computes PR-AUC, Brier, Brier Skill Score, ECE, CRPS, tail metrics (POD, FAR, CSI/ETS for heavy/extreme rainfall), and cycle-block bootstrap confidence intervals.
+- Emits structured benchmark report.
+
+#### [NEW] [evaluate_conditional_coverage.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/scripts/evaluate_conditional_coverage.py)
+- Supports `--hazard precipitation --bootstrap cycle`.
+- Evaluates risk-coverage curves under selective prediction / abstention.
+- Verifies that abstaining on unsupported/OOD states strictly reduces residual forecast failure risk.
+
+---
+
+### 4. Tests
+
+#### [NEW] [test_precipitation_contract.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/backend/tests/test_precipitation_contract.py)
+- Validates precipitation contracts, null-safety, unit transformations, accumulation windows, and schema constraints.
+
+#### [NEW] [test_precipitation_targets.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/backend/tests/test_precipitation_targets.py)
+- Validates `data/precipitation_target_manifest.json`, threshold categories, occurrence/amount/tail failure definitions, and anti-leakage invariants.
+
+#### [NEW] [test_hazard_specific_engines.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/backend/tests/test_hazard_specific_engines.py)
+- Validates `PrecipitationReliabilitySpecialist`, baseline ladder comparisons, `ReliabilityState` generation, tail calibrations, and abstention behavior.
+
+---
+
+### 5. Documentation & Deliverables
+
+#### [NEW] [phase-d-report.md](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/docs/phase-d-report.md)
+- Complete drop-in report meeting all blueprint criteria:
+  - Status: COMPLETE
+  - Environment, commands, test outputs
+  - Baseline ladder comparisons (PR-AUC, Brier, BSS, ECE, CRPS, CSI)
+  - Subgroup metrics (lead, season, terrain, severity, OOD)
+  - Leakage audit and negative control results
+  - Rollback decision and next-phase authorization.
+
+## Verification Plan
+
+### Automated Tests
+Run phase commands:
+```bash
+python -m pytest backend/tests/test_precipitation_contract.py backend/tests/test_precipitation_targets.py backend/tests/test_hazard_specific_engines.py -q
+python scripts/evaluate_hazard_engines.py --hazards precipitation --bootstrap cycle
+python scripts/evaluate_conditional_coverage.py --hazard precipitation --bootstrap cycle
+```
+
+Verify complete test suite and frontend build:
+```bash
+python -m pytest backend/tests/ -q
+cd frontend && npm test -- --run && npm run build
+```
+
+### Git Push
+```bash
+git add data/precipitation_target_manifest.json backend/app/contracts/precipitation_contract.py models/v3/PRECIP_RELIABILITY_V1.json backend/app/builder2/precipitation_specialist.py scripts/evaluate_hazard_engines.py scripts/evaluate_conditional_coverage.py backend/tests/test_precipitation_contract.py backend/tests/test_precipitation_targets.py backend/tests/test_hazard_specific_engines.py docs/phase-d-report.md
+git commit -m "docs: complete phase D - precipitation-reliability-specialist"
+git push origin main
+```

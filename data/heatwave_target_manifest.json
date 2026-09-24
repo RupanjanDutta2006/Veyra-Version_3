@@ -1,0 +1,91 @@
+{
+  "manifest_id": "MANIFEST-HEATWAVE-2026-V1",
+  "hazard_family": "HEATWAVE",
+  "gate": "Gate 7",
+  "priority": "P1",
+  "description": "Target manifest for Heatwave and Data-Dependent Severe-Wind Reliability Specialist, covering threshold exceedance, peak temperature, onset timing, duration, warm nights, spatial extent, and gale gusts.",
+  "invariants": {
+    "decomposed_evaluation": "Threshold exceedance, peak temperature, onset, duration, warm night, spatial extent, and severe wind must be evaluated independently without collapsing into an opaque single score.",
+    "anti_leakage": "All evaluation features strictly constrained to issue time t0. Verification against gridded maximum/minimum temperature and hourly gust observations sealed with 24h verification latency.",
+    "data_dependent_wind_activation": "Severe wind evaluation is strictly activated on paired forecast/reference datasets meeting Gate 0 data availability contracts.",
+    "regional_conditioning": "Validation must be partitioned across Core Heatwave Zone, Northwest Plains, Coastal Peninsular, and Hill Region domains."
+  },
+  "targets": [
+    {
+      "target_id": "HEATWAVE-THRESH-01",
+      "name": "Heatwave Occurrence Threshold Exceedance Failure",
+      "metric_type": "THRESHOLD_EXCEEDANCE",
+      "threshold_value": 40.0,
+      "threshold_unit": "celsius",
+      "secondary_threshold_value": 4.5,
+      "secondary_threshold_unit": "celsius_departure",
+      "variable": "heatwave_threshold_error",
+      "primary_reference": "IMD_GRIDDED_MAX_TEMP_05DEG",
+      "description": "Binary failure to predict heatwave occurrence (Tmax >= 40.0°C and departure >= 4.5°C in plains, Tmax >= 37.0°C in coastal, or Tmax >= 30.0°C in hills) or false alarm with forecast error > 2.5°C."
+    },
+    {
+      "target_id": "HEATWAVE-PEAK-01",
+      "name": "Heatwave Peak Maximum Temperature Error Exceedance",
+      "metric_type": "THRESHOLD_EXCEEDANCE",
+      "threshold_value": 2.5,
+      "threshold_unit": "celsius",
+      "variable": "peak_tmax_error",
+      "primary_reference": "IMD_GRIDDED_MAX_TEMP_05DEG",
+      "description": "Forecast daily peak maximum temperature absolute error |Tmax_fc - Tmax_obs| exceeding 2.5°C."
+    },
+    {
+      "target_id": "HEATWAVE-ONSET-01",
+      "name": "Heatwave Onset Timing Error Exceedance",
+      "metric_type": "THRESHOLD_EXCEEDANCE",
+      "threshold_value": 24.0,
+      "threshold_unit": "hours",
+      "variable": "onset_timing_error",
+      "primary_reference": "IMD_HEATWAVE_BULLETINS",
+      "description": "Heatwave spell onset timing error exceeding 24.0 hours."
+    },
+    {
+      "target_id": "HEATWAVE-DURATION-01",
+      "name": "Heatwave Spell Duration Error Exceedance",
+      "metric_type": "THRESHOLD_EXCEEDANCE",
+      "threshold_value": 48.0,
+      "threshold_unit": "hours",
+      "variable": "spell_duration_error",
+      "primary_reference": "IMD_HEATWAVE_BULLETINS",
+      "description": "Forecast heatwave persistence and spell duration error exceeding 48.0 hours (2 days)."
+    },
+    {
+      "target_id": "HEATWAVE-NIGHT-01",
+      "name": "Warm Night Minimum Temperature Departure Error Exceedance",
+      "metric_type": "THRESHOLD_EXCEEDANCE",
+      "threshold_value": 2.0,
+      "threshold_unit": "celsius",
+      "secondary_threshold_value": 4.5,
+      "secondary_threshold_unit": "celsius_departure",
+      "variable": "warm_night_tmin_error",
+      "primary_reference": "IMD_GRIDDED_MIN_TEMP_05DEG",
+      "description": "Warm night minimum temperature departure error exceeding 2.0°C when Tmax >= 40.0°C."
+    },
+    {
+      "target_id": "HEATWAVE-SPATIAL-01",
+      "name": "Heatwave Spatial Extent Area Coverage Error Exceedance",
+      "metric_type": "THRESHOLD_EXCEEDANCE",
+      "threshold_value": 0.20,
+      "threshold_unit": "area_fraction",
+      "variable": "spatial_extent_error",
+      "primary_reference": "IMD_GRIDDED_MAX_TEMP_05DEG",
+      "description": "Regional spatial extent area coverage fraction error exceeding 20% of the contiguous climatic zone."
+    },
+    {
+      "target_id": "WIND-GUST-THRESH-01",
+      "name": "Severe Wind Gale Gust Exceedance Error",
+      "metric_type": "THRESHOLD_EXCEEDANCE",
+      "threshold_value": 6.0,
+      "threshold_unit": "m/s",
+      "secondary_threshold_value": 17.2,
+      "secondary_threshold_unit": "m/s",
+      "variable": "gale_gust_error",
+      "primary_reference": "ERA5_HOURLY_GUSTS",
+      "description": "Forecast 10m wind gust absolute error exceeding 6.0 m/s on gale-force events (>= 17.2 m/s / 62 km/h); evaluated conditionally on paired data."
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "release_id": "veyra-v3.0.0-release-candidate",
+  "manifest_schema_version": "v1.1.0",
+  "generation_timestamp": "2026-09-23T15:30:00Z",
+  "git_provenance": {
+    "base_commit_sha": "82eded8194151e37fb9b3eecf273010dc62d7b29",
+    "candidate_commit_sha": "6c1e8453d0f2fc12fc1b12f813858430cf5ebda4",
+    "integration_branch": "integration/sih-round2-selective-merge",
+    "strategy": "base_commit_provenance"
+  },
+  "verification_metrics": {
+    "backend_tests_passed": 952,
+    "frontend_tests_passed": 111,
+    "total_tests_passed": 1063,
+    "acceptance_gates_passed": 10,
+    "total_acceptance_gates": 10,
+    "gate_pass_rate": "100%"
+  },
+  "model_artifact": {
+    "path": "models/v3/lightgbm_v3_challenger.joblib",
+    "sha256": "00a8410746f4a0eecbf7e76aaa0565143fc948d0e06aea65e7bcc4ce28a1c660",
+    "version": "veyra-v3-benchmark-lightgbm",
+    "decision_threshold": 0.06
+  },
+  "calibrator_artifact": {
+    "path": "models/v3/probability_calibrator_v3.joblib",
+    "sha256": "9f448606ce4338ded92f238a551b3a9d8e6d2cb5902e8bc687bce5f5850af531",
+    "type": "IsotonicRegression",
+    "method": "isotonic"
+  },
+  "feature_contract": {
+    "feature_count": 50,
+    "feature_schema_version": "veyra-50-features-v3.0",
+    "feature_names_reference": "models/v3/feature_names.json",
+    "sha256": "702ff4153fd95d8c9de3bbd01461d65fde0ef207099f7f3a8e7f5c8bac02031e"
+  },
+  "route_authority": "/v1/predict",
+  "fallback_policy": "safe_abstention",
+  "environment_pins": {
+    "python": "3.10+",
+    "scikit_learn": "1.7.2",
+    "lightgbm": "4.7.0",
+    "joblib": "1.5.3"
+  },
+  "scientific_policies": {
+    "certification_policy_version": "v3.0.0-frozen-benchmark",
+    "certified_station_count": 25,
+    "certified_variables": [
+      "temperature_2m",
+      "wind_speed_10m",
+      "surface_pressure"
+    ],
+    "max_certified_lead_hours": 240,
+    "ood_policy_version": "v3.0.0-physical-support",
+    "time_contract_version": "v3.0.0-utc-temporal-invariants",
+    "revision_store_schema_version": "v1.0.0-sqlite-wal"
+  },
+  "operational_horizons": {
+    "supported_max_lead_hours": 384,
+    "certified_max_lead_hours": 240,
+    "extended_uncertified_horizon": "264h-384h"
+  },
+  "evidence_boundaries": {
+    "training_holdout": "2017-2019 NOAA GEFSv12 benchmark",
+    "post_2019_certified": false,
+    "unseen_station_certified": false,
+    "n5_historical_n31_live_equivalence_certified": false
+  },
+  "threshold_consolidation": {
+    "v3_challenger_incumbent": 0.06,
+    "day4_legacy_baseline": 0.28,
+    "rule": "Active prediction route uses v3_challenger (0.060); Day 4 is baseline comparator only"
+  }
+}

@@ -1,0 +1,54 @@
+# Implementation Plan - Phase J: Hazard-specific calibration, OOD, drift and independent truth (Gate 9 / P1)
+
+## Status: COMPLETED
+Certified: 2026-09-20  
+Blueprint Gate: Gate 9  
+Priority: P1  
+
+---
+
+## 1. Overview & Problem Definition
+
+Phase J implements **Hazard-specific calibration, OOD, drift and independent truth audit (Gate 9 / P1)** across all 6 meteorological hazard families in Veyra:
+- `PRECIPITATION`
+- `CYCLONE`
+- `MONSOON_LPS`
+- `WESTERN_DISTURBANCE`
+- `HEATWAVE`
+- `SEVERE_WIND`
+
+In accordance with Veyra's non-negotiable architectural principles:
+- **Never claim universal conditional coverage**: Conformal prediction guarantees finite-sample marginal coverage ($1-\alpha$), while residual slice miscoverage is explicitly quantified across lead, season, location, regime, severity, and OOD slices.
+- **Strict Truth Sealing**: Online verification and model adaptation are strictly blocked until dissemination latency matures (24h for IMD station observations, 120h for ERA5, 336h for RSMC cyclone best track).
+- **Sparse Reference Abstention**: If independent station density falls below certified thresholds ($<3$ stations), the system reports `REFERENCE_UNAVAILABLE` rather than claiming false operational validation.
+- **Selective Prediction & Risk Reduction**: Abstaining on unsupported OOD states strictly decreases or maintains residual failure risk.
+- **Zero Invented Values**: Unsupported outputs yield `null` or explicit abstention reason (`OOD_EXCEEDED`, `REFERENCE_UNAVAILABLE`, `PHYSICAL_INCONSISTENCY`), never an invented number.
+
+---
+
+## 2. Deliverables Checklist
+
+- [x] `INDEPENDENT_TRUTH_AUDIT` (`data/reference_audit_manifest.json` & `backend/app/builder2/independent_truth_audit.py`)
+- [x] Hazard Calibration Registry (`data/hazard_calibration_registry.json`)
+- [x] OOD/Drift Ledger (`data/ood_drift_ledger.json`)
+- [x] Abstention Policy (`backend/app/builder2/abstention_policy.py`)
+- [x] Conditional Calibration Engine (`backend/app/builder2/conditional_calibration_engine.py`)
+- [x] Sliced Conditional Coverage Script (`scripts/evaluate_conditional_coverage.py`)
+- [x] Reference Challenge Script (`scripts/evaluate_reference_challenge.py`)
+- [x] `backend/tests/test_hazard_calibration_ood.py`
+- [x] `backend/tests/test_conditional_calibration.py`
+- [x] `backend/tests/test_independent_truth.py`
+- [x] `backend/tests/test_reference_uncertainty.py`
+- [x] `docs/phase-j-report.md`
+- [x] `.round2-roadmap/imple-plan/implementation_plan-J`
+
+---
+
+## 3. Verification Commands & Results
+
+1. `python -m pytest backend/tests/test_hazard_calibration_ood.py backend/tests/test_conditional_calibration.py backend/tests/test_independent_truth.py backend/tests/test_reference_uncertainty.py -q` -> 15 passed in 0.47s (Exit Code 0).
+2. `python scripts/evaluate_conditional_coverage.py --all-hazards --slices lead,season,location,regime,severity,ood,reference --bootstrap cycle` -> 31 slices evaluated per hazard, monotonic risk reduction verified (Exit Code 0).
+3. `python scripts/evaluate_reference_challenge.py --references era5,station --event-held-out --bootstrap cycle` -> Event-held-out cross-validation passed, truth sealing and sparse reference verified (Exit Code 0).
+4. `python -m pytest backend/tests/ -q` -> 727 passed (Exit Code 0).
+5. `cd frontend && npm test -- --run` -> 58 passed (Exit Code 0).
+6. `cd frontend && npm run build` -> built cleanly (Exit Code 0).

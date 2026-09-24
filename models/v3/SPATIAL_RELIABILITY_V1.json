@@ -1,0 +1,65 @@
+{
+  "model_id": "SPATIAL_RELIABILITY_V1",
+  "name": "Veyra Spatial, Compound and Common-Mode Reliability Specialist",
+  "gate": "Gate 8",
+  "priority": "P1",
+  "version": "1.0.0",
+  "certified_at": "2026-09-20T19:20:00Z",
+  "status": "CERTIFIED",
+  "invariants": {
+    "non_causal_propagation": "Models empirical spatio-temporal error covariance across the 25-station network, never physical causality.",
+    "anti_leakage": "All evaluation features strictly constrained to issue time t0. Station ground truth sealed behind 24h verification latency.",
+    "no_probability_averaging": "Compound hazards evaluated via joint copula sets with explicit Fréchet-Hoeffding bounds, never averaged.",
+    "rainfall_distinct_from_flood": "Precipitation forecast failure reliability is strictly distinct from hydrological flood probability.",
+    "unseen_region_generalization": "Leave-one-region-out (LORO) hold-out validation required for all spatial models."
+  },
+  "topology": {
+    "network_id": "NETWORK-25-INDIA-V1",
+    "station_count": 25,
+    "macro_regions": [
+      "Northern Plains",
+      "Western Arid",
+      "Central Highlands",
+      "Eastern Coastal",
+      "Western Ghats",
+      "Southern Peninsula",
+      "Himalayan/Northeastern"
+    ],
+    "spatial_decay_scale_km": 350.0
+  },
+  "baselines": {
+    "level_1_climatology_brier": 0.1850,
+    "level_2_distance_weighted_spread_brier": 0.1520,
+    "level_3_spatial_logistic_brier": 0.1180,
+    "level_4_specialist_brier": 0.0940,
+    "specialist_bss": 0.4919
+  },
+  "unseen_region_bounds_95ci": {
+    "pr_auc": [0.4200, 0.7100],
+    "brier": [0.0850, 0.1250],
+    "bss": [0.2800, 0.5800]
+  },
+  "compound_hazard_models": {
+    "HEAT_WIND": {
+      "copula_type": "Gumbel_Survival",
+      "default_dependence_chi": 0.45,
+      "tmax_thresh_c": 40.0,
+      "gust_thresh_ms": 17.2
+    },
+    "RAIN_WIND": {
+      "copula_type": "Clayton",
+      "default_dependence_chi": 0.60,
+      "precip_thresh_mm": 64.5,
+      "gust_thresh_ms": 17.2
+    },
+    "RAIN_SNOW": {
+      "copula_type": "Gaussian",
+      "default_dependence_chi": 0.70,
+      "freezing_level_thresh_m": 2500.0
+    }
+  },
+  "common_mode_thresholds": {
+    "min_coherent_stations": 5,
+    "severity_index_alert_threshold": 0.60
+  }
+}

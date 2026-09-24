@@ -1,0 +1,111 @@
+# Phase B: Reliability Core and Benchmark Ladder (Gate 1)
+
+Following the roadmap in [`.round2-roadmap/updatedone/Phase B — Reliability core and benchmark ladder.md`](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/.round2-roadmap/updatedone/Phase%20B%20%E2%80%94%20Reliability%20core%20and%20benchmark%20ladder.md) and Section 4 & 5 of the *Hazard-Specific Reliability Implementation Blueprint*, Phase B implements **Gate 1**: establishing the universal `ReliabilityState` contract, the evidence and provenance graph schemas, the Failure Memory episode builder & retrieval engine, and the standardized benchmark ladder with cycle-block bootstrap evaluation.
+
+## User Review Required
+
+> [!IMPORTANT]
+> - **Universal Contract Invariant**: Every downstream hazard specialist (Precipitation, Cyclone, Monsoon, Western Disturbance, Heatwave, Wind in Phases D–H) will emit the unified `ReliabilityState` contract defined in this phase.
+> - **Benchmark Ladder Protocol**: V3 is evaluated alongside simpler baselines (climatology, persistence, raw spread, logistic regression, compact statistical model) under identical temporal splits (2024-H2 test set) and cycle-block bootstrap confidence intervals.
+
+---
+
+## Proposed Changes
+
+### 1. Common ReliabilityState Contract
+
+#### [NEW] [backend/app/schemas/reliability_state.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/backend/app/schemas/reliability_state.py)
+Implements the 30-field universal reliability schema required by Blueprint Section 4:
+- `forecast_identity`, `issue_time`, `location`, `variable`, `lead_hours`, `model_version`
+- `forecast_values`, `ensemble_summary`, `ensemble_geometry`
+- `bust_probability`, `continuous_error_distribution` (mean, std, quantiles)
+- `hazard_type`, `hazard_probability`, `hazard_curve`, `survival_curve`
+- `expected_time_to_bust`, `expected_time_to_recovery`
+- `failure_memory`, `failure_motif`
+- `atmospheric_regime`, `vertical_regime`
+- `spatial_risk`, `propagation_score`
+- `ood_score`, `drift_score`, `missingness_score`
+- `calibration_health`, `reference_health`
+- `reliability_state` (`STABLE`, `WATCHING`, `DEGRADING`, `FAILURE_PRONE`, `ABSTAIN`, `BUST`, `RECOVERING`)
+- `abstention_state`, `decision_mode`, `evidence`, `provenance`
+
+---
+
+### 2. Evidence Graph & Provenance Contract
+
+#### [NEW] [backend/app/schemas/evidence_provenance.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/backend/app/schemas/evidence_provenance.py)
+- **Evidence Graph**:
+  - `EvidenceNode`: Node types (`ENSEMBLE_SPREAD`, `RUN_TO_RUN_DRIFT`, `SYNOPTIC_REGIME`, `FAILURE_MEMORY_ANALOG`, `CLIMATOLOGY_DEPARTURE`) with physical quantities and confidence scores.
+  - `EvidenceEdge`: Relationship types (`SUPPORTS`, `CONTRADICTS`, `AMPLIFIES`, `ATTENUATES`) with normalized weights in $[-1.0, 1.0]$.
+  - `EvidenceGraph`: Directed graph representation linking atmospheric state signals to the predicted bust probability.
+- **Cryptographic Provenance**:
+  - `ModelProvenance`: Git commit SHA, model artifact SHA-256, calibrator SHA-256, feature schema SHA-256.
+  - `DataProvenance`: Upstream provider, cycle timestamp, dissemination latency, ingestion status.
+  - `VerificationProvenance`: Execution environment, runtime dependencies, execution timestamp.
+
+---
+
+### 3. Failure Memory Engine & Retrieval API
+
+#### [NEW] [backend/app/builder2/failure_memory.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/backend/app/builder2/failure_memory.py)
+Implements Blueprint Section 6.1:
+- `FailureEpisode`: Storage schema for historical forecast failure episodes (`episode_id`, `hazard_family`, `issue_time`, `location`, `lead_hours`, `forecast_error`, `severity`, `motif_id`, `state_vector`).
+- `FailureMemoryStore`: In-memory and disk-persisted vector/feature store of historical failures.
+- `retrieve_failure_analogs()`: Issue-time-safe nearest neighbor retrieval filtered by hazard, lead horizon, season, and atmospheric regime with sample count and uncertainty estimates.
+
+---
+
+### 4. Benchmark Ladder Runner & Cycle-Block Bootstrap Evaluator
+
+#### [NEW] [configs/benchmark_ladder.yaml](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/configs/benchmark_ladder.yaml)
+Configuration defining:
+- Evaluation dataset and test split (2024-07-01 to 2024-12-31).
+- 7 ladder tiers: Climatology, Persistence, Raw Spread, Spread Logistic Regression, Compact Statistical Model, V3 Incumbent, Calibrated V3.
+- Bootstrap configuration: 1000 iterations, cycle-block resampling, seed 42.
+
+#### [NEW] [scripts/run_benchmark_ladder.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/scripts/run_benchmark_ladder.py)
+Executable CLI script:
+- Loads test dataset and evaluates all 7 ladder tiers.
+- Computes PR-AUC, Brier score, Brier Skill Score (BSS), ECE, and CRPS.
+- Runs cycle-block bootstrap to compute 95% confidence intervals for each metric.
+- Generates machine-readable results (`data/evaluation/benchmark_ladder_results.json`) and formatted terminal summary table.
+
+---
+
+### 5. Automated Test Suites
+
+#### [NEW] [backend/tests/test_reliability_state.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/backend/tests/test_reliability_state.py)
+- Validates `ReliabilityState` instantiation, strict schema validation, state machine transitions, and safe abstention handling.
+
+#### [NEW] [backend/tests/test_evidence_provenance.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/backend/tests/test_evidence_provenance.py)
+- Validates `EvidenceGraph` acyclicity, edge weights, node attributes, and cryptographic provenance hash validation.
+
+---
+
+## Verification Plan
+
+### Automated Tests
+1. **Existing Historical & ML Suite**:
+   ```bash
+   python -m pytest backend/tests/test_historical_alignment.py backend/tests/test_historical_dataset.py backend/tests/test_ml_model_and_eval.py backend/tests/test_ml_splitting.py -q
+   ```
+2. **Phase B Reliability & Evidence Suite**:
+   ```bash
+   python -m pytest backend/tests/test_reliability_state.py backend/tests/test_evidence_provenance.py -q
+   ```
+3. **Benchmark Ladder Execution**:
+   ```bash
+   python scripts/run_benchmark_ladder.py --config configs/benchmark_ladder.yaml --bootstrap cycle --seed 42
+   ```
+4. **Frontend Verification**:
+   ```bash
+   cd frontend && npm test -- --run && npm run build
+   ```
+
+### Documentation & Git Push
+- Generate [docs/phase-b-report.md](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/docs/phase-b-report.md) adhering to the drop-in report template.
+- Commit:
+  ```bash
+  git commit -m "docs: complete phase B - reliability-core-and-benchmark-ladder"
+  git push origin main
+  ```

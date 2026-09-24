@@ -1,0 +1,272 @@
+{
+  "network_id": "NETWORK-25-INDIA-V1",
+  "generated_at": "2026-09-20T19:20:00Z",
+  "protocol": "SIH26079 Gate 8 Spatial Reliability Protocol",
+  "station_count": 25,
+  "regions": [
+    "Northern Plains",
+    "Western Arid",
+    "Central Highlands",
+    "Eastern Coastal",
+    "Western Ghats",
+    "Southern Peninsula",
+    "Himalayan/Northeastern"
+  ],
+  "invariants": {
+    "non_causal_propagation": "Spatial graph propagation models empirical spatio-temporal error covariance, never physical causality.",
+    "anti_leakage": "Only issue-time observations at t <= t0 allowed. Nearby ground truth observations strictly sealed behind 24h verification latency.",
+    "unseen_region_generalization": "Network must maintain calibration and skill under leave-one-region-out (LORO) hold-out testing."
+  },
+  "stations": [
+    {
+      "id": "DELHI",
+      "name": "Delhi",
+      "latitude": 28.6139,
+      "longitude": 77.2090,
+      "elevation_m": 214.0,
+      "region": "Northern Plains",
+      "state": "National Capital Region",
+      "synoptic_corridor": "Indo-Gangetic West"
+    },
+    {
+      "id": "CHANDIGARH",
+      "name": "Chandigarh",
+      "latitude": 30.7333,
+      "longitude": 76.7794,
+      "elevation_m": 321.0,
+      "region": "Northern Plains",
+      "state": "Chandigarh",
+      "synoptic_corridor": "Indo-Gangetic West"
+    },
+    {
+      "id": "LUCKNOW",
+      "name": "Lucknow",
+      "latitude": 26.8467,
+      "longitude": 80.9462,
+      "elevation_m": 123.0,
+      "region": "Northern Plains",
+      "state": "Uttar Pradesh",
+      "synoptic_corridor": "Indo-Gangetic Central"
+    },
+    {
+      "id": "JAIPUR",
+      "name": "Jaipur",
+      "latitude": 26.9124,
+      "longitude": 75.7873,
+      "elevation_m": 431.0,
+      "region": "Western Arid",
+      "state": "Rajasthan",
+      "synoptic_corridor": "Thar Desert Border"
+    },
+    {
+      "id": "AHMEDABAD",
+      "name": "Ahmedabad",
+      "latitude": 23.0225,
+      "longitude": 72.5714,
+      "elevation_m": 53.0,
+      "region": "Western Arid",
+      "state": "Gujarat",
+      "synoptic_corridor": "Gujarat Plains"
+    },
+    {
+      "id": "BHOPAL",
+      "name": "Bhopal",
+      "latitude": 23.2599,
+      "longitude": 77.4126,
+      "elevation_m": 527.0,
+      "region": "Central Highlands",
+      "state": "Madhya Pradesh",
+      "synoptic_corridor": "Monsoon Trough Central"
+    },
+    {
+      "id": "NAGPUR",
+      "name": "Nagpur",
+      "latitude": 21.1458,
+      "longitude": 79.0882,
+      "elevation_m": 310.0,
+      "region": "Central Highlands",
+      "state": "Maharashtra",
+      "synoptic_corridor": "Vidarbha Plateau"
+    },
+    {
+      "id": "RAIPUR",
+      "name": "Raipur",
+      "latitude": 21.2514,
+      "longitude": 81.6296,
+      "elevation_m": 298.0,
+      "region": "Central Highlands",
+      "state": "Chhattisgarh",
+      "synoptic_corridor": "Chhattisgarh Basin"
+    },
+    {
+      "id": "RANCHI",
+      "name": "Ranchi",
+      "latitude": 23.3441,
+      "longitude": 85.3096,
+      "elevation_m": 651.0,
+      "region": "Central Highlands",
+      "state": "Jharkhand",
+      "synoptic_corridor": "Chota Nagpur Plateau"
+    },
+    {
+      "id": "KOLKATA",
+      "name": "Kolkata",
+      "latitude": 22.5726,
+      "longitude": 88.3639,
+      "elevation_m": 9.0,
+      "region": "Eastern Coastal",
+      "state": "West Bengal",
+      "synoptic_corridor": "Bengal Delta / BoB Head"
+    },
+    {
+      "id": "BHUBANESWAR",
+      "name": "Bhubaneswar",
+      "latitude": 20.2961,
+      "longitude": 85.8245,
+      "elevation_m": 45.0,
+      "region": "Eastern Coastal",
+      "state": "Odisha",
+      "synoptic_corridor": "Odisha Coast"
+    },
+    {
+      "id": "VISAKHAPATNAM",
+      "name": "Visakhapatnam",
+      "latitude": 17.6868,
+      "longitude": 83.2185,
+      "elevation_m": 45.0,
+      "region": "Eastern Coastal",
+      "state": "Andhra Pradesh",
+      "synoptic_corridor": "Andhra Coast"
+    },
+    {
+      "id": "CHENNAI",
+      "name": "Chennai",
+      "latitude": 13.0827,
+      "longitude": 80.2707,
+      "elevation_m": 7.0,
+      "region": "Eastern Coastal",
+      "state": "Tamil Nadu",
+      "synoptic_corridor": "Coromandel Coast"
+    },
+    {
+      "id": "MUMBAI",
+      "name": "Mumbai",
+      "latitude": 19.0760,
+      "longitude": 72.8777,
+      "elevation_m": 14.0,
+      "region": "Western Ghats",
+      "state": "Maharashtra",
+      "synoptic_corridor": "Konkan Coast"
+    },
+    {
+      "id": "PUNE",
+      "name": "Pune",
+      "latitude": 18.5204,
+      "longitude": 73.8567,
+      "elevation_m": 560.0,
+      "region": "Western Ghats",
+      "state": "Maharashtra",
+      "synoptic_corridor": "Ghats Lee Plateau"
+    },
+    {
+      "id": "PANAJI",
+      "name": "Panaji",
+      "latitude": 15.2993,
+      "longitude": 73.8278,
+      "elevation_m": 10.0,
+      "region": "Western Ghats",
+      "state": "Goa",
+      "synoptic_corridor": "Central Konkan"
+    },
+    {
+      "id": "KOCHI",
+      "name": "Kochi",
+      "latitude": 9.9312,
+      "longitude": 76.2673,
+      "elevation_m": 4.0,
+      "region": "Western Ghats",
+      "state": "Kerala",
+      "synoptic_corridor": "Malabar Coast"
+    },
+    {
+      "id": "BENGALURU",
+      "name": "Bengaluru",
+      "latitude": 12.9716,
+      "longitude": 77.5946,
+      "elevation_m": 920.0,
+      "region": "Southern Peninsula",
+      "state": "Karnataka",
+      "synoptic_corridor": "Mysore Plateau"
+    },
+    {
+      "id": "HYDERABAD",
+      "name": "Hyderabad",
+      "latitude": 17.3850,
+      "longitude": 78.4867,
+      "elevation_m": 542.0,
+      "region": "Southern Peninsula",
+      "state": "Telangana",
+      "synoptic_corridor": "Deccan Plateau"
+    },
+    {
+      "id": "THIRUVANANTHAPURAM",
+      "name": "Thiruvananthapuram",
+      "latitude": 8.5241,
+      "longitude": 76.9366,
+      "elevation_m": 16.0,
+      "region": "Southern Peninsula",
+      "state": "Kerala",
+      "synoptic_corridor": "Southern Tip Maritime"
+    },
+    {
+      "id": "LEH",
+      "name": "Leh",
+      "latitude": 34.1526,
+      "longitude": 77.5771,
+      "elevation_m": 3524.0,
+      "region": "Himalayan/Northeastern",
+      "state": "Ladakh",
+      "synoptic_corridor": "Trans-Himalayan Cold Desert"
+    },
+    {
+      "id": "SRINAGAR",
+      "name": "Srinagar",
+      "latitude": 34.0837,
+      "longitude": 74.7973,
+      "elevation_m": 1585.0,
+      "region": "Himalayan/Northeastern",
+      "state": "Jammu and Kashmir",
+      "synoptic_corridor": "Kashmir Valley"
+    },
+    {
+      "id": "SHIMLA",
+      "name": "Shimla",
+      "latitude": 31.1048,
+      "longitude": 77.1734,
+      "elevation_m": 2276.0,
+      "region": "Himalayan/Northeastern",
+      "state": "Himachal Pradesh",
+      "synoptic_corridor": "Western Himalayan Ridge"
+    },
+    {
+      "id": "DEHRADUN",
+      "name": "Dehradun",
+      "latitude": 30.3165,
+      "longitude": 78.0322,
+      "elevation_m": 640.0,
+      "region": "Himalayan/Northeastern",
+      "state": "Uttarakhand",
+      "synoptic_corridor": "Sub-Himalayan Foothills"
+    },
+    {
+      "id": "GUWAHATI",
+      "name": "Guwahati",
+      "latitude": 26.1445,
+      "longitude": 91.7362,
+      "elevation_m": 55.0,
+      "region": "Himalayan/Northeastern",
+      "state": "Assam",
+      "synoptic_corridor": "Brahmaputra Valley"
+    }
+  ]
+}

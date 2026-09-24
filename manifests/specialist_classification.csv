@@ -1,0 +1,7 @@
+specialist,classification,trained_model_exists,dataset,status
+precipitation_specialist.py,deterministic_formula,NO,None (CAPE/RH heuristic rules),EXPERIMENTAL_PROTOTYPE
+cyclone_specialist.py,deterministic_formula,NO,None (Pressure drop/vorticity formula),EXPERIMENTAL_PROTOTYPE
+monsoon_specialist.py,deterministic_formula,NO,None (Low-level jet/shear rule),EXPERIMENTAL_PROTOTYPE
+western_disturbance_specialist.py,deterministic_formula,NO,None (Subtropical jet/trough rule),EXPERIMENTAL_PROTOTYPE
+heatwave_specialist.py,deterministic_formula,NO,None (Temperature percentile threshold),EXPERIMENTAL_PROTOTYPE
+severe_wind_specialist.py,missing,NO,None,PLANNED_FUTURE

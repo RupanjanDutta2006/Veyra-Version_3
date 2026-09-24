@@ -1,0 +1,270 @@
+{
+  "benchmark_ladder_version": "1.0.0",
+  "gate": "Gate 1",
+  "evaluation_split": "2024-07-01 to 2024-12-31",
+  "bootstrap_method": "cycle",
+  "n_iterations": 200,
+  "seed": 42,
+  "prevalence": 0.102,
+  "results": {
+    "1_Climatology": {
+      "pr_auc": {
+        "point_estimate": 0.551,
+        "ci_95": [
+          0.5466,
+          0.5562
+        ]
+      },
+      "roc_auc": {
+        "point_estimate": 0.5,
+        "ci_95": [
+          0.5,
+          0.5
+        ]
+      },
+      "brier_score": {
+        "point_estimate": 0.0932,
+        "ci_95": [
+          0.0855,
+          0.1023
+        ]
+      },
+      "brier_skill_score": {
+        "point_estimate": 0.0863,
+        "ci_95": [
+          0.0828,
+          0.0898
+        ]
+      },
+      "expected_calibration_error": {
+        "point_estimate": 0.04,
+        "ci_95": [
+          0.0312,
+          0.0504
+        ]
+      }
+    },
+    "2_Persistence": {
+      "pr_auc": {
+        "point_estimate": 0.1281,
+        "ci_95": [
+          0.114,
+          0.149
+        ]
+      },
+      "roc_auc": {
+        "point_estimate": 0.5582,
+        "ci_95": [
+          0.5348,
+          0.5798
+        ]
+      },
+      "brier_score": {
+        "point_estimate": 0.0936,
+        "ci_95": [
+          0.086,
+          0.1031
+        ]
+      },
+      "brier_skill_score": {
+        "point_estimate": 0.0822,
+        "ci_95": [
+          0.0776,
+          0.0865
+        ]
+      },
+      "expected_calibration_error": {
+        "point_estimate": 0.0486,
+        "ci_95": [
+          0.0399,
+          0.0587
+        ]
+      }
+    },
+    "3_Raw_Spread": {
+      "pr_auc": {
+        "point_estimate": 0.1306,
+        "ci_95": [
+          0.1158,
+          0.1526
+        ]
+      },
+      "roc_auc": {
+        "point_estimate": 0.5734,
+        "ci_95": [
+          0.5478,
+          0.5971
+        ]
+      },
+      "brier_score": {
+        "point_estimate": 0.095,
+        "ci_95": [
+          0.0887,
+          0.102
+        ]
+      },
+      "brier_skill_score": {
+        "point_estimate": 0.0686,
+        "ci_95": [
+          0.0425,
+          0.0946
+        ]
+      },
+      "expected_calibration_error": {
+        "point_estimate": 0.049,
+        "ci_95": [
+          0.0406,
+          0.0562
+        ]
+      }
+    },
+    "4_Logistic_Spread": {
+      "pr_auc": {
+        "point_estimate": 0.1307,
+        "ci_95": [
+          0.1158,
+          0.1526
+        ]
+      },
+      "roc_auc": {
+        "point_estimate": 0.5735,
+        "ci_95": [
+          0.548,
+          0.5974
+        ]
+      },
+      "brier_score": {
+        "point_estimate": 0.0912,
+        "ci_95": [
+          0.0843,
+          0.0994
+        ]
+      },
+      "brier_skill_score": {
+        "point_estimate": 0.1061,
+        "ci_95": [
+          0.0958,
+          0.1164
+        ]
+      },
+      "expected_calibration_error": {
+        "point_estimate": 0.0118,
+        "ci_95": [
+          0.0069,
+          0.022
+        ]
+      }
+    },
+    "5_Compact_Statistical": {
+      "pr_auc": {
+        "point_estimate": 0.165,
+        "ci_95": [
+          0.1447,
+          0.1972
+        ]
+      },
+      "roc_auc": {
+        "point_estimate": 0.6296,
+        "ci_95": [
+          0.6055,
+          0.6564
+        ]
+      },
+      "brier_score": {
+        "point_estimate": 0.0897,
+        "ci_95": [
+          0.0835,
+          0.0972
+        ]
+      },
+      "brier_skill_score": {
+        "point_estimate": 0.1208,
+        "ci_95": [
+          0.1061,
+          0.1356
+        ]
+      },
+      "expected_calibration_error": {
+        "point_estimate": 0.0113,
+        "ci_95": [
+          0.0042,
+          0.0196
+        ]
+      }
+    },
+    "6_V3_Incumbent_Raw": {
+      "pr_auc": {
+        "point_estimate": 0.1489,
+        "ci_95": [
+          0.1316,
+          0.1694
+        ]
+      },
+      "roc_auc": {
+        "point_estimate": 0.6233,
+        "ci_95": [
+          0.5972,
+          0.6487
+        ]
+      },
+      "brier_score": {
+        "point_estimate": 0.0902,
+        "ci_95": [
+          0.0835,
+          0.0981
+        ]
+      },
+      "brier_skill_score": {
+        "point_estimate": 0.1155,
+        "ci_95": [
+          0.102,
+          0.1274
+        ]
+      },
+      "expected_calibration_error": {
+        "point_estimate": 0.006,
+        "ci_95": [
+          0.0032,
+          0.0167
+        ]
+      }
+    },
+    "7_V3_Incumbent_Calibrated": {
+      "pr_auc": {
+        "point_estimate": 0.1554,
+        "ci_95": [
+          0.1372,
+          0.1761
+        ]
+      },
+      "roc_auc": {
+        "point_estimate": 0.6283,
+        "ci_95": [
+          0.6021,
+          0.6542
+        ]
+      },
+      "brier_score": {
+        "point_estimate": 0.0899,
+        "ci_95": [
+          0.0831,
+          0.0978
+        ]
+      },
+      "brier_skill_score": {
+        "point_estimate": 0.1188,
+        "ci_95": [
+          0.1058,
+          0.1309
+        ]
+      },
+      "expected_calibration_error": {
+        "point_estimate": 0.0035,
+        "ci_95": [
+          0.0029,
+          0.0133
+        ]
+      }
+    }
+  }
+}

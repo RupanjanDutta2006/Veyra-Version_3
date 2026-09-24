@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "last_updated": "2026-09-20T11:40:00Z",
+  "gate": "Gate 0",
+  "description": "Veyra Canonical Target Manifest defining forecast bust and failure labels across variables and hazards.",
+  "invariants": {
+    "temporal_safety": "Target variables can only be computed when verification ground truth is available (valid_time + latency).",
+    "feature_target_isolation": "No target-derived variables or ground-truth residuals may be present in issue-time feature sets.",
+    "evaluation_contract": "All challengers and incumbent baselines must evaluate against these exact target definitions."
+  },
+  "targets": [
+    {
+      "target_id": "TARGET-V3-BASE",
+      "target_name": "bust_95th_mad",
+      "variable": "temperature_2m",
+      "unit": "K",
+      "threshold_type": "STRATIFIED_QUANTILE",
+      "quantile": 0.95,
+      "stratification_keys": ["lead_hours", "season", "climate_zone"],
+      "formula": "|F_mean - O_truth| > Q_95(|F - O|_historical)",
+      "description": "Primary V3 binary bust indicator: absolute forecast error exceeds the 95th percentile historical error for the specific lead and climate stratum."
+    },
+    {
+      "target_id": "TARGET-PRECIP-01",
+      "target_name": "bust_precip_95th_mad",
+      "variable": "precipitation_amount",
+      "unit": "mm/24h",
+      "threshold_type": "PERCENTILE_AND_FIXED",
+      "threshold_fixed": 50.0,
+      "quantile": 0.95,
+      "formula": "(|F - O| > 50.0 mm) OR (|F - O| > Q_95)",
+      "description": "Precipitation bust indicator: 24h accumulated rainfall error exceeds 50mm or stratum-specific 95th percentile error."
+    },
+    {
+      "target_id": "TARGET-CYCLONE-01",
+      "target_name": "bust_cyclone_track_intensity",
+      "variable": "cyclone_compound",
+      "unit": "compound (km, m/s)",
+      "threshold_type": "DUAL_THRESHOLD",
+      "threshold_track_km": 100.0,
+      "threshold_intensity_ms": 7.7,
+      "formula": "(Track_Error_km > 100.0) OR (|V_max_forecast - V_max_truth| > 7.7 m/s)",
+      "description": "Tropical cyclone bust: track position error exceeds 100km at 48h or intensity error exceeds 15 knots (7.7 m/s)."
+    },
+    {
+      "target_id": "TARGET-MONSOON-01",
+      "target_name": "bust_lps_track_genesis",
+      "variable": "monsoon_lps",
+      "unit": "compound (hours, km)",
+      "threshold_type": "GENESIS_PLACEMENT",
+      "threshold_genesis_hours": 24.0,
+      "threshold_placement_km": 200.0,
+      "formula": "(|T_genesis_fc - T_genesis_obs| > 24h) OR (Center_Distance_km > 200 km)",
+      "description": "Monsoon Low Pressure System bust: genesis timing error exceeds 24h or trough center placement exceeds 200km."
+    },
+    {
+      "target_id": "TARGET-WD-01",
+      "target_name": "bust_wd_arrival_precipitation",
+      "variable": "western_disturbance",
+      "unit": "compound (hours, mm)",
+      "threshold_type": "ARRIVAL_AND_PRECIP",
+      "threshold_arrival_hours": 12.0,
+      "threshold_precip_mm": 25.0,
+      "formula": "(|T_arrival_fc - T_arrival_obs| > 12h) OR (|Precip_fc - Precip_obs| > 25mm)",
+      "description": "Western Disturbance bust: trough arrival timing error exceeds 12h or orographic precipitation error exceeds 25mm/24h."
+    },
+    {
+      "target_id": "TARGET-HEATWAVE-01",
+      "target_name": "bust_heatwave_threshold",
+      "variable": "maximum_temperature_2m",
+      "unit": "K",
+      "threshold_type": "IMD_HEATWAVE_CRITERIA",
+      "threshold_plains_celsius": 40.0,
+      "threshold_departure_celsius": 4.5,
+      "formula": "(Missed_Heatwave) OR (False_Alarm AND |Tmax_fc - Tmax_obs| > 3.0 K)",
+      "description": "Heatwave bust: failure to predict heatwave conditions (Tmax >= 40°C & anomaly >= 4.5°C) or false alarm with > 3.0 K overprediction."
+    },
+    {
+      "target_id": "TARGET-WIND-01",
+      "target_name": "bust_gale_gust_exceedance",
+      "variable": "wind_gust_10m",
+      "unit": "m/s",
+      "threshold_type": "GALE_THRESHOLD",
+      "threshold_speed_ms": 17.2,
+      "threshold_error_ms": 6.0,
+      "formula": "(Missed_Gale_Gust) OR (|Gust_fc - Gust_obs| > 6.0 m/s)",
+      "description": "Severe wind bust: failure to predict gale-force gusts (>= 17.2 m/s) or gust speed error exceeding 6 m/s."
+    }
+  ]
+}

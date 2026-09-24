@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "last_updated": "2026-09-20T19:50:00Z",
+  "blueprint_gate": "Gate 10 / Phase K",
+  "alert_tiers": {
+    "INFO": {
+      "min_probability": 0.0,
+      "max_probability": 0.15,
+      "action": "Routine surveillance; no operational intervention required."
+    },
+    "ADVISORY": {
+      "min_probability": 0.15,
+      "max_probability": 0.30,
+      "action": "Advisory state; slight elevation in forecast bust risk."
+    },
+    "WATCH": {
+      "min_probability": 0.30,
+      "max_probability": 0.50,
+      "action": "Heightened watch; automatic ingestion into operational watchlist."
+    },
+    "WARNING": {
+      "min_probability": 0.50,
+      "max_probability": 0.75,
+      "action": "Operational warning; contingency forecasts and alternative scenarios recommended."
+    },
+    "CRITICAL": {
+      "min_probability": 0.75,
+      "max_probability": 1.0,
+      "action": "Critical failure alert; forecast bust imminent, primary guidance untrusted."
+    }
+  },
+  "watchlist_governance": {
+    "entry_threshold_probability": 0.30,
+    "exit_threshold_probability": 0.20,
+    "consecutive_cycles_for_exit": 2,
+    "retention_hours": 48,
+    "max_active_watchlist_items": 50,
+    "spatial_cluster_threshold_stations": 3,
+    "cluster_action": "ELEVATE_TO_REGIONAL_COMMON_MODE_ALERT"
+  }
+}

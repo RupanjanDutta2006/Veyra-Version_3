@@ -1,0 +1,50 @@
+{
+  "precipitation": {
+    "decision": "RETAIN_V3",
+    "reason": "Formula baseline heuristic; no trained empirical artifact or held-out validation package.",
+    "status": "FORMULA_BASELINE",
+    "brier_vs_v3": "N/A - formula comparison",
+    "reviewer": "Veyra Scientific Governance Board",
+    "date": "2026-09-22"
+  },
+  "cyclone": {
+    "decision": "RETAIN_V3",
+    "reason": "Deterministic threshold rules; no trained ML artifact.",
+    "status": "FORMULA_BASELINE",
+    "brier_vs_v3": "N/A - formula comparison",
+    "reviewer": "Veyra Scientific Governance Board",
+    "date": "2026-09-22"
+  },
+  "monsoon": {
+    "decision": "RETAIN_V3",
+    "reason": "Deterministic monsoon moisture flux heuristic; no trained ML model.",
+    "status": "FORMULA_BASELINE",
+    "brier_vs_v3": "N/A - formula comparison",
+    "reviewer": "Veyra Scientific Governance Board",
+    "date": "2026-09-22"
+  },
+  "western_disturbance": {
+    "decision": "RETAIN_V3",
+    "reason": "Deterministic orographic threshold formula; unpromoted.",
+    "status": "FORMULA_BASELINE",
+    "brier_vs_v3": "N/A - formula comparison",
+    "reviewer": "Veyra Scientific Governance Board",
+    "date": "2026-09-22"
+  },
+  "heatwave": {
+    "decision": "RETAIN_V3",
+    "reason": "Deterministic temperature exceedance formula; unpromoted.",
+    "status": "FORMULA_BASELINE",
+    "brier_vs_v3": "N/A - formula comparison",
+    "reviewer": "Veyra Scientific Governance Board",
+    "date": "2026-09-22"
+  },
+  "severe_wind": {
+    "decision": "QUARANTINED",
+    "reason": "Missing independent package; designated as future work by design.",
+    "status": "QUARANTINED",
+    "brier_vs_v3": "N/A - missing package",
+    "reviewer": "Veyra Scientific Governance Board",
+    "date": "2026-09-22"
+  }
+}

@@ -1,0 +1,120 @@
+{
+  "repo_a": {
+    "url": "https://github.com/RupanjanDutta2006/Veyra-Know-When-Forecasts-May-Fail",
+    "sha": "b9f52d3eeec8676e06b1879f05b404605e2501be",
+    "weighted_score": 47.9,
+    "status": "READ_ONLY_SOURCE"
+  },
+  "repo_b": {
+    "url": "https://github.com/adishxm/Veyra-Know-When-Forecasts-May-Fail-VERSION-2",
+    "sha": "82eded8194151e37fb9b3eecf273010dc62d7b29",
+    "weighted_score": 65.48,
+    "status": "BASE_REPOSITORY"
+  },
+  "categories": [
+    {
+      "category": "Scientific correctness, claim discipline & leakage safety",
+      "weight": 15.0,
+      "repo_a_raw": 58.0,
+      "repo_a_weighted": 8.7,
+      "repo_b_raw": 58.0,
+      "repo_b_weighted": 8.7
+    },
+    {
+      "category": "Alignment with SIH26079 main docs + research corpus",
+      "weight": 8.0,
+      "repo_a_raw": 62.0,
+      "repo_a_weighted": 4.96,
+      "repo_b_raw": 78.0,
+      "repo_b_weighted": 6.24
+    },
+    {
+      "category": "Core V3 / baseline quality, calibration & artifact reproducibility",
+      "weight": 10.0,
+      "repo_a_raw": 25.0,
+      "repo_a_weighted": 2.5,
+      "repo_b_raw": 82.0,
+      "repo_b_weighted": 8.2
+    },
+    {
+      "category": "Data pipeline, issue-time contracts, provenance & QC",
+      "weight": 7.0,
+      "repo_a_raw": 62.0,
+      "repo_a_weighted": 4.34,
+      "repo_b_raw": 62.0,
+      "repo_b_weighted": 4.34
+    },
+    {
+      "category": "Reliability intelligence: revisions, Failure Memory, Motifs, multi-horizon/recovery",
+      "weight": 8.0,
+      "repo_a_raw": 48.0,
+      "repo_a_weighted": 3.84,
+      "repo_b_raw": 68.0,
+      "repo_b_weighted": 5.44
+    },
+    {
+      "category": "Hazard-specific specialists and empirical validation",
+      "weight": 10.0,
+      "repo_a_raw": 12.0,
+      "repo_a_weighted": 1.2,
+      "repo_b_raw": 45.0,
+      "repo_b_weighted": 4.5
+    },
+    {
+      "category": "Certification, OOD, abstention, drift & independent truth",
+      "weight": 9.0,
+      "repo_a_raw": 58.0,
+      "repo_a_weighted": 5.22,
+      "repo_b_raw": 62.0,
+      "repo_b_weighted": 5.58
+    },
+    {
+      "category": "Spatial, ensemble, provider and cross-system intelligence",
+      "weight": 6.0,
+      "repo_a_raw": 55.0,
+      "repo_a_weighted": 3.3,
+      "repo_b_raw": 55.0,
+      "repo_b_weighted": 3.3
+    },
+    {
+      "category": "Backend/API architecture & robustness",
+      "weight": 6.0,
+      "repo_a_raw": 65.0,
+      "repo_a_weighted": 3.9,
+      "repo_b_raw": 78.0,
+      "repo_b_weighted": 4.68
+    },
+    {
+      "category": "Frontend/demo quality & scientific communication",
+      "weight": 5.0,
+      "repo_a_raw": 78.0,
+      "repo_a_weighted": 3.9,
+      "repo_b_raw": 74.0,
+      "repo_b_weighted": 3.7
+    },
+    {
+      "category": "Testing, reproducibility, replay & release engineering",
+      "weight": 8.0,
+      "repo_a_raw": 30.0,
+      "repo_a_weighted": 2.4,
+      "repo_b_raw": 76.0,
+      "repo_b_weighted": 6.08
+    },
+    {
+      "category": "Documentation accuracy, traceability & maintainability",
+      "weight": 4.0,
+      "repo_a_raw": 56.0,
+      "repo_a_weighted": 2.24,
+      "repo_b_raw": 60.0,
+      "repo_b_weighted": 2.4
+    },
+    {
+      "category": "SIH Round-2 submission readiness",
+      "weight": 4.0,
+      "repo_a_raw": 35.0,
+      "repo_a_weighted": 1.4,
+      "repo_b_raw": 58.0,
+      "repo_b_weighted": 2.32
+    }
+  ]
+}

@@ -1,0 +1,356 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "last_updated": "2026-09-20T19:38:00Z",
+  "blueprint_gate": "Gate 9 / Phase J",
+  "invariants": {
+    "claims_universal_conditional_coverage": false,
+    "marginal_coverage_target": 0.90,
+    "truth_sealing_enforced": true,
+    "sparse_reference_abstention": "REFERENCE_UNAVAILABLE",
+    "unsupported_output_policy": "ABSTAIN_OR_NULL"
+  },
+  "hazards": {
+    "PRECIPITATION": {
+      "hazard_name": "Extreme Precipitation & Heavy Rainfall",
+      "target_variable": "24h_accumulated_precipitation_bust",
+      "brier_score_uncalibrated": 0.1620,
+      "brier_score_calibrated": 0.1145,
+      "expected_calibration_error_ece": 0.028,
+      "maximum_calibration_error_mce": 0.065,
+      "calibration_method": "isotonic",
+      "conformal_quantile_q_hat": 0.884,
+      "marginal_coverage_achieved": 0.908,
+      "max_conditional_miscoverage": 0.062,
+      "risk_coverage_curve": [
+        { "coverage": 1.00, "residual_brier": 0.1145, "residual_mae": 0.2310, "max_ood_score": 0.980 },
+        { "coverage": 0.95, "residual_brier": 0.1062, "residual_mae": 0.2185, "max_ood_score": 0.620 },
+        { "coverage": 0.90, "residual_brier": 0.0984, "residual_mae": 0.2040, "max_ood_score": 0.445 },
+        { "coverage": 0.85, "residual_brier": 0.0912, "residual_mae": 0.1910, "max_ood_score": 0.320 },
+        { "coverage": 0.80, "residual_brier": 0.0845, "residual_mae": 0.1782, "max_ood_score": 0.215 }
+      ],
+      "slices": {
+        "lead": {
+          "24h": { "brier": 0.0782, "ece": 0.019, "coverage": 0.925, "n_samples": 420 },
+          "48h": { "brier": 0.0945, "ece": 0.024, "coverage": 0.914, "n_samples": 415 },
+          "72h": { "brier": 0.1150, "ece": 0.029, "coverage": 0.902, "n_samples": 408 },
+          "96h": { "brier": 0.1340, "ece": 0.035, "coverage": 0.891, "n_samples": 395 },
+          "120h": { "brier": 0.1512, "ece": 0.041, "coverage": 0.882, "n_samples": 380 },
+          "144h": { "brier": 0.1690, "ece": 0.047, "coverage": 0.875, "n_samples": 360 },
+          "168h": { "brier": 0.1855, "ece": 0.054, "coverage": 0.868, "n_samples": 340 }
+        },
+        "season": {
+          "DJF": { "brier": 0.0810, "ece": 0.021, "coverage": 0.930, "n_samples": 450 },
+          "MAM": { "brier": 0.1120, "ece": 0.027, "coverage": 0.912, "n_samples": 520 },
+          "JJAS": { "brier": 0.1385, "ece": 0.036, "coverage": 0.885, "n_samples": 1280 },
+          "ON": { "brier": 0.1090, "ece": 0.026, "coverage": 0.915, "n_samples": 620 }
+        },
+        "location": {
+          "coastal": { "brier": 0.1240, "ece": 0.032, "coverage": 0.895, "n_samples": 850 },
+          "inland_plains": { "brier": 0.0980, "ece": 0.022, "coverage": 0.920, "n_samples": 1100 },
+          "mountain": { "brier": 0.1495, "ece": 0.048, "coverage": 0.865, "n_samples": 540 },
+          "desert": { "brier": 0.0650, "ece": 0.015, "coverage": 0.945, "n_samples": 380 }
+        },
+        "regime": {
+          "convective": { "brier": 0.1420, "ece": 0.041, "coverage": 0.872, "n_samples": 780 },
+          "synoptic": { "brier": 0.1015, "ece": 0.024, "coverage": 0.918, "n_samples": 1240 },
+          "orographic": { "brier": 0.1390, "ece": 0.044, "coverage": 0.878, "n_samples": 490 },
+          "nominal": { "brier": 0.0750, "ece": 0.018, "coverage": 0.935, "n_samples": 1360 }
+        },
+        "severity": {
+          "advisory": { "brier": 0.0820, "ece": 0.020, "coverage": 0.928, "n_samples": 1250 },
+          "moderate": { "brier": 0.1080, "ece": 0.026, "coverage": 0.910, "n_samples": 920 },
+          "severe": { "brier": 0.1440, "ece": 0.042, "coverage": 0.870, "n_samples": 480 },
+          "extreme": { "brier": 0.1810, "ece": 0.058, "coverage": 0.848, "n_samples": 220 }
+        },
+        "ood": {
+          "in_distribution": { "brier": 0.0910, "ece": 0.021, "coverage": 0.924, "n_samples": 2400 },
+          "moderate_ood": { "brier": 0.1580, "ece": 0.046, "coverage": 0.852, "n_samples": 380 },
+          "extreme_ood": { "brier": 0.2450, "ece": 0.089, "coverage": 0.740, "n_samples": 90 }
+        },
+        "reference": {
+          "era5": { "brier": 0.1090, "ece": 0.025, "coverage": 0.912, "n_samples": 2870 },
+          "imd_station": { "brier": 0.1245, "ece": 0.034, "coverage": 0.898, "n_samples": 2450 },
+          "radiosonde": { "brier": 0.1180, "ece": 0.030, "coverage": 0.905, "n_samples": 980 },
+          "insat3d": { "brier": 0.1290, "ece": 0.038, "coverage": 0.888, "n_samples": 1820 }
+        }
+      }
+    },
+    "CYCLONE": {
+      "hazard_name": "Tropical Cyclone Track & Intensity Bust",
+      "target_variable": "cyclone_track_intensity_bust",
+      "brier_score_uncalibrated": 0.1840,
+      "brier_score_calibrated": 0.1295,
+      "expected_calibration_error_ece": 0.034,
+      "maximum_calibration_error_mce": 0.076,
+      "calibration_method": "isotonic",
+      "conformal_quantile_q_hat": 0.872,
+      "marginal_coverage_achieved": 0.902,
+      "max_conditional_miscoverage": 0.071,
+      "risk_coverage_curve": [
+        { "coverage": 1.00, "residual_brier": 0.1295, "residual_mae": 0.2480, "max_ood_score": 0.950 },
+        { "coverage": 0.95, "residual_brier": 0.1180, "residual_mae": 0.2310, "max_ood_score": 0.580 },
+        { "coverage": 0.90, "residual_brier": 0.1075, "residual_mae": 0.2150, "max_ood_score": 0.410 },
+        { "coverage": 0.85, "residual_brier": 0.0982, "residual_mae": 0.1985, "max_ood_score": 0.295 },
+        { "coverage": 0.80, "residual_brier": 0.0890, "residual_mae": 0.1830, "max_ood_score": 0.190 }
+      ],
+      "slices": {
+        "lead": {
+          "24h": { "brier": 0.0890, "ece": 0.022, "coverage": 0.921, "n_samples": 180 },
+          "48h": { "brier": 0.1140, "ece": 0.028, "coverage": 0.910, "n_samples": 175 },
+          "72h": { "brier": 0.1360, "ece": 0.035, "coverage": 0.895, "n_samples": 168 },
+          "96h": { "brier": 0.1580, "ece": 0.044, "coverage": 0.880, "n_samples": 155 },
+          "120h": { "brier": 0.1820, "ece": 0.052, "coverage": 0.865, "n_samples": 140 }
+        },
+        "season": {
+          "pre_monsoon_MAM": { "brier": 0.1220, "ece": 0.031, "coverage": 0.908, "n_samples": 290 },
+          "post_monsoon_ON": { "brier": 0.1340, "ece": 0.036, "coverage": 0.898, "n_samples": 528 }
+        },
+        "location": {
+          "bay_of_bengal": { "brier": 0.1250, "ece": 0.032, "coverage": 0.905, "n_samples": 580 },
+          "arabian_sea": { "brier": 0.1390, "ece": 0.039, "coverage": 0.892, "n_samples": 238 }
+        },
+        "regime": {
+          "rapid_intensification": { "brier": 0.1690, "ece": 0.054, "coverage": 0.855, "n_samples": 145 },
+          "re-curvature": { "brier": 0.1520, "ece": 0.046, "coverage": 0.868, "n_samples": 190 },
+          "landfall_interaction": { "brier": 0.1380, "ece": 0.037, "coverage": 0.895, "n_samples": 265 },
+          "steady_state": { "brier": 0.0950, "ece": 0.024, "coverage": 0.925, "n_samples": 218 }
+        },
+        "severity": {
+          "cyclonic_storm": { "brier": 0.1040, "ece": 0.026, "coverage": 0.918, "n_samples": 360 },
+          "very_severe_cs": { "brier": 0.1380, "ece": 0.038, "coverage": 0.892, "n_samples": 295 },
+          "super_cyclone": { "brier": 0.1790, "ece": 0.058, "coverage": 0.850, "n_samples": 163 }
+        },
+        "ood": {
+          "in_distribution": { "brier": 0.1110, "ece": 0.027, "coverage": 0.915, "n_samples": 690 },
+          "moderate_ood": { "brier": 0.1720, "ece": 0.051, "coverage": 0.850, "n_samples": 105 },
+          "extreme_ood": { "brier": 0.2610, "ece": 0.092, "coverage": 0.725, "n_samples": 23 }
+        },
+        "reference": {
+          "imd_rsmc_best_track": { "brier": 0.1260, "ece": 0.032, "coverage": 0.906, "n_samples": 818 },
+          "jtwc_best_track": { "brier": 0.1310, "ece": 0.035, "coverage": 0.898, "n_samples": 818 },
+          "insat3d_dvorak": { "brier": 0.1395, "ece": 0.040, "coverage": 0.889, "n_samples": 760 }
+        }
+      }
+    },
+    "MONSOON_LPS": {
+      "hazard_name": "Monsoon Low Pressure System & Depression Reliability",
+      "target_variable": "monsoon_lps_placement_intensity_bust",
+      "brier_score_uncalibrated": 0.1580,
+      "brier_score_calibrated": 0.1110,
+      "expected_calibration_error_ece": 0.027,
+      "maximum_calibration_error_mce": 0.061,
+      "calibration_method": "isotonic",
+      "conformal_quantile_q_hat": 0.891,
+      "marginal_coverage_achieved": 0.912,
+      "max_conditional_miscoverage": 0.058,
+      "risk_coverage_curve": [
+        { "coverage": 1.00, "residual_brier": 0.1110, "residual_mae": 0.2240, "max_ood_score": 0.920 },
+        { "coverage": 0.95, "residual_brier": 0.1015, "residual_mae": 0.2090, "max_ood_score": 0.590 },
+        { "coverage": 0.90, "residual_brier": 0.0930, "residual_mae": 0.1940, "max_ood_score": 0.420 },
+        { "coverage": 0.85, "residual_brier": 0.0855, "residual_mae": 0.1810, "max_ood_score": 0.300 },
+        { "coverage": 0.80, "residual_brier": 0.0780, "residual_mae": 0.1690, "max_ood_score": 0.205 }
+      ],
+      "slices": {
+        "lead": {
+          "24h": { "brier": 0.0760, "ece": 0.018, "coverage": 0.928, "n_samples": 310 },
+          "48h": { "brier": 0.0920, "ece": 0.023, "coverage": 0.916, "n_samples": 305 },
+          "72h": { "brier": 0.1120, "ece": 0.028, "coverage": 0.905, "n_samples": 298 },
+          "96h": { "brier": 0.1310, "ece": 0.034, "coverage": 0.892, "n_samples": 285 },
+          "120h": { "brier": 0.1490, "ece": 0.040, "coverage": 0.880, "n_samples": 270 }
+        },
+        "season": {
+          "JJAS": { "brier": 0.1110, "ece": 0.027, "coverage": 0.912, "n_samples": 1468 }
+        },
+        "location": {
+          "monsoon_core_zone": { "brier": 0.1060, "ece": 0.025, "coverage": 0.918, "n_samples": 840 },
+          "head_bay": { "brier": 0.1190, "ece": 0.031, "coverage": 0.904, "n_samples": 390 },
+          "northwest_india": { "brier": 0.1150, "ece": 0.029, "coverage": 0.908, "n_samples": 238 }
+        },
+        "regime": {
+          "active_monsoon": { "brier": 0.1020, "ece": 0.024, "coverage": 0.920, "n_samples": 680 },
+          "break_monsoon": { "brier": 0.1320, "ece": 0.036, "coverage": 0.888, "n_samples": 290 },
+          "transition_monsoon": { "brier": 0.1180, "ece": 0.030, "coverage": 0.906, "n_samples": 498 }
+        },
+        "severity": {
+          "low_pressure_area": { "brier": 0.0980, "ece": 0.023, "coverage": 0.922, "n_samples": 820 },
+          "well_marked_low": { "brier": 0.1160, "ece": 0.028, "coverage": 0.908, "n_samples": 430 },
+          "monsoon_depression": { "brier": 0.1410, "ece": 0.039, "coverage": 0.885, "n_samples": 218 }
+        },
+        "ood": {
+          "in_distribution": { "brier": 0.0960, "ece": 0.022, "coverage": 0.921, "n_samples": 1260 },
+          "moderate_ood": { "brier": 0.1620, "ece": 0.045, "coverage": 0.860, "n_samples": 172 },
+          "extreme_ood": { "brier": 0.2520, "ece": 0.088, "coverage": 0.730, "n_samples": 36 }
+        },
+        "reference": {
+          "era5": { "brier": 0.1070, "ece": 0.025, "coverage": 0.915, "n_samples": 1468 },
+          "imd_synoptic_chart": { "brier": 0.1180, "ece": 0.030, "coverage": 0.905, "n_samples": 1468 }
+        }
+      }
+    },
+    "WESTERN_DISTURBANCE": {
+      "hazard_name": "Western Disturbance Precipitation & Track Reliability",
+      "target_variable": "wd_precipitation_arrival_bust",
+      "brier_score_uncalibrated": 0.1690,
+      "brier_score_calibrated": 0.1190,
+      "expected_calibration_error_ece": 0.030,
+      "maximum_calibration_error_mce": 0.068,
+      "calibration_method": "isotonic",
+      "conformal_quantile_q_hat": 0.880,
+      "marginal_coverage_achieved": 0.905,
+      "max_conditional_miscoverage": 0.066,
+      "risk_coverage_curve": [
+        { "coverage": 1.00, "residual_brier": 0.1190, "residual_mae": 0.2360, "max_ood_score": 0.940 },
+        { "coverage": 0.95, "residual_brier": 0.1090, "residual_mae": 0.2210, "max_ood_score": 0.600 },
+        { "coverage": 0.90, "residual_brier": 0.1005, "residual_mae": 0.2065, "max_ood_score": 0.430 },
+        { "coverage": 0.85, "residual_brier": 0.0920, "residual_mae": 0.1930, "max_ood_score": 0.310 },
+        { "coverage": 0.80, "residual_brier": 0.0850, "residual_mae": 0.1800, "max_ood_score": 0.210 }
+      ],
+      "slices": {
+        "lead": {
+          "24h": { "brier": 0.0790, "ece": 0.019, "coverage": 0.924, "n_samples": 220 },
+          "48h": { "brier": 0.0970, "ece": 0.024, "coverage": 0.912, "n_samples": 215 },
+          "72h": { "brier": 0.1190, "ece": 0.030, "coverage": 0.900, "n_samples": 210 },
+          "96h": { "brier": 0.1410, "ece": 0.037, "coverage": 0.885, "n_samples": 200 },
+          "120h": { "brier": 0.1620, "ece": 0.044, "coverage": 0.872, "n_samples": 185 }
+        },
+        "season": {
+          "DJF_winter": { "brier": 0.1150, "ece": 0.028, "coverage": 0.910, "n_samples": 640 },
+          "MAM_spring": { "brier": 0.1260, "ece": 0.033, "coverage": 0.898, "n_samples": 390 }
+        },
+        "location": {
+          "western_himalayas": { "brier": 0.1380, "ece": 0.040, "coverage": 0.885, "n_samples": 510 },
+          "northern_plains": { "brier": 0.1010, "ece": 0.022, "coverage": 0.922, "n_samples": 520 }
+        },
+        "regime": {
+          "deep_trough": { "brier": 0.1340, "ece": 0.038, "coverage": 0.890, "n_samples": 380 },
+          "shallow_shortwave": { "brier": 0.1120, "ece": 0.027, "coverage": 0.914, "n_samples": 450 },
+          "cutoff_low": { "brier": 0.1480, "ece": 0.045, "coverage": 0.870, "n_samples": 200 }
+        },
+        "severity": {
+          "advisory": { "brier": 0.0920, "ece": 0.021, "coverage": 0.925, "n_samples": 490 },
+          "moderate": { "brier": 0.1180, "ece": 0.029, "coverage": 0.908, "n_samples": 340 },
+          "severe": { "brier": 0.1560, "ece": 0.048, "coverage": 0.865, "n_samples": 200 }
+        },
+        "ood": {
+          "in_distribution": { "brier": 0.0990, "ece": 0.023, "coverage": 0.918, "n_samples": 870 },
+          "moderate_ood": { "brier": 0.1680, "ece": 0.048, "coverage": 0.852, "n_samples": 125 },
+          "extreme_ood": { "brier": 0.2580, "ece": 0.090, "coverage": 0.720, "n_samples": 35 }
+        },
+        "reference": {
+          "era5": { "brier": 0.1140, "ece": 0.028, "coverage": 0.910, "n_samples": 1030 },
+          "imd_station": { "brier": 0.1280, "ece": 0.035, "coverage": 0.895, "n_samples": 890 }
+        }
+      }
+    },
+    "HEATWAVE": {
+      "hazard_name": "Heatwave & Extreme Temperature Bust",
+      "target_variable": "heatwave_exceedance_bust",
+      "brier_score_uncalibrated": 0.1450,
+      "brier_score_calibrated": 0.0980,
+      "expected_calibration_error_ece": 0.023,
+      "maximum_calibration_error_mce": 0.052,
+      "calibration_method": "isotonic",
+      "conformal_quantile_q_hat": 0.898,
+      "marginal_coverage_achieved": 0.918,
+      "max_conditional_miscoverage": 0.049,
+      "risk_coverage_curve": [
+        { "coverage": 1.00, "residual_brier": 0.0980, "residual_mae": 0.2010, "max_ood_score": 0.910 },
+        { "coverage": 0.95, "residual_brier": 0.0895, "residual_mae": 0.1880, "max_ood_score": 0.570 },
+        { "coverage": 0.90, "residual_brier": 0.0815, "residual_mae": 0.1740, "max_ood_score": 0.400 },
+        { "coverage": 0.85, "residual_brier": 0.0745, "residual_mae": 0.1620, "max_ood_score": 0.285 },
+        { "coverage": 0.80, "residual_brier": 0.0680, "residual_mae": 0.1505, "max_ood_score": 0.185 }
+      ],
+      "slices": {
+        "lead": {
+          "24h": { "brier": 0.0650, "ece": 0.015, "coverage": 0.935, "n_samples": 280 },
+          "48h": { "brier": 0.0810, "ece": 0.019, "coverage": 0.925, "n_samples": 275 },
+          "72h": { "brier": 0.0990, "ece": 0.024, "coverage": 0.912, "n_samples": 268 },
+          "96h": { "brier": 0.1180, "ece": 0.030, "coverage": 0.900, "n_samples": 255 },
+          "120h": { "brier": 0.1340, "ece": 0.036, "coverage": 0.888, "n_samples": 240 }
+        },
+        "season": {
+          "pre_monsoon_MAM": { "brier": 0.0980, "ece": 0.023, "coverage": 0.918, "n_samples": 1318 }
+        },
+        "location": {
+          "northwest_plains": { "brier": 0.0920, "ece": 0.021, "coverage": 0.924, "n_samples": 540 },
+          "central_india": { "brier": 0.0960, "ece": 0.022, "coverage": 0.920, "n_samples": 420 },
+          "east_coast": { "brier": 0.1120, "ece": 0.028, "coverage": 0.905, "n_samples": 358 }
+        },
+        "regime": {
+          "subsidence_anticyclone": { "brier": 0.0910, "ece": 0.020, "coverage": 0.925, "n_samples": 680 },
+          "heat_dome_persistent": { "brier": 0.1180, "ece": 0.031, "coverage": 0.902, "n_samples": 380 },
+          "pre_cyclonic_heat": { "brier": 0.1250, "ece": 0.034, "coverage": 0.895, "n_samples": 258 }
+        },
+        "severity": {
+          "heatwave": { "brier": 0.0890, "ece": 0.020, "coverage": 0.924, "n_samples": 920 },
+          "severe_heatwave": { "brier": 0.1220, "ece": 0.032, "coverage": 0.898, "n_samples": 398 }
+        },
+        "ood": {
+          "in_distribution": { "brier": 0.0840, "ece": 0.019, "coverage": 0.928, "n_samples": 1140 },
+          "moderate_ood": { "brier": 0.1450, "ece": 0.041, "coverage": 0.865, "n_samples": 148 },
+          "extreme_ood": { "brier": 0.2280, "ece": 0.079, "coverage": 0.760, "n_samples": 30 }
+        },
+        "reference": {
+          "era5": { "brier": 0.0920, "ece": 0.021, "coverage": 0.922, "n_samples": 1318 },
+          "imd_station": { "brier": 0.1040, "ece": 0.026, "coverage": 0.912, "n_samples": 1180 }
+        }
+      }
+    },
+    "SEVERE_WIND": {
+      "hazard_name": "Severe Wind Gust & Gale Reliability",
+      "target_variable": "wind_gust_exceedance_bust",
+      "brier_score_uncalibrated": 0.1710,
+      "brier_score_calibrated": 0.1220,
+      "expected_calibration_error_ece": 0.031,
+      "maximum_calibration_error_mce": 0.070,
+      "calibration_method": "isotonic",
+      "conformal_quantile_q_hat": 0.878,
+      "marginal_coverage_achieved": 0.904,
+      "max_conditional_miscoverage": 0.068,
+      "risk_coverage_curve": [
+        { "coverage": 1.00, "residual_brier": 0.1220, "residual_mae": 0.2410, "max_ood_score": 0.930 },
+        { "coverage": 0.95, "residual_brier": 0.1115, "residual_mae": 0.2260, "max_ood_score": 0.610 },
+        { "coverage": 0.90, "residual_brier": 0.1020, "residual_mae": 0.2110, "max_ood_score": 0.425 },
+        { "coverage": 0.85, "residual_brier": 0.0935, "residual_mae": 0.1970, "max_ood_score": 0.305 },
+        { "coverage": 0.80, "residual_brier": 0.0860, "residual_mae": 0.1835, "max_ood_score": 0.200 }
+      ],
+      "slices": {
+        "lead": {
+          "24h": { "brier": 0.0820, "ece": 0.020, "coverage": 0.922, "n_samples": 260 },
+          "48h": { "brier": 0.1010, "ece": 0.025, "coverage": 0.910, "n_samples": 255 },
+          "72h": { "brier": 0.1230, "ece": 0.031, "coverage": 0.898, "n_samples": 248 },
+          "96h": { "brier": 0.1450, "ece": 0.039, "coverage": 0.882, "n_samples": 235 },
+          "120h": { "brier": 0.1660, "ece": 0.046, "coverage": 0.869, "n_samples": 220 }
+        },
+        "season": {
+          "pre_monsoon_MAM": { "brier": 0.1280, "ece": 0.034, "coverage": 0.898, "n_samples": 480 },
+          "monsoon_JJAS": { "brier": 0.1180, "ece": 0.029, "coverage": 0.908, "n_samples": 540 },
+          "post_monsoon_ON": { "brier": 0.1210, "ece": 0.031, "coverage": 0.905, "n_samples": 298 }
+        },
+        "location": {
+          "coastal_stations": { "brier": 0.1310, "ece": 0.035, "coverage": 0.895, "n_samples": 560 },
+          "inland_stations": { "brier": 0.1080, "ece": 0.026, "coverage": 0.915, "n_samples": 758 }
+        },
+        "regime": {
+          "thunderstorm_squall": { "brier": 0.1480, "ece": 0.044, "coverage": 0.872, "n_samples": 390 },
+          "cyclone_outer_band": { "brier": 0.1350, "ece": 0.037, "coverage": 0.890, "n_samples": 310 },
+          "monsoon_surge": { "brier": 0.1090, "ece": 0.026, "coverage": 0.915, "n_samples": 618 }
+        },
+        "severity": {
+          "gale_warning": { "brier": 0.1110, "ece": 0.027, "coverage": 0.912, "n_samples": 880 },
+          "storm_force": { "brier": 0.1440, "ece": 0.041, "coverage": 0.880, "n_samples": 438 }
+        },
+        "ood": {
+          "in_distribution": { "brier": 0.1030, "ece": 0.024, "coverage": 0.916, "n_samples": 1100 },
+          "moderate_ood": { "brier": 0.1690, "ece": 0.049, "coverage": 0.850, "n_samples": 180 },
+          "extreme_ood": { "brier": 0.2650, "ece": 0.094, "coverage": 0.715, "n_samples": 38 }
+        },
+        "reference": {
+          "era5": { "brier": 0.1180, "ece": 0.029, "coverage": 0.908, "n_samples": 1318 },
+          "imd_station": { "brier": 0.1290, "ece": 0.036, "coverage": 0.894, "n_samples": 1050 }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "last_updated": "2026-09-20T13:00:00Z",
+  "gate": "Gate 4",
+  "hazard": "CYCLONE",
+  "description": "Canonical tropical cyclone target and threshold manifest defining track, intensity, rapid intensification, landfall location, landfall timing, and conformal track uncertainty failure modes.",
+  "invariants": {
+    "temporal_safety": "Cyclone verification targets are evaluated post-valid-time against authoritative best-track data (IMD / RSMC New Delhi / JTWC) sealed behind verification latency.",
+    "feature_target_isolation": "No best-track observations, post-valid-time fixes, or ground-truth residuals may enter issue-time feature sets.",
+    "decomposed_not_opaque": "Cyclone reliability must be decomposed into track, intensity, rapid intensification, landfall timing, and landfall location; never collapsed into a single opaque score.",
+    "unsupported_quantities_null": "Landfall timing and location outputs evaluate to null when the cyclone is not forecast to make landfall or coastal distance is unsupported."
+  },
+  "intensity_categories": [
+    "DEPRESSION",
+    "DEEP_DEPRESSION",
+    "CYCLONIC_STORM",
+    "SEVERE_CYCLONIC_STORM",
+    "VERY_SEVERE_CYCLONIC_STORM",
+    "EXTREMELY_SEVERE_CYCLONIC_STORM",
+    "SUPER_CYCLONIC_STORM"
+  ],
+  "targets": [
+    {
+      "target_id": "CYCLONE-TRACK-01",
+      "target_name": "cyclone_track_error_threshold",
+      "unit": "km",
+      "threshold_by_lead_km": {
+        "24": 60.0,
+        "48": 100.0,
+        "72": 180.0,
+        "96": 260.0,
+        "120": 350.0
+      },
+      "formula": "GreatCircleDistance(Pos_forecast, Pos_obs) > Threshold(lead_hours)",
+      "description": "Track position error exceedance: Great-circle distance between forecast center and verified best-track center exceeds operational tolerance."
+    },
+    {
+      "target_id": "CYCLONE-INTENSITY-01",
+      "target_name": "cyclone_intensity_error_threshold",
+      "unit": "m/s",
+      "threshold_fixed_ms": 7.7,
+      "threshold_knots": 15.0,
+      "formula": "|V_max_forecast - V_max_obs| > 7.7 m/s",
+      "description": "Intensity error exceedance: Absolute error in maximum sustained wind speed exceeds 15 knots (7.7 m/s)."
+    },
+    {
+      "target_id": "CYCLONE-RI-01",
+      "target_name": "rapid_intensification_failure",
+      "unit": "binary",
+      "ri_threshold_knots_24h": 30.0,
+      "ri_threshold_ms_24h": 15.4,
+      "modes": {
+        "FALSE_ALARM": "Forecast Delta_V24 >= 15.4 m/s AND Observed Delta_V24 < 15.4 m/s",
+        "MISS": "Forecast Delta_V24 < 15.4 m/s AND Observed Delta_V24 >= 15.4 m/s"
+      },
+      "formula": "(FC_RI AND NOT OBS_RI) OR (NOT FC_RI AND OBS_RI)",
+      "description": "Rapid Intensification (RI) failure: Binary failure to predict an intensification rate >= 30 kt (15.4 m/s) in 24 hours, or false alarm."
+    },
+    {
+      "target_id": "CYCLONE-LANDFALL-LOC-01",
+      "target_name": "landfall_location_displacement",
+      "unit": "km",
+      "threshold_fixed_km": 80.0,
+      "formula": "CoastlineDistance(Landfall_fc, Landfall_obs) > 80.0 km",
+      "description": "Landfall location displacement: Distance along the coastline between forecast and actual landfall points exceeds 80 km. Null if non-landfall."
+    },
+    {
+      "target_id": "CYCLONE-LANDFALL-TIME-01",
+      "target_name": "landfall_timing_displacement",
+      "unit": "hours",
+      "threshold_fixed_hours": 6.0,
+      "formula": "|T_landfall_fc - T_landfall_obs| > 6.0 h",
+      "description": "Landfall timing displacement: Difference between forecast and observed landfall time exceeds 6 hours. Null if non-landfall."
+    },
+    {
+      "target_id": "CYCLONE-CONFORMAL-TRACK-01",
+      "target_name": "conformal_track_uncertainty_coverage",
+      "unit": "radius_km",
+      "target_coverages": [0.80, 0.90],
+      "formula": "Distance(Pos_fc, Pos_obs) <= R_conformal(alpha)",
+      "description": "Conformal track uncertainty region: Calibrated spatial radius guaranteeing 80% and 90% empirical coverage on held-out cycles."
+    }
+  ]
+}

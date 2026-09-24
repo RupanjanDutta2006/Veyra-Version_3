@@ -1,0 +1,55 @@
+# Implementation Plan - Phase H: Heatwave and Data-Dependent Severe-Wind Specialists (Gate 7 / P1 + P2)
+
+## Status: COMPLETED
+Certified: 2026-09-20
+Blueprint Gate: Gate 7
+Priority: P1 (Heatwave) + P2 (Data-Dependent Severe Wind)
+Model ID: `HEATWAVE_RELIABILITY_V1`
+
+---
+
+## 1. Overview & Problem Definition
+
+Phase H implements the **Heatwave and Data-Dependent Severe-Wind Reliability Specialist (`HEATWAVE_RELIABILITY_V1`)**, addressing extreme heat spells, severe thermal departures, tropical warm nights, and convective severe wind gusts across India.
+In accordance with Veyra's non-negotiable architectural principles:
+- Reliability is never collapsed into an opaque composite score.
+- Decomposes failure into:
+  1. Heatwave occurrence threshold exceedance (`HEATWAVE-THRESH-01`, $T_{max} \ge 40.0^\circ\text{C}$ & departure $\ge 4.5^\circ\text{C}$ in plains; $37^\circ\text{C}$ coastal; $30^\circ\text{C}$ hills).
+  2. Peak maximum temperature absolute error exceedance (`HEATWAVE-PEAK-01`, $|T_{max}^{fc} - T_{max}^{obs}| > 2.5^\circ\text{C}$).
+  3. Heatwave spell onset timing error exceedance (`HEATWAVE-ONSET-01`, onset offset $> 24.0$h).
+  4. Spell duration and persistence error exceedance (`HEATWAVE-DURATION-01`, duration error $> 48.0$h / 2 days).
+  5. Warm night minimum temperature departure error exceedance (`HEATWAVE-NIGHT-01`, $|T_{min}^{fc} - T_{min}^{obs}| > 2.0^\circ\text{C}$ when $T_{max} \ge 40.0^\circ\text{C}$).
+  6. Spatial extent area coverage fraction error exceedance (`HEATWAVE-SPATIAL-01`, area fraction error $> 0.20$).
+  7. Severe wind gale gust error exceedance (`WIND-GUST-THRESH-01`, $|V_{fc} - V_{obs}| > 6.0$ m/s on gusts $\ge 17.2$ m/s).
+- Severe wind evaluation is data-dependent: strictly conditional on paired forecast/reference observations, otherwise explicitly `null`.
+- Anti-leakage at $t_0$: only issue-time atmospheric state enters inference; verification data sealed with 24h verification latency.
+- Full Level 1-4 baseline ladder comparison.
+
+---
+
+## 2. Deliverables Checklist
+
+- [x] `data/heatwave_target_manifest.json`
+- [x] `data/heatwave_event_catalogue.json`
+- [x] `backend/app/contracts/heatwave_contract.py`
+- [x] `models/v3/HEATWAVE_RELIABILITY_V1.json`
+- [x] `backend/app/builder2/heatwave_specialist.py`
+- [x] `backend/tests/test_heatwave_contract.py`
+- [x] `backend/tests/test_heatwave_targets.py`
+- [x] `backend/tests/test_hazard_specific_engines.py` (Heatwave & Severe Wind tests added)
+- [x] `scripts/evaluate_hazard_engines.py` (Heatwave & Severe Wind evaluation added)
+- [x] `scripts/evaluate_regime_slices.py` (Heatwave regional/severity slice evaluation added)
+- [x] `docs/phase-h-report.md`
+- [x] `.round2-roadmap/imple-plan/implementation_plan-H`
+
+---
+
+## 3. Verification Commands & Results
+
+1. `python -m pytest backend/tests/test_heatwave_contract.py backend/tests/test_heatwave_targets.py backend/tests/test_hazard_specific_engines.py -q` -> 40 passed in 1.48s (Exit Code 0).
+2. `python scripts/evaluate_hazard_engines.py --hazards heatwave --bootstrap cycle` -> Exit Code 0.
+3. `python scripts/evaluate_hazard_engines.py --hazards severe_wind --bootstrap cycle` -> Exit Code 0.
+4. `python scripts/evaluate_regime_slices.py --hazards heatwave --bootstrap cycle` -> Exit Code 0.
+5. `python -m pytest backend/tests/ -q` -> 692 passed in 170.91s (Exit Code 0).
+6. `cd frontend && npm test -- --run` -> 58 passed in 19.43s (Exit Code 0).
+7. `cd frontend && npm run build` -> built in 15.10s (Exit Code 0).

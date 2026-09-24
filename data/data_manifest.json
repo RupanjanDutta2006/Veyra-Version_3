@@ -1,0 +1,93 @@
+{
+  "manifest_version": "1.0.0",
+  "generated_at": "2026-09-20T11:18:00Z",
+  "protocol": "SIH26079 Master Specification §7 & §10.4",
+  "status": "FROZEN_AUTHORITATIVE",
+  "splits": {
+    "train": {
+      "start_date": "2000-01-01",
+      "end_date": "2013-12-31",
+      "rows": 547500,
+      "cycles": 730,
+      "description": "Historical training block used for feature engineering, baseline fitting, and model optimization"
+    },
+    "validation": {
+      "start_date": "2014-01-01",
+      "end_date": "2016-12-31",
+      "rows": 116250,
+      "cycles": 155,
+      "description": "Validation partition used exclusively for hyperparameter tuning and isotonic probability calibration"
+    },
+    "test": {
+      "start_date": "2017-01-01",
+      "end_date": "2019-12-31",
+      "rows": 116250,
+      "cycles": 155,
+      "description": "Strictly held-out chronological test partition for unbiased benchmark evaluation"
+    }
+  },
+  "temporal_guards": {
+    "purge_window_days": 14,
+    "embargo_window_days": 21,
+    "event_grouping_policy": "Episode-held-out (cyclone/monsoon depressions never split across train/test)"
+  },
+  "certified_stations": {
+    "count": 25,
+    "regions": [
+      "Northern Plains",
+      "Western Arid",
+      "Central Highlands",
+      "Eastern Coastal",
+      "Western Ghats",
+      "Southern Peninsula",
+      "Northeastern Hills"
+    ],
+    "sample_stations": [
+      {"id": "DELHI", "name": "New Delhi (Safdarjung)", "lat": 28.58, "lon": 77.20},
+      {"id": "MUMBAI", "name": "Mumbai (Santacruz)", "lat": 19.12, "lon": 72.85},
+      {"id": "CHENNAI", "name": "Chennai (Meenambakkam)", "lat": 12.99, "lon": 80.18},
+      {"id": "KOLKATA", "name": "Kolkata (Alipore)", "lat": 22.53, "lon": 88.33},
+      {"id": "AHMEDABAD", "name": "Ahmedabad", "lat": 23.07, "lon": 72.63}
+    ]
+  },
+  "variables": [
+    {
+      "name": "temperature_2m",
+      "canonical_unit": "K",
+      "display_unit": "°C",
+      "description": "2-meter air temperature"
+    },
+    {
+      "name": "wind_speed_10m",
+      "canonical_unit": "m/s",
+      "display_unit": "m/s",
+      "description": "10-meter wind speed scalar"
+    },
+    {
+      "name": "surface_pressure",
+      "canonical_unit": "Pa",
+      "display_unit": "hPa",
+      "description": "Surface atmospheric pressure"
+    }
+  ],
+  "horizons": {
+    "min_lead_hours": 24,
+    "max_lead_hours": 240,
+    "step_hours": 24,
+    "certified_range": "Day 1 to Day 10"
+  },
+  "leakage_invariants": {
+    "forbidden_predictors": [
+      "observed_val",
+      "error",
+      "abs_error",
+      "squared_error",
+      "is_bust",
+      "is_bust_q95",
+      "regime",
+      "future_forecast",
+      "adjacent_station_ground_truth"
+    ],
+    "availability_constraint": "availability_time <= issue_time"
+  }
+}

@@ -1,0 +1,52 @@
+# Implementation Plan - Phase I: Spatial, Compound and Common-Mode Reliability (Gate 8 / P1 + Extensions)
+
+## Status: COMPLETED
+Certified: 2026-09-20
+Blueprint Gate: Gate 8
+Priority: P1 + Extensions
+Model ID: `SPATIAL_RELIABILITY_V1`
+
+---
+
+## 1. Overview & Problem Definition
+
+Phase I implements the **Spatial, Compound and Common-Mode Reliability Specialist (`SPATIAL_RELIABILITY_V1`)**, expanding Veyra from single-location hazard specialists to networked spatial failure graph intelligence across 25 canonical Indian meteorological stations.
+In accordance with Veyra's non-negotiable architectural principles:
+- Spatial propagation represents empirical spatio-temporal covariance of forecast errors, never physical causality.
+- Compound hazard failure probabilities are evaluated as explicit joint sets under Fréchet-Hoeffding copula bounds ($P(A \cap B) \le \min(P_A, P_B)$), never as an unexplained average score.
+- Rainfall reliability is strictly distinct from hydrological flood probability (`hydrological_flood_claim: false`, `rainfall_reliability_distinct_from_flood: true`).
+- Anti-leakage at $t_0$: only issue-time atmospheric state enters inference; station ground truth is sealed behind a 24h verification latency.
+- Full Level 1-4 baseline ladder comparison.
+- Leave-one-region-out (LORO) hold-out validation across 7 macro-regions.
+- Common-mode failure detection with Common-Mode Severity Index (CMSI) and ablation testing.
+
+---
+
+## 2. Deliverables Checklist
+
+- [x] `data/spatial_network_topology.json`
+- [x] `data/spatial_target_manifest.json`
+- [x] `backend/app/contracts/spatial_contract.py`
+- [x] `models/v3/SPATIAL_RELIABILITY_V1.json`
+- [x] `backend/app/builder2/spatial_reliability_engine.py`
+- [x] `backend/app/builder2/compound_hazard_engine.py`
+- [x] `backend/app/builder2/common_mode_detector.py`
+- [x] `scripts/evaluate_spatial_propagation.py`
+- [x] `backend/tests/test_spatial_graph.py`
+- [x] `backend/tests/test_spatial_propagation.py`
+- [x] `backend/tests/test_spatial_leakage.py`
+- [x] `backend/tests/test_compound_hazards.py`
+- [x] `backend/tests/test_common_mode_failure.py`
+- [x] `docs/phase-i-report.md`
+- [x] `.round2-roadmap/imple-plan/implementation_plan-I`
+
+---
+
+## 3. Verification Commands & Results
+
+1. `python -m pytest backend/tests/test_spatial_graph.py backend/tests/test_spatial_propagation.py backend/tests/test_spatial_leakage.py -q` -> 12 passed in 0.41s (Exit Code 0).
+2. `python -m pytest backend/tests/test_compound_hazards.py backend/tests/test_common_mode_failure.py -q` -> 8 passed in 0.59s (Exit Code 0).
+3. `python scripts/evaluate_spatial_propagation.py --unseen-region --bootstrap cycle` -> Exit Code 0.
+4. `python -m pytest backend/tests/ -q` -> 712 passed in 193.82s (Exit Code 0).
+5. `cd frontend && npm test -- --run` -> 58 passed in 11.70s (Exit Code 0).
+6. `cd frontend && npm run build` -> built in 12.66s (Exit Code 0).

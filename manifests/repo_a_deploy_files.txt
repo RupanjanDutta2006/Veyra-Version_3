@@ -1,0 +1,2 @@
+./Parinidhi/configs/data_sources.yaml
+./vercel.json

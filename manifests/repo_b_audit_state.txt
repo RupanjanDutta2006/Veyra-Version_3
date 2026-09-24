@@ -1,0 +1,4 @@
+SHA:c9903fa962179d645eec993c150364e697d98ebe
+Date:2026-09-22T13:31:05+05:30
+Subject:feat(launcher): neutralize false-positive AV triggers by replacing inline powershell with cross-platform python utilities
+Branch:HEAD -> main, origin/main, main

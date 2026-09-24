@@ -1,0 +1,216 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "last_updated": "2026-09-20T19:50:00Z",
+  "blueprint_gate": "Gate 10 / Phase K",
+  "invariants": {
+    "primary_forecast_system": "ECMWF_IFS_025",
+    "max_acceptable_transfer_brier_degradation": 0.035,
+    "unsupported_transfer_action": "ABSTAIN_OR_RECALIBRATE",
+    "zero_invented_values": true
+  },
+  "systems": {
+    "ECMWF_IFS_025": {
+      "system_id": "SYS-ECMWF-IFS-025",
+      "name": "ECMWF Integrated Forecasting System (HRES/ENS 0.25°)",
+      "provider": "ECMWF",
+      "role": "Primary Training Incumbent",
+      "cadence_hours": 6,
+      "member_count": 51
+    },
+    "NOAA_GFS_025": {
+      "system_id": "SYS-NOAA-GFS-025",
+      "name": "NOAA Global Forecast System (GFS 0.25°)",
+      "provider": "NOAA / NCEP",
+      "role": "Cross-System Transfer Challenger A",
+      "cadence_hours": 6,
+      "member_count": 31
+    },
+    "NCMRWF_UM_012": {
+      "system_id": "SYS-NCMRWF-UM-012",
+      "name": "NCMRWF Unified Model Regional Ensemble (NEPS-G 12km)",
+      "provider": "NCMRWF / Ministry of Earth Sciences India",
+      "role": "Cross-System Transfer Challenger B (India Regional)",
+      "cadence_hours": 12,
+      "member_count": 23
+    },
+    "OPEN_METEO_GEFS": {
+      "system_id": "SYS-OPEN-METEO-GEFS",
+      "name": "Open-Meteo Seamless Ensemble Pipeline",
+      "provider": "Open-Meteo GmbH",
+      "role": "Operational Serving Pipeline",
+      "cadence_hours": 6,
+      "member_count": 31
+    }
+  },
+  "transfer_evidence_by_hazard": {
+    "PRECIPITATION": {
+      "hazard_family": "PRECIPITATION",
+      "incumbent_system": "ECMWF_IFS_025",
+      "incumbent_brier": 0.1145,
+      "transfers": {
+        "NOAA_GFS_025": {
+          "direct_brier": 0.1380,
+          "recalibrated_brier": 0.1210,
+          "delta_brier": 0.0065,
+          "sample_count": 1200,
+          "transfer_status": "CERTIFIED_TRANSFER"
+        },
+        "NCMRWF_UM_012": {
+          "direct_brier": 0.1340,
+          "recalibrated_brier": 0.1190,
+          "delta_brier": 0.0045,
+          "sample_count": 980,
+          "transfer_status": "CERTIFIED_TRANSFER"
+        },
+        "OPEN_METEO_GEFS": {
+          "direct_brier": 0.1410,
+          "recalibrated_brier": 0.1245,
+          "delta_brier": 0.0100,
+          "sample_count": 1500,
+          "transfer_status": "CERTIFIED_TRANSFER"
+        }
+      }
+    },
+    "CYCLONE": {
+      "hazard_family": "CYCLONE",
+      "incumbent_system": "ECMWF_IFS_025",
+      "incumbent_brier": 0.1295,
+      "transfers": {
+        "NOAA_GFS_025": {
+          "direct_brier": 0.1540,
+          "recalibrated_brier": 0.1380,
+          "delta_brier": 0.0085,
+          "sample_count": 420,
+          "transfer_status": "CERTIFIED_TRANSFER"
+        },
+        "NCMRWF_UM_012": {
+          "direct_brier": 0.1480,
+          "recalibrated_brier": 0.1340,
+          "delta_brier": 0.0045,
+          "sample_count": 380,
+          "transfer_status": "CERTIFIED_TRANSFER"
+        },
+        "OPEN_METEO_GEFS": {
+          "direct_brier": 0.1590,
+          "recalibrated_brier": 0.1410,
+          "delta_brier": 0.0115,
+          "sample_count": 500,
+          "transfer_status": "CERTIFIED_TRANSFER"
+        }
+      }
+    },
+    "MONSOON_LPS": {
+      "hazard_family": "MONSOON_LPS",
+      "incumbent_system": "ECMWF_IFS_025",
+      "incumbent_brier": 0.1110,
+      "transfers": {
+        "NOAA_GFS_025": {
+          "direct_brier": 0.1320,
+          "recalibrated_brier": 0.1180,
+          "delta_brier": 0.0070,
+          "sample_count": 680,
+          "transfer_status": "CERTIFIED_TRANSFER"
+        },
+        "NCMRWF_UM_012": {
+          "direct_brier": 0.1250,
+          "recalibrated_brier": 0.1140,
+          "delta_brier": 0.0030,
+          "sample_count": 640,
+          "transfer_status": "CERTIFIED_TRANSFER"
+        },
+        "OPEN_METEO_GEFS": {
+          "direct_brier": 0.1360,
+          "recalibrated_brier": 0.1205,
+          "delta_brier": 0.0095,
+          "sample_count": 750,
+          "transfer_status": "CERTIFIED_TRANSFER"
+        }
+      }
+    },
+    "WESTERN_DISTURBANCE": {
+      "hazard_family": "WESTERN_DISTURBANCE",
+      "incumbent_system": "ECMWF_IFS_025",
+      "incumbent_brier": 0.1190,
+      "transfers": {
+        "NOAA_GFS_025": {
+          "direct_brier": 0.1410,
+          "recalibrated_brier": 0.1260,
+          "delta_brier": 0.0070,
+          "sample_count": 520,
+          "transfer_status": "CERTIFIED_TRANSFER"
+        },
+        "NCMRWF_UM_012": {
+          "direct_brier": 0.1350,
+          "recalibrated_brier": 0.1220,
+          "delta_brier": 0.0030,
+          "sample_count": 490,
+          "transfer_status": "CERTIFIED_TRANSFER"
+        },
+        "OPEN_METEO_GEFS": {
+          "direct_brier": 0.1440,
+          "recalibrated_brier": 0.1285,
+          "delta_brier": 0.0095,
+          "sample_count": 580,
+          "transfer_status": "CERTIFIED_TRANSFER"
+        }
+      }
+    },
+    "HEATWAVE": {
+      "hazard_family": "HEATWAVE",
+      "incumbent_system": "ECMWF_IFS_025",
+      "incumbent_brier": 0.0980,
+      "transfers": {
+        "NOAA_GFS_025": {
+          "direct_brier": 0.1180,
+          "recalibrated_brier": 0.1040,
+          "delta_brier": 0.0060,
+          "sample_count": 650,
+          "transfer_status": "CERTIFIED_TRANSFER"
+        },
+        "NCMRWF_UM_012": {
+          "direct_brier": 0.1120,
+          "recalibrated_brier": 0.1010,
+          "delta_brier": 0.0030,
+          "sample_count": 620,
+          "transfer_status": "CERTIFIED_TRANSFER"
+        },
+        "OPEN_METEO_GEFS": {
+          "direct_brier": 0.1220,
+          "recalibrated_brier": 0.1070,
+          "delta_brier": 0.0090,
+          "sample_count": 710,
+          "transfer_status": "CERTIFIED_TRANSFER"
+        }
+      }
+    },
+    "SEVERE_WIND": {
+      "hazard_family": "SEVERE_WIND",
+      "incumbent_system": "ECMWF_IFS_025",
+      "incumbent_brier": 0.1220,
+      "transfers": {
+        "NOAA_GFS_025": {
+          "direct_brier": 0.1480,
+          "recalibrated_brier": 0.1310,
+          "delta_brier": 0.0090,
+          "sample_count": 580,
+          "transfer_status": "CERTIFIED_TRANSFER"
+        },
+        "NCMRWF_UM_012": {
+          "direct_brier": 0.1420,
+          "recalibrated_brier": 0.1270,
+          "delta_brier": 0.0050,
+          "sample_count": 540,
+          "transfer_status": "CERTIFIED_TRANSFER"
+        },
+        "OPEN_METEO_GEFS": {
+          "direct_brier": 0.1510,
+          "recalibrated_brier": 0.1330,
+          "delta_brier": 0.0110,
+          "sample_count": 620,
+          "transfer_status": "CERTIFIED_TRANSFER"
+        }
+      }
+    }
+  }
+}

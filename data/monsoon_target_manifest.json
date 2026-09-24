@@ -1,0 +1,76 @@
+{
+  "manifest_id": "MANIFEST-MONSOON-2026-V1",
+  "hazard_family": "MONSOON_LPS",
+  "gate": "Gate 5",
+  "priority": "P1",
+  "description": "Target manifest for Monsoon and Low-Pressure-System (LPS) Reliability Specialist, covering system dynamics, precipitation, and regime transition failure modes.",
+  "invariants": {
+    "decomposed_evaluation": "System dynamics (location, speed, deepening), precipitation (placement, intensity), and regime transitions must be evaluated independently without collapsing into an opaque single score.",
+    "anti_leakage": "All evaluation features strictly constrained to issue time t0. Verification against gridded rainfall and RSMC synoptic charts sealed with 24h latency.",
+    "regime_awareness": "Validation must be partitioned across Active Monsoon, Break Monsoon, and Transition phases."
+  },
+  "targets": [
+    {
+      "target_id": "MONSOON-LPS-LOC-01",
+      "name": "LPS Center Position Placement Error Exceedance",
+      "metric_type": "THRESHOLD_EXCEEDANCE",
+      "threshold_value": 200.0,
+      "threshold_unit": "km",
+      "variable": "lps_center_position_error",
+      "primary_reference": "RSMC_NEW_DELHI_SYNOPTIC_BULLETINS",
+      "description": "LPS center placement error exceeding 200 km at 48h/72h forecast lead."
+    },
+    {
+      "target_id": "MONSOON-LPS-SPEED-01",
+      "name": "LPS Propagation Speed and Timing Error Exceedance",
+      "metric_type": "THRESHOLD_EXCEEDANCE",
+      "threshold_value": 5.0,
+      "threshold_unit": "km/h",
+      "secondary_threshold_value": 12.0,
+      "secondary_threshold_unit": "hours",
+      "variable": "propagation_speed_error",
+      "primary_reference": "IMD_DEPRESSION_TRACK_ARCHIVE",
+      "description": "LPS translation speed error exceeding 5 km/h or landfall/arrival timing error exceeding 12 hours."
+    },
+    {
+      "target_id": "MONSOON-LPS-INTENSITY-01",
+      "name": "LPS Central Pressure Deepening Error Exceedance",
+      "metric_type": "THRESHOLD_EXCEEDANCE",
+      "threshold_value": 4.0,
+      "threshold_unit": "hPa",
+      "variable": "central_pressure_deepening_error",
+      "primary_reference": "IMD_SURFACE_SYNOPTIC_OBSERVATIONS",
+      "description": "Forecast 24h central pressure deepening error exceeding 4 hPa."
+    },
+    {
+      "target_id": "MONSOON-PRECIP-LOC-01",
+      "name": "Monsoon Rainfall Centroid Placement Displacement Exceedance",
+      "metric_type": "THRESHOLD_EXCEEDANCE",
+      "threshold_value": 100.0,
+      "threshold_unit": "km",
+      "variable": "rainfall_centroid_displacement_error",
+      "primary_reference": "IMD_GRIDDED_RAINFALL_025DEG",
+      "description": "Monsoon heavy rainfall centroid displacement error exceeding 100 km."
+    },
+    {
+      "target_id": "MONSOON-PRECIP-AMT-01",
+      "name": "Monsoon Heavy Precipitation Intensity Error Exceedance",
+      "metric_type": "THRESHOLD_EXCEEDANCE",
+      "threshold_value": 50.0,
+      "threshold_unit": "mm/24h",
+      "variable": "heavy_rainfall_intensity_error",
+      "primary_reference": "IMD_GRIDDED_RAINFALL_025DEG",
+      "description": "Forecast 24h heavy rainfall intensity error exceeding 50 mm/24h."
+    },
+    {
+      "target_id": "MONSOON-REGIME-TRANS-01",
+      "name": "Active-Break Monsoon Regime Transition Timing and Stability Failure",
+      "metric_type": "REGIME_TRANSITION_FAILURE",
+      "threshold_value": 24.0,
+      "threshold_unit": "hours",
+      "variable": "regime_transition_timing_error",
+      "primary_reference": "NCMRWF_MONSOON_REGIME_INDEX",
+      "description": "Forecast transition between active and break monsoon regimes with timing error exceeding 24 hours or false transition prediction."
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+# Phase C: Multi-Horizon Hazard, Motifs and Recovery (Gate 2)
+
+Following the updated roadmap in [`.round2-roadmap/updatedone/Phase C — Multi-horizon hazard, motifs and recovery.md`](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/.round2-roadmap/updatedone/Phase%20C%20%E2%80%94%20Multi-horizon%20hazard,%20motifs%20and%20recovery.md), Phase C establishes **Gate 2**: building Failure Memory episode storage & retrieval, trajectory representations, data-derived Failure Motifs, multi-horizon hazard & survival curves, time-to-bust / recovery dynamics, and abstention-aware state transitions.
+
+## User Review Required
+
+> [!IMPORTANT]
+> - **Hazard Dynamics vs Thresholds Invariant**: Per the failure & rollback rule: *"Do not treat threshold-derived time-to-failure as learned hazard. Reject unstable motifs, future-period analogs, pre-truth calibration, and UI-only recovery labels."*
+> - **Survival Curve Invariant**: Forecast survival $S(t) = \prod_{\tau \le t} (1 - P_{\text{bust}}(\tau))$ is monotonically non-increasing across lead horizons $t$, representing the probability that a forecast trajectory avoids catastrophic failure up to lead $t$.
+
+---
+
+## Proposed Changes
+
+### 1. Failure Motifs & Catalog
+
+#### [NEW] [backend/app/builder2/failure_motifs.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/backend/app/builder2/failure_motifs.py)
+- Defines `FailureMotif`: `motif_id`, `motif_name`, `hazard_family`, `description`, `archetypal_trajectory`, `precursor_signals`, `mean_lead_to_bust_hours`, `recovery_probability_48h`.
+- Implements canonical data-derived motifs across the 6 hazard families:
+  1. `MOTIF-HEAT-DOMING`: Persistent upper-level anticyclonic ridge with rapid daytime Tmax escalation.
+  2. `MOTIF-CONVECTIVE-TRIGGER`: Low-level moisture convergence + high CAPE producing sudden evening convective burst underprediction.
+  3. `MOTIF-TROUGH-PHASING`: Western disturbance mid-latitude trough phasing with tropical moisture plume over Western Himalayas.
+  4. `MOTIF-TC-RECURVATURE`: Tropical cyclone track steering transition near subtropical ridge.
+  5. `MOTIF-DEPRESSION-SLOW`: Slow-moving monsoon low-pressure system producing localized deluge.
+  6. `MOTIF-SQUALL-GUST`: Rapid frontal passage producing sudden gale-force surface gusts.
+- `MotifClassifier`: Matches incoming forecast trajectory and precursor signals to canonical motifs, assigning match probabilities and similarity scores.
+
+#### [NEW] [data/motifs/motif_catalog.json](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/data/motifs/motif_catalog.json)
+- Persisted machine-readable catalog of canonical failure motifs.
+
+---
+
+### 2. Hazard & Recovery Engine
+
+#### [NEW] [backend/app/builder2/hazard_engine.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/backend/app/builder2/hazard_engine.py)
+- **Multi-Horizon Hazard Curve**: Generates `List[HazardPoint]` over lead times $t \in [24, 48, 72, 96, 120, 144, 168, 192, 216, 240]$.
+- **Survival Function**: Computes $S(t) = \prod_{\tau \le t} (1 - P_{\text{bust}}(\tau))$.
+- **Expected Time-to-Bust**: $\mathbb{E}[T_{\text{bust}}] = \sum t \cdot P(T_{\text{bust}} = t)$.
+- **Recovery Engine**:
+  - Computes probability that a degraded forecast recovers to nominal accuracy at extended leads ($P_{\text{recovery}}$).
+  - Determines state transitions: `STABLE → WATCHING → DEGRADING → FAILURE_PRONE → BUST → RECOVERING → STABLE`.
+  - Enforces safe abstention transitions when OOD score exceeds threshold or inputs are missing.
+
+---
+
+### 3. Hazard & Trajectory APIs
+
+#### [NEW] [backend/app/api/v1/endpoints/hazard.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/backend/app/api/v1/endpoints/hazard.py)
+- `GET /v1/hazard/trajectory`: Returns multi-horizon trajectory, hazard curve, survival curve, time-to-bust, and recovery expectation for a location & variable.
+- `GET /v1/hazard/motifs`: Returns the motif catalog and current motif attributions.
+- `GET /v1/hazard/episodes`: Returns retrieved Failure Memory episodes with sample support and uncertainty.
+- Integrates into `backend/app/api/v1/router.py`.
+
+---
+
+### 4. Trajectory Evaluation Script
+
+#### [NEW] [scripts/evaluate_trajectory_models.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/scripts/evaluate_trajectory_models.py)
+- CLI script supporting: `--event-held-out`, `--bootstrap cycle`, `--seed 42`.
+- Evaluates multi-horizon trajectories on held-out event chronologies.
+- Computes:
+  - Lead-stratified Brier score and BSS (short, medium, extended).
+  - Survival concordance index.
+  - Time-to-bust prediction error (MAE in hours).
+  - Recovery state transition accuracy.
+  - Cycle-block bootstrap confidence intervals.
+- Exports results to `data/evaluation/trajectory_evaluation_results.json`.
+
+---
+
+### 5. Automated Test Suites
+
+#### [NEW] [backend/tests/test_failure_episodes.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/backend/tests/test_failure_episodes.py)
+- Tests episode schema validation, persistence, and issue-time retrieval isolation.
+
+#### [NEW] [backend/tests/test_failure_motifs.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/backend/tests/test_failure_motifs.py)
+- Tests motif catalog completeness, archetypal trajectory matching, and precursor signal detection.
+
+#### [NEW] [backend/tests/test_hazard_engine.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/backend/tests/test_hazard_engine.py)
+- Tests multi-horizon hazard curve generation, survival curve monotonicity, and expected time-to-bust calculations.
+
+#### [NEW] [backend/tests/test_recovery_engine.py](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/backend/tests/test_recovery_engine.py)
+- Tests recovery probability calculation, state transition lifecycle, and abstention-aware transitions.
+
+---
+
+## Verification Plan
+
+### Automated Commands
+```bash
+python -m pytest backend/tests/test_failure_episodes.py backend/tests/test_failure_motifs.py backend/tests/test_hazard_engine.py backend/tests/test_recovery_engine.py -q
+python scripts/evaluate_trajectory_models.py --event-held-out --bootstrap cycle
+cd frontend && npm test -- --run && npm run build
+```
+
+### Documentation & Git Push
+- Generate [docs/phase-c-report.md](file:///c:/Users/adity/OneDrive/Desktop/SIH26079-RII/docs/phase-c-report.md) with status `COMPLETE`.
+- Commit:
+  ```bash
+  git commit -m "docs: complete phase C - multi-horizon-hazard,-motifs-and-recovery"
+  git push origin main
+  ```
