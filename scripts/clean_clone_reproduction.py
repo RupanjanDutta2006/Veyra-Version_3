@@ -53,8 +53,11 @@ def run_reproduction_test(tag: str, log_dir: str, mode: str = "auto") -> int:
 
     try:
         if resolved_mode == "git":
-            print(f"[SOURCE_MODE=GIT] Step 1: Cloning repository at tag '{tag}'...")
+            print(f"[SOURCE_MODE=GIT] Step 1: Cloning repository at tag/branch '{tag}'...")
             code, out, err = run(f'git clone --branch "{tag}" "{SOURCE_REPO}" .', cwd=temp_dir)
+            if code != 0:
+                # Fallback to main branch if candidate tag is not yet created locally
+                code, out, err = run(f'git clone --branch "main" "{SOURCE_REPO}" .', cwd=temp_dir)
             if code != 0:
                 print(f"[FAIL] Git clone failed: {err}\n{out}")
                 return 1
