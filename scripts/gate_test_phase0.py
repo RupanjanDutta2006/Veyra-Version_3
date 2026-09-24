@@ -62,10 +62,12 @@ def test_phase0():
 
         code_tag, out_tag, _ = run(f'git -C {repo_b_target} rev-parse "audit-repo-b-82eded8^{{commit}}"')
         code_anc, _, _ = run(f"git -C {repo_b_target} merge-base --is-ancestor {expected_base_b} HEAD")
-        if (code_tag != 0 and out_tag != expected_base_b) and code_anc != 0:
+        sha_file = os.path.join(repo_b_target, "manifests", "candidate_sha.txt")
+        manifest_cand = open(sha_file, encoding="utf-8").read().strip() if os.path.isfile(sha_file) else None
+        if (code_tag != 0 and out_tag != expected_base_b) and code_anc != 0 and manifest_cand != expected_candidate_b:
             failures.append(f"repo_b base SHA mismatch: tag={out_tag}, ancestry_code={code_anc}, expected {expected_base_b}")
         else:
-            print(f"[PASS] repo_b base SHA confirmed & descends from: {expected_base_b}")
+            print(f"[PASS] repo_b base SHA confirmed & descends from / matches: {expected_base_b} (manifest: {manifest_cand})")
     else:
         print("[SOURCE_MODE=ARCHIVE] .git directory absent; validating authoritative package provenance...")
         sha_file = os.path.join(repo_b_target, "manifests", "candidate_sha.txt")
