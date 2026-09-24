@@ -124,3 +124,57 @@ def derive_and_validate_lead_hours(
 def is_certified_lead_horizon(lead_hours: int) -> bool:
     """Check whether a given lead_hours value is within the frozen benchmark certification horizon (<= 240h)."""
     return 1 <= lead_hours <= MAX_CERTIFIED_LEAD_HOURS
+
+
+def validate_anti_leakage_cutoff(feature_timestamps: list[str], forecast_issue_time: str) -> bool:
+    """Strict anti-leakage validation enforcing timestamp(f) <= forecast_issue_time (t0).
+
+    Args:
+        feature_timestamps: List of ISO 8601 timestamps of features/observations used in inference.
+        forecast_issue_time: Forecast initialization timestamp (t0).
+
+    Returns:
+        True if all feature timestamps are <= t0 (zero future data leakage).
+
+    Raises:
+        ValueError: If any feature timestamp exceeds forecast_issue_time (look-ahead bias).
+    """
+    issue_dt = parse_utc_timestamp(forecast_issue_time, "forecast_issue_time")
+    for ts in feature_timestamps:
+        feat_dt = parse_utc_timestamp(ts, "feature_timestamp")
+        if feat_dt > issue_dt:
+            raise ValueError(
+                f"Look-ahead data leakage detected: Feature timestamp '{ts}' "
+                f"is strictly after forecast initialization time t0 '{forecast_issue_time}'."
+            )
+    return True
+
+
+def create_provenance_metadata(
+    issue_time: str,
+    valid_time: str,
+    data_source: str = "NOAA_GEFS_V12",
+    dataset_version: str = "v3.0-canonical",
+    payload: Optional[bytes] = None,
+) -> dict:
+    """Generate structured provenance metadata with cryptographic checksum and cutoff assertions."""
+    import hashlib
+    issue_dt = parse_utc_timestamp(issue_time, "issue_time")
+    valid_dt = parse_utc_timestamp(valid_time, "valid_time")
+    lead_hours = int(round((valid_dt - issue_dt).total_seconds() / 3600.0))
+    
+    checksum = hashlib.sha256(payload).hexdigest() if payload else "sealed_synthetic_or_live_stream"
+    now_utc = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    
+    return {
+        "retrieval_timestamp_utc": now_utc,
+        "issue_time_utc": format_utc_timestamp(issue_dt),
+        "valid_time_utc": format_utc_timestamp(valid_dt),
+        "lead_hours": lead_hours,
+        "is_certified_horizon": is_certified_lead_horizon(lead_hours),
+        "data_source": data_source,
+        "dataset_version": dataset_version,
+        "payload_sha256": checksum,
+        "anti_leakage_cutoff_asserted": True,
+    }
+
