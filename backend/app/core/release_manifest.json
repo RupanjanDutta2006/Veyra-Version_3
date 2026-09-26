@@ -5,7 +5,7 @@
   "git_provenance": {
     "base_commit_sha": "94745df06298ee5daab3144e329885f780958bad",
     "candidate_commit_sha": null,
-    "candidate_tag": "sih-round2-submission-v1.1.1",
+    "candidate_tag": "sih-round2-submission-v1.1.2",
     "integration_branch": "main",
     "strategy": "base_commit_provenance"
   },
