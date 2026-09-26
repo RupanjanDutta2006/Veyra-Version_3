@@ -1,7 +1,7 @@
 === Veyra Version-3 Release Candidate ===
 Repository URL: https://github.com/RupanjanDutta2006/Veyra-Version_3
 Baseline Commit SHA: 94745df06298ee5daab3144e329885f780958bad
-Candidate Tag: sih-round2-submission-v1.1.2
+Candidate Tag: sih-round2-submission-v1.1.3
 Status: clean
 Branch: main
 

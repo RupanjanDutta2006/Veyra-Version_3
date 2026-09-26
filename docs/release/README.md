@@ -6,7 +6,7 @@
 - **Problem Statement**: PS 26079 (SIH 2026) — Ministry of Earth Sciences (MoES) & NCMRWF
 - **Team**: HEXARK
 - **Release Candidate ID**: `veyra-v3.0.0-release-candidate`
-- **Release Tag**: `sih-round2-submission-v1.1.2`
+- **Release Tag**: `sih-round2-submission-v1.1.3`
 - **Baseline Commit SHA**: `94745df06298ee5daab3144e329885f780958bad`
 - **Candidate Head Branch**: `main`
 - **Target Repository**: `https://github.com/RupanjanDutta2006/Veyra-Version_3`
@@ -110,7 +110,7 @@ python scripts/validate_claim_register.py --input manifests/claim_register.csv
 python scripts/validate_specialist_evidence.py
 
 # Run clean-clone reproduction test
-python scripts/clean_clone_reproduction.py --tag sih-round2-submission-v1.1.2
+python scripts/clean_clone_reproduction.py --tag sih-round2-submission-v1.1.3
 
 # Run frontend tests & production build
 npm test --prefix frontend -- --run

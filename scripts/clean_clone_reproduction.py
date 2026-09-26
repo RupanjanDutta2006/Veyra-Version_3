@@ -86,18 +86,26 @@ def parse_raw_vitest_json(json_path: str) -> dict:
         data = json.load(f)
 
     # Validate required top-level keys
-    required_keys = [
+    required = {
+        "numTotalTestSuites",
+        "numPassedTestSuites",
+        "numFailedTestSuites",
+        "numPendingTestSuites",
         "numTotalTests",
         "numPassedTests",
         "numFailedTests",
         "numPendingTests",
         "numTodoTests",
         "success",
-        "testResults",
-    ]
-    for key in required_keys:
+    }
+    for key in required:
         if key not in data:
             raise KeyError(f"Required Vitest report field '{key}' missing from {json_path}")
+
+    total_suites = int(data["numTotalTestSuites"])
+    passed_suites = int(data["numPassedTestSuites"])
+    failed_suites = int(data["numFailedTestSuites"])
+    pending_suites = int(data["numPendingTestSuites"])
 
     total = int(data["numTotalTests"])
     passed = int(data["numPassedTests"])
@@ -105,7 +113,9 @@ def parse_raw_vitest_json(json_path: str) -> dict:
     pending = int(data["numPendingTests"])
     todo = int(data["numTodoTests"])
     success = bool(data["success"])
-    test_results = data["testResults"]
+
+    if total_suites < 0 or passed_suites < 0 or failed_suites < 0 or pending_suites < 0:
+        raise ValueError("Negative test suite counts encountered in Vitest raw JSON")
 
     if total < 0 or passed < 0 or failed < 0 or pending < 0 or todo < 0:
         raise ValueError("Negative test counts encountered in Vitest raw JSON")
@@ -115,13 +125,10 @@ def parse_raw_vitest_json(json_path: str) -> dict:
             f"Inconsistent Vitest test counts: total={total} != passed({passed}) + failed({failed}) + pending({pending}) + todo({todo})"
         )
 
-    test_files_count = len(test_results)
-    if test_files_count == 0:
-        raise ValueError("Vitest report contains zero test files")
-
-    return {
+    frontend_metrics = {
         "framework": "vitest",
-        "test_files": test_files_count,
+        "test_suites": total_suites,
+        "test_files": total_suites,
         "total_tests": total,
         "passed": passed,
         "failed": failed,
@@ -133,8 +140,28 @@ def parse_raw_vitest_json(json_path: str) -> dict:
         "status": "PASSED" if (success and failed == 0 and total > 0) else "FAILED",
     }
 
+    # Strict equality validation against raw report
+    if frontend_metrics["test_suites"] != data["numTotalTestSuites"]:
+        raise ValueError(f"Mismatch: test_suites ({frontend_metrics['test_suites']}) != numTotalTestSuites ({data['numTotalTestSuites']})")
+    if frontend_metrics["test_files"] != data["numTotalTestSuites"]:
+        raise ValueError(f"Mismatch: test_files ({frontend_metrics['test_files']}) != numTotalTestSuites ({data['numTotalTestSuites']})")
+    if frontend_metrics["total_tests"] != data["numTotalTests"]:
+        raise ValueError(f"Mismatch: total_tests ({frontend_metrics['total_tests']}) != numTotalTests ({data['numTotalTests']})")
+    if frontend_metrics["passed"] != data["numPassedTests"]:
+        raise ValueError(f"Mismatch: passed ({frontend_metrics['passed']}) != numPassedTests ({data['numPassedTests']})")
+    if frontend_metrics["failed"] != data["numFailedTests"]:
+        raise ValueError(f"Mismatch: failed ({frontend_metrics['failed']}) != numFailedTests ({data['numFailedTests']})")
+    if frontend_metrics["pending"] != data["numPendingTests"]:
+        raise ValueError(f"Mismatch: pending ({frontend_metrics['pending']}) != numPendingTests ({data['numPendingTests']})")
+    if frontend_metrics["todo"] != data["numTodoTests"]:
+        raise ValueError(f"Mismatch: todo ({frontend_metrics['todo']}) != numTodoTests ({data['numTodoTests']})")
+    if frontend_metrics["success"] != data["success"]:
+        raise ValueError(f"Mismatch: success ({frontend_metrics['success']}) != success ({data['success']})")
 
-def run_reproduction_test(tag: str = "sih-round2-submission-v1.1.2", log_dir: str = "artifacts/submission_reproduction", mode: str = "auto") -> int:
+    return frontend_metrics
+
+
+def run_reproduction_test(tag: str = "sih-round2-submission-v1.1.3", log_dir: str = "artifacts/submission_reproduction", mode: str = "auto") -> int:
     # ── Recursion Guard ──────────────────────────────────────────────────
     if os.environ.get("VEYRA_CLEAN_CLONE_ACTIVE") == "1":
         print("[FAIL] Recursion detected: clean-clone reproduction cannot be invoked nested inside another clean-clone run.")
@@ -354,12 +381,24 @@ def run_reproduction_test(tag: str = "sih-round2-submission-v1.1.2", log_dir: st
 
         # Generate official attestation inside clean clone
         tag_version = tag.replace("sih-round2-submission-", "")
+        with open(raw_vitest_path, "r", encoding="utf-8") as rf:
+            raw_data = json.load(rf)
+
+        raw_suites = int(raw_data["numTotalTestSuites"])
+        fe_suites = int(frontend_metrics["test_suites"])
+        fe_files = int(frontend_metrics["test_files"])
+        suite_count_consistent = bool(raw_suites == fe_suites == fe_files)
+
         attestation = {
             "phase": "phase_1_closeout",
             "status": "PHASE_1_APPROVED",
             "candidate_tag": tag,
             "candidate_commit_sha": commit_sha,
             "tag_commit_sha": commit_sha,
+            "frontend_raw_num_total_test_suites": raw_suites,
+            "frontend_json_test_suites": fe_suites,
+            "frontend_json_test_files": fe_files,
+            "suite_count_consistent": suite_count_consistent,
             "locked_installation": {
                 "status": "PASSED",
                 "exit_code": 0,
@@ -427,7 +466,7 @@ def run_reproduction_test(tag: str = "sih-round2-submission-v1.1.2", log_dir: st
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--tag", default="sih-round2-submission-v1.1.2")
+    parser.add_argument("--tag", default="sih-round2-submission-v1.1.3")
     parser.add_argument("--log-dir", default="artifacts/submission_reproduction")
     parser.add_argument("--mode", choices=["auto", "git", "archive"], default="auto")
     args = parser.parse_args()

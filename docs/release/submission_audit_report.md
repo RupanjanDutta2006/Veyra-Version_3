@@ -4,7 +4,7 @@
 - **Audit Date**: 2026-09-23
 - **Audited Target**: Veyra Sentinel (VERSION-3 Candidate)
 - **Repository**: `https://github.com/RupanjanDutta2006/Veyra-Version_3`
-- **Candidate Tag**: `sih-round2-submission-v1.1.2`
+- **Candidate Tag**: `sih-round2-submission-v1.1.3`
 - **Candidate Commit Base**: `94745df06298ee5daab3144e329885f780958bad`
 - **Auditor Role**: Scientific & Systems Engineering Reviewer Audit
 - **Compliance Disposition**: **FULL SCIENTIFIC & CODE CONFORMANCE (APPROVED)**

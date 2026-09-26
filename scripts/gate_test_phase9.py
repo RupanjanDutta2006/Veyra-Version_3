@@ -34,7 +34,7 @@ def run(cmd, cwd=None):
     return res.returncode, res.stdout.strip(), res.stderr.strip()
 
 
-def test_phase9(skip_clean_clone: bool = False, tag: str = "sih-round2-submission-v1.1.2"):
+def test_phase9(skip_clean_clone: bool = False, tag: str = "sih-round2-submission-v1.1.3"):
     print("================================================================================")
     print("      GATE P9: SUBMISSION READINESS, FINAL FREEZE & EVIDENCE PACKAGE            ")
     print("================================================================================\n")
@@ -185,7 +185,7 @@ def test_phase9(skip_clean_clone: bool = False, tag: str = "sih-round2-submissio
         failures.append("docs/release/README.md missing")
     else:
         content = open(release_readme, encoding="utf-8").read()
-        if "sih-round2-submission-v1.1.2" not in content and "sih-round2-submission-v1.1.1" not in content and "Veyra Sentinel" not in content:
+        if "sih-round2-submission-v1.1.3" not in content and "sih-round2-submission-v1.1.2" not in content and "sih-round2-submission-v1.1.1" not in content and "Veyra Sentinel" not in content:
             failures.append("docs/release/README.md missing authoritative release header")
         else:
             print("  [PASS] docs/release/README.md verified with complete release metrics and invariant ledger.")
@@ -218,6 +218,6 @@ def test_phase9(skip_clean_clone: bool = False, tag: str = "sih-round2-submissio
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Phase 09 Master Submission Gate")
     parser.add_argument("--skip-clean-clone", action="store_true", help="Skip clean-clone step when executing inside isolated clone")
-    parser.add_argument("--tag", default="sih-round2-submission-v1.1.2", help="Candidate tag to verify")
+    parser.add_argument("--tag", default="sih-round2-submission-v1.1.3", help="Candidate tag to verify")
     args = parser.parse_args()
     test_phase9(skip_clean_clone=args.skip_clean_clone, tag=args.tag)

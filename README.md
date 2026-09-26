@@ -6,7 +6,7 @@
   <img src="https://img.shields.io/badge/Problem%20Statement-26079-blue.svg?style=for-the-badge" alt="PS 26079" />
   <img src="https://img.shields.io/badge/Team-HEXARK-success.svg?style=for-the-badge" alt="Team HEXARK" />
   <a href="audit/baseline.md"><img src="https://img.shields.io/badge/Baseline-Audited%20%40%2094745df-blue.svg?style=for-the-badge&logo=git" alt="Baseline independently audited at 94745df" /></a>
-  <a href="manifests/v3_release_manifest.json"><img src="https://img.shields.io/badge/Candidate-Tag%20v1.1.2-purple.svg?style=for-the-badge&logo=git" alt="Candidate Tag sih-round2-submission-v1.1.2" /></a>
+  <a href="manifests/v3_release_manifest.json"><img src="https://img.shields.io/badge/Candidate-Tag%20v1.1.3-purple.svg?style=for-the-badge&logo=git" alt="Candidate Tag sih-round2-submission-v1.1.3" /></a>
   <img src="https://img.shields.io/badge/Backend%20Tests-954%20Passed-brightgreen.svg?style=for-the-badge&logo=pytest" alt="954 Backend Tests Passed" />
   <img src="https://img.shields.io/badge/Frontend%20Tests-111%20Passed-brightgreen.svg?style=for-the-badge&logo=vitest" alt="111 Frontend Tests Passed" />
   <img src="https://img.shields.io/badge/Gates%20Status-10%2F10%20Passed-brightgreen.svg?style=for-the-badge" alt="All 10 Master Gates Passed" />
