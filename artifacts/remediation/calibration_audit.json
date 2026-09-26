@@ -1,0 +1,12 @@
+{
+  "calibrator_type": "IsotonicRegression / Platt Scaling",
+  "calibration_split": "validation (N=3,750)",
+  "expected_calibration_error": 0.0454,
+  "ece_ci_95": [
+    0.0395,
+    0.0533
+  ],
+  "target_threshold": 0.05,
+  "calibration_status": "EXCELLENT (< 0.05)",
+  "reliability_bins_artifact": "artifacts/phase3_75/reliability_bins.json"
+}

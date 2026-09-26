@@ -1,0 +1,42 @@
+{
+  "resampling_method": "Non-parametric Bootstrap",
+  "n_iterations": 1000,
+  "seed": 42,
+  "metrics": {
+    "brier_score": {
+      "estimate": 0.0496,
+      "ci_95": [
+        0.043,
+        0.0561
+      ]
+    },
+    "brier_skill_score": {
+      "estimate": 0.0728,
+      "ci_95": [
+        0.0153,
+        0.1276
+      ]
+    },
+    "roc_auc": {
+      "estimate": 0.9438,
+      "ci_95": [
+        0.9342,
+        0.9532
+      ]
+    },
+    "pr_auc": {
+      "estimate": 0.4585,
+      "ci_95": [
+        0.3883,
+        0.5326
+      ]
+    },
+    "expected_calibration_error": {
+      "estimate": 0.0454,
+      "ci_95": [
+        0.0395,
+        0.0533
+      ]
+    }
+  }
+}

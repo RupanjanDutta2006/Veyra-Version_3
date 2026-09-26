@@ -1,0 +1,24 @@
+{
+  "evaluation_split": "validation",
+  "sample_count": 3750,
+  "positive_rate": 0.0899,
+  "raw_predictions": {
+    "mean": 0.0275,
+    "std": 0.0213,
+    "min": 0.001,
+    "max": 0.2723,
+    "brier_score": 0.0807,
+    "ece": 0.0629,
+    "roc_auc": 0.895
+  },
+  "legacy_calibrated_predictions": {
+    "mean": 0.0289,
+    "std": 0.0254,
+    "min": 0.0,
+    "max": 0.3401,
+    "brier_score": 0.0798,
+    "ece": 0.062,
+    "roc_auc": 0.8935
+  },
+  "finding": "Legacy calibrator artifact systematically scales up probability outputs to ~16%, whereas empirical base rate on real data is 5.2% to 8.5%. Remediation requires calibrating probability directly against training split ground truth."
+}

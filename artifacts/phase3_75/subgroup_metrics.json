@@ -1,0 +1,176 @@
+{
+  "hazards": {
+    "surface_pressure": {
+      "count": 1245,
+      "positive_rate": 0.0217,
+      "brier_score": 0.0141,
+      "brier_skill_score": 0.3961,
+      "roc_auc": 0.9776,
+      "ece": 0.012
+    },
+    "temperature_2m": {
+      "count": 1260,
+      "positive_rate": 0.146,
+      "brier_score": 0.1328,
+      "brier_skill_score": -0.0149,
+      "roc_auc": 0.8407,
+      "ece": 0.1255
+    },
+    "wind_speed_10m": {
+      "count": 1245,
+      "positive_rate": 0.0008,
+      "brier_score": 0.0008,
+      "brier_skill_score": 0.847,
+      "roc_auc": 0.9879,
+      "ece": 0.0017
+    }
+  },
+  "leads": {
+    "short_24_48h": {
+      "count": 840,
+      "positive_rate": 0.0583,
+      "brier_score": 0.048,
+      "brier_skill_score": 0.1277,
+      "roc_auc": 0.9439,
+      "ece": 0.0434
+    },
+    "medium_72_144h": {
+      "count": 1665,
+      "positive_rate": 0.0565,
+      "brier_score": 0.0488,
+      "brier_skill_score": 0.0863,
+      "roc_auc": 0.9501,
+      "ece": 0.0463
+    },
+    "extended_168_240h": {
+      "count": 1245,
+      "positive_rate": 0.0554,
+      "brier_score": 0.0517,
+      "brier_skill_score": 0.0156,
+      "roc_auc": 0.9349,
+      "ece": 0.0485
+    }
+  },
+  "stations": {
+    "AMD": {
+      "count": 250,
+      "positive_rate": 0.048,
+      "brier_score": 0.0387,
+      "brier_skill_score": 0.1601,
+      "roc_auc": 0.9604,
+      "ece": 0.031
+    },
+    "BBI": {
+      "count": 250,
+      "positive_rate": 0.012,
+      "brier_score": 0.0119,
+      "brier_skill_score": 0.2022,
+      "roc_auc": 0.9231,
+      "ece": 0.0087
+    },
+    "BHO": {
+      "count": 250,
+      "positive_rate": 0.0,
+      "brier_score": 0.0,
+      "brier_skill_score": 0.9918,
+      "roc_auc": "NOT_AVAILABLE",
+      "ece": 0.0036
+    },
+    "BLR": {
+      "count": 250,
+      "positive_rate": 0.008,
+      "brier_score": 0.0079,
+      "brier_skill_score": 0.3118,
+      "roc_auc": 1.0,
+      "ece": 0.0055
+    },
+    "BOM": {
+      "count": 250,
+      "positive_rate": 0.084,
+      "brier_score": 0.0603,
+      "brier_skill_score": 0.2197,
+      "roc_auc": 0.9526,
+      "ece": 0.0633
+    },
+    "CCU": {
+      "count": 250,
+      "positive_rate": 0.008,
+      "brier_score": 0.008,
+      "brier_skill_score": 0.3049,
+      "roc_auc": 0.7601,
+      "ece": 0.0049
+    },
+    "COK": {
+      "count": 250,
+      "positive_rate": 0.0,
+      "brier_score": 0.0013,
+      "brier_skill_score": 0.7083,
+      "roc_auc": "NOT_AVAILABLE",
+      "ece": 0.0086
+    },
+    "DEL": {
+      "count": 250,
+      "positive_rate": 0.24,
+      "brier_score": 0.2158,
+      "brier_skill_score": -0.0173,
+      "roc_auc": 0.9512,
+      "ece": 0.2202
+    },
+    "GAU": {
+      "count": 250,
+      "positive_rate": 0.016,
+      "brier_score": 0.0157,
+      "brier_skill_score": 0.1445,
+      "roc_auc": 0.9258,
+      "ece": 0.0131
+    },
+    "HYD": {
+      "count": 250,
+      "positive_rate": 0.0,
+      "brier_score": 0.0,
+      "brier_skill_score": 0.9977,
+      "roc_auc": "NOT_AVAILABLE",
+      "ece": 0.0028
+    },
+    "JAI": {
+      "count": 250,
+      "positive_rate": 0.052,
+      "brier_score": 0.0447,
+      "brier_skill_score": 0.0969,
+      "roc_auc": 0.9546,
+      "ece": 0.0452
+    },
+    "MAA": {
+      "count": 250,
+      "positive_rate": 0.008,
+      "brier_score": 0.0075,
+      "brier_skill_score": 0.3479,
+      "roc_auc": 1.0,
+      "ece": 0.0052
+    },
+    "NAG": {
+      "count": 250,
+      "positive_rate": 0.0,
+      "brier_score": 0.0,
+      "brier_skill_score": 0.9935,
+      "roc_auc": "NOT_AVAILABLE",
+      "ece": 0.0031
+    },
+    "SXR": {
+      "count": 250,
+      "positive_rate": 0.372,
+      "brier_score": 0.3315,
+      "brier_skill_score": -0.016,
+      "roc_auc": 0.894,
+      "ece": 0.3328
+    },
+    "TRV": {
+      "count": 250,
+      "positive_rate": 0.0,
+      "brier_score": 0.0001,
+      "brier_skill_score": 0.9851,
+      "roc_auc": "NOT_AVAILABLE",
+      "ece": 0.0032
+    }
+  }
+}

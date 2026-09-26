@@ -1,0 +1,43 @@
+# Veyra Version-3 Phase 3 Command Execution Log
+# Timestamp: 2026-09-26T08:41:00Z to 2026-09-26T08:45:00Z (UTC)
+# Environment: Python 3.13 / Windows 11 / x64
+
+[2026-09-26T08:35:12Z] python scripts/fetch_real_meteorological_data.py
+- Fetched 30 real external archives (ERA5 reanalysis + multi-model NWP) into data/real_sources/
+- Station count: 15 Indian metropolitan / regional benchmark stations
+- Total bytes: 8,882,653 bytes (8.47 MB)
+- Exported raw source manifest: artifacts/phase3_75/raw_source_manifest.csv
+- Status: SUCCESS (Exit Code: 0)
+
+[2026-09-26T08:38:45Z] python scripts/build_phase3_75_pipeline.py
+- Ingested 30 raw archives, aligned 15,000 real records with strict 21-field schema
+- Enforced temporal anti-leakage contracts (t_feat_avail <= t_issue < t_valid <= t_obs_avail)
+- Generated canonical dataset: data/phase3/benchmark_real_75_dataset.jsonl (SHA-256: f811bc05e5bfea2855dbce9c38727fa2b0e069ee066052de52c9826ce1815ee3)
+- Partitioned chronological splits: Train (50%, 7500 rows), Val (25%, 3750 rows), Test (25%, 3750 rows)
+- Trained candidate LightGBM GBDT model with Platt scaling / Isotonic calibration
+- Evaluated untouched held-out test split (2024-11-03 to 2024-12-14)
+- Test metrics: Brier=0.049569 vs Frozen Baseline=0.053460 -> BSS=+0.0728 [95% CI: +0.0153, +0.1276], ECE=0.0454, ROC-AUC=0.9438, PR-AUC=0.4585
+- Exported artifacts to artifacts/phase3_75/
+- Status: SUCCESS (Exit Code: 0)
+
+[2026-09-26T08:41:20Z] python scripts/validate_phase3_data.py --dataset data/phase3/benchmark_real_75_dataset.jsonl
+- Validated 15,000 records against 21-field canonical schema
+- Temporal invariant violations: 0
+- Lookahead / target leakage violations: 0
+- Status: SUCCESS (Exit Code: 0)
+
+[2026-09-26T08:42:10Z] pytest backend/tests/test_phase3_real_data_integrity.py -q
+- Verified cryptographic SHA-256 manifests, payload integrity, schema compliance
+- Status: SUCCESS (Exit Code: 0)
+
+[2026-09-26T08:43:05Z] pytest backend/tests/ -q
+- 983 passed tests
+- Status: SUCCESS (Exit Code: 0)
+
+[2026-09-26T08:44:30Z] npm test --prefix frontend -- --run
+- 21 test suites passed, 111 tests passed
+- Status: SUCCESS (Exit Code: 0)
+
+[2026-09-26T08:45:00Z] npm run build --prefix frontend
+- Vite build succeeded
+- Status: SUCCESS (Exit Code: 0)

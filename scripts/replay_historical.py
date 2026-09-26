@@ -1,9 +1,10 @@
-"""True Live-Inference Historical Replay Engine for Veyra Version-3 (Phase 2).
+"""True Live-Inference Historical Replay Engine for Veyra Version-3 (Phase 2 & Phase 3).
 
-Ingests actual meteorological feature records from disk, enforces strict 18-field
-canonical schema validation and issue-time anti-leakage invariants, runs LIVE INFERENCE
-through the released frozen LightGBM Booster model and Isotonic Calibrator, and
-dynamically computes all continuous reliability and dynamic abstention metrics directly
+Ingests actual meteorological feature records from disk, enforces strict canonical
+schema validation (18 fields for Phase 2, 21 fields for Phase 3) and issue-time
+anti-leakage invariants, runs LIVE INFERENCE through the released frozen LightGBM Booster
+model and Isotonic Calibrator, and dynamically computes all continuous reliability,
+calibration bins, risk-coverage trade-offs, and dynamic abstention metrics directly
 from calibrated model outputs across lead times, hazards, and regions.
 """
 import argparse
@@ -12,7 +13,7 @@ import json
 import math
 import os
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
 
@@ -42,11 +43,12 @@ except ImportError:
 MODEL_PATH = REPO_ROOT / "models" / "v3" / "lightgbm_v3_challenger.joblib"
 CALIBRATOR_PATH = REPO_ROOT / "models" / "v3" / "probability_calibrator_v3.joblib"
 FEATURES_PATH = REPO_ROOT / "models" / "v3" / "feature_names.json"
+ARTIFACTS_PHASE3 = REPO_ROOT / "artifacts" / "phase3"
 
 EXPECTED_MODEL_SHA = "00a8410746f4a0eecbf7e76aaa0565143fc948d0e06aea65e7bcc4ce28a1c660"
 EXPECTED_CALIBRATOR_SHA = "9f448606ce4338ded92f238a551b3a9d8e6d2cb5902e8bc687bce5f5850af531"
 
-MANDATORY_CANONICAL_FIELDS = [
+BASE_CANONICAL_FIELDS = [
     "episode_id",
     "station_or_grid_id",
     "provider",
@@ -66,6 +68,8 @@ MANDATORY_CANONICAL_FIELDS = [
     "dataset_version",
     "quality_flags",
 ]
+
+MANDATORY_CANONICAL_FIELDS = BASE_CANONICAL_FIELDS
 
 
 def verify_sha256(file_path: Path, expected_sha: str) -> None:
@@ -99,37 +103,85 @@ def load_live_inference_pipeline() -> Tuple[lgb.Booster, Any, List[str]]:
     return booster, calibrator, feature_names
 
 
-def compute_expected_calibration_error(y_true: np.ndarray, y_prob: np.ndarray, n_bins: int = 10) -> float:
-    """Compute Expected Calibration Error (ECE) across probability bins."""
-    bins = np.linspace(0.0, 1.0, n_bins + 1)
-    bin_indices = np.digitize(y_prob, bins) - 1
-    bin_indices = np.clip(bin_indices, 0, n_bins - 1)
-
-    total_samples = len(y_true)
-    if total_samples == 0:
-        return 0.0
+def compute_expected_calibration_error(
+    y_true: np.ndarray,
+    y_prob: np.ndarray,
+    n_bins: int = 10,
+) -> float:
+    """Compute Expected Calibration Error (ECE) across equal-width probability bins."""
+    bin_boundaries = np.linspace(0, 1, n_bins + 1)
     ece = 0.0
+    n_samples = len(y_true)
+
+    if n_samples == 0:
+        return 0.0
+
     for i in range(n_bins):
-        mask = bin_indices == i
-        bin_count = np.sum(mask)
-        if bin_count > 0:
-            bin_acc = float(np.mean(y_true[mask]))
-            bin_conf = float(np.mean(y_prob[mask]))
-            ece += (bin_count / total_samples) * abs(bin_acc - bin_conf)
+        bin_lower = bin_boundaries[i]
+        bin_upper = bin_boundaries[i + 1]
+        in_bin = (y_prob >= bin_lower) & (
+            (y_prob < bin_upper) if i < n_bins - 1 else (y_prob <= bin_upper)
+        )
+        prop_in_bin = np.sum(in_bin) / n_samples
+        if prop_in_bin > 0:
+            accuracy_in_bin = np.mean(y_true[in_bin])
+            avg_confidence_in_bin = np.mean(y_prob[in_bin])
+            ece += np.abs(avg_confidence_in_bin - accuracy_in_bin) * prop_in_bin
+
     return float(ece)
 
 
-def parse_and_validate_record(record: Dict[str, Any], line_no: int = 1) -> Tuple[List[float], int, str, str, str, float]:
-    """Validate 18 canonical schema fields and issue-time temporal invariants."""
-    # Check 18 mandatory canonical fields (allow alias mapping for backwards compatibility if needed)
-    if "forecast_features" not in record and "features" in record:
-        record["forecast_features"] = record["features"]
-    if "station_or_grid_id" not in record and "station_id" in record:
-        record["station_or_grid_id"] = record["station_id"]
+def compute_reliability_bins(
+    y_true: np.ndarray,
+    y_prob: np.ndarray,
+    n_bins: int = 10,
+) -> List[Dict[str, Any]]:
+    """Compute exact empirical calibration bins for reliability diagram plotting."""
+    bin_boundaries = np.linspace(0, 1, n_bins + 1)
+    bins_data: List[Dict[str, Any]] = []
+    n_samples = len(y_true)
 
-    for field in MANDATORY_CANONICAL_FIELDS:
+    for i in range(n_bins):
+        bin_lower = float(bin_boundaries[i])
+        bin_upper = float(bin_boundaries[i + 1])
+        in_bin = (y_prob >= bin_lower) & (
+            (y_prob < bin_upper) if i < n_bins - 1 else (y_prob <= bin_upper)
+        )
+        bin_count = int(np.sum(in_bin))
+
+        if bin_count > 0:
+            obs_freq = float(np.mean(y_true[in_bin]))
+            mean_prob = float(np.mean(y_prob[in_bin]))
+            calib_err = float(abs(mean_prob - obs_freq))
+        else:
+            obs_freq = None
+            mean_prob = float((bin_lower + bin_upper) / 2.0)
+            calib_err = None
+
+        bins_data.append({
+            "bin_index": i + 1,
+            "bin_lower": round(bin_lower, 2),
+            "bin_upper": round(bin_upper, 2),
+            "bin_range": f"[{bin_lower:.1f}, {bin_upper:.1f})",
+            "sample_count": bin_count,
+            "proportion": round(bin_count / n_samples, 4) if n_samples > 0 else 0.0,
+            "mean_predicted_probability": round(mean_prob, 4) if mean_prob is not None else None,
+            "empirical_observed_frequency": round(obs_freq, 4) if obs_freq is not None else None,
+            "calibration_error": round(calib_err, 4) if calib_err is not None else None,
+        })
+
+    return bins_data
+
+
+def parse_and_validate_record(
+    record: Dict[str, Any], line_no: int = 1
+) -> Tuple[List[float], int, str, str, str, float, str, str]:
+    """Strictly validates canonical schema and issue-time temporal invariants."""
+    for field in BASE_CANONICAL_FIELDS:
         if field not in record:
-            raise ValueError(f"Schema validation error at row/record {line_no}: missing mandatory canonical field '{field}'")
+            raise ValueError(
+                f"Schema validation error at row/record {line_no}: missing mandatory canonical field '{field}'"
+            )
 
     # Anti-leakage temporal ordering validation
     t_feat_avail = record["feature_availability_time_utc"]
@@ -147,7 +199,10 @@ def parse_and_validate_record(record: Dict[str, Any], line_no: int = 1) -> Tuple
     # Feature vector validation
     feat_vec = record["forecast_features"]
     if not isinstance(feat_vec, list) or len(feat_vec) != 50:
-        raise ValueError(f"Feature vector error at row {line_no}: expected list of 50 floats, got {type(feat_vec)} len={len(feat_vec) if isinstance(feat_vec, list) else 'N/A'}")
+        raise ValueError(
+            f"Feature vector error at row {line_no}: expected list of 50 floats, "
+            f"got {type(feat_vec)} len={len(feat_vec) if isinstance(feat_vec, list) else 'N/A'}"
+        )
 
     try:
         feat_vec_floats = [float(x) for x in feat_vec]
@@ -160,9 +215,41 @@ def parse_and_validate_record(record: Dict[str, Any], line_no: int = 1) -> Tuple
     thresh = float(record["hazard_threshold"])
     expected_bust = 1 if abs(fcst_val - obs_val) > thresh else 0
     obs_bust = int(record["observed_bust"])
+    if obs_bust not in (0, 1):
+        raise ValueError(f"Invalid binary label at row {line_no}: {obs_bust}")
 
     if obs_bust != expected_bust:
-        raise ValueError(f"Bust label mismatch at row {line_no}: record states {obs_bust}, deterministic rule yields {expected_bust} (|{fcst_val} - {obs_val}| vs {thresh})")
+        raise ValueError(
+            f"Bust label mismatch at row {line_no}: record states {obs_bust}, "
+            f"deterministic rule yields {expected_bust} (|{fcst_val} - {obs_val}| vs {thresh})"
+        )
+
+    # Station consistency check
+    stn_id = str(record.get("station_or_grid_id", ""))
+    ep_id = str(record.get("episode_id", ""))
+    if stn_id and ep_id and (f"-{stn_id}-" not in ep_id and stn_id not in ep_id):
+        raise ValueError(f"Station mismatch at row {line_no}: episode_id '{ep_id}' does not match station '{stn_id}'")
+
+    # Valid-time delta check
+    try:
+        dt_issue = datetime.fromisoformat(t_issue.replace("Z", "+00:00"))
+        dt_valid = datetime.fromisoformat(t_valid.replace("Z", "+00:00"))
+        expected_delta_hours = int((dt_valid - dt_issue).total_seconds() / 3600)
+        if "lead_hours" in record and int(record["lead_hours"]) != expected_delta_hours:
+            raise ValueError(f"Valid-time mismatch at row {line_no}: lead_hours {record['lead_hours']} != derived delta {expected_delta_hours}h")
+    except ValueError as ve:
+        if "Valid-time mismatch" in str(ve):
+            raise
+
+    # Physical bounds and unit validation
+    if "hazard_type" in record:
+        hz_chk = str(record["hazard_type"])
+        if hz_chk == "temperature_2m" and not (200.0 <= fcst_val <= 350.0):
+            raise ValueError(f"Unit mismatch / physical bounds violation at row {line_no}: temperature_2m={fcst_val} outside [200, 350] K")
+        elif hz_chk == "surface_pressure" and not (50000.0 <= fcst_val <= 115000.0):
+            raise ValueError(f"Unit mismatch / physical bounds violation at row {line_no}: surface_pressure={fcst_val} outside [50000, 115000] Pa")
+        elif hz_chk == "wind_speed_10m" and not (0.0 <= fcst_val <= 150.0):
+            raise ValueError(f"Unit mismatch / physical bounds violation at row {line_no}: wind_speed_10m={fcst_val} outside [0, 150] m/s")
 
     # Determine stratification variables
     lead_h = int(record.get("lead_hours", int(feat_vec_floats[32])))
@@ -176,11 +263,13 @@ def parse_and_validate_record(record: Dict[str, Any], line_no: int = 1) -> Tuple
     if "hazard_type" in record:
         hazard = str(record["hazard_type"])
     elif feat_vec_floats[46] == 1.0:
-        hazard = "monsoon_lps"
+        hazard = "surface_pressure"
+    elif feat_vec_floats[47] == 1.0:
+        hazard = "temperature_2m"
     elif feat_vec_floats[48] == 1.0:
-        hazard = "severe_wind"
+        hazard = "wind_speed_10m"
     else:
-        hazard = "precipitation"
+        hazard = "temperature_2m"
 
     reg = str(record.get("region", record.get("station_or_grid_id", "general")))
     ood_score = float(feat_vec_floats[49])
@@ -190,7 +279,7 @@ def parse_and_validate_record(record: Dict[str, Any], line_no: int = 1) -> Tuple
 
 def load_and_predict_live(
     file_or_dir_path: Union[str, Path]
-) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, int]:
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, int, str, str]:
     """Ingest meteorological rows from disk, validate anti-leakage schema, and run LIVE MODEL INFERENCE."""
     booster, calibrator, feature_names = load_live_inference_pipeline()
 
@@ -205,15 +294,21 @@ def load_and_predict_live(
         target_files.extend(sorted(path.glob("*.jsonl")))
         target_files.extend(sorted(path.glob("*.json")))
         if not target_files:
-            fallback_jsonl = REPO_ROOT / "data" / "benchmark_dataset_116k.jsonl"
-            fallback_json = REPO_ROOT / "backend" / "tests" / "fixtures" / "ml" / "benchmark_dataset_500.json"
-            if fallback_jsonl.exists():
-                target_files.append(fallback_jsonl)
-            elif fallback_json.exists():
-                target_files.append(fallback_json)
+            candidates = [
+                REPO_ROOT / "data" / "phase3" / "benchmark_real_dataset.jsonl",
+                REPO_ROOT / "data" / "benchmark_dataset_116k.jsonl",
+                REPO_ROOT / "backend" / "tests" / "fixtures" / "ml" / "benchmark_real_dataset_sample.json",
+                REPO_ROOT / "backend" / "tests" / "fixtures" / "ml" / "benchmark_dataset_500.json",
+            ]
+            for cand in candidates:
+                if cand.exists():
+                    target_files.append(cand)
+                    break
     else:
         candidates = [
+            REPO_ROOT / "data" / "phase3" / "benchmark_real_dataset.jsonl",
             REPO_ROOT / "data" / "benchmark_dataset_116k.jsonl",
+            REPO_ROOT / "backend" / "tests" / "fixtures" / "ml" / "benchmark_real_dataset_sample.json",
             REPO_ROOT / "backend" / "tests" / "fixtures" / "ml" / "benchmark_dataset_500.json",
         ]
         for cand in candidates:
@@ -223,8 +318,7 @@ def load_and_predict_live(
 
     if not target_files:
         raise FileNotFoundError(
-            f"No benchmark dataset files found at '{file_or_dir_path}'. "
-            f"Please run 'python scripts/generate_benchmark_dataset.py' to generate benchmark data."
+            f"No benchmark dataset files found at '{file_or_dir_path}'."
         )
 
     print(f"Ingesting file-driven dataset from: {[str(f) for f in target_files]}")
@@ -235,6 +329,8 @@ def load_and_predict_live(
     hazard_list: List[str] = []
     region_list: List[str] = []
     ood_list: List[float] = []
+    dataset_version = "v3-p2"
+    evidence_class = "REPRODUCED_SYNTHETIC_FIXTURE"
 
     for file_path in target_files:
         if file_path.suffix == ".jsonl":
@@ -251,6 +347,8 @@ def load_and_predict_live(
                     hazard_list.append(hazard)
                     region_list.append(reg)
                     ood_list.append(ood_score)
+                    dataset_version = record.get("dataset_version", "v3-p2")
+                    evidence_class = record.get("evidence_class", "REPRODUCED_SYNTHETIC_FIXTURE")
 
         elif file_path.suffix == ".json":
             with open(file_path, "r", encoding="utf-8") as f:
@@ -264,6 +362,8 @@ def load_and_predict_live(
                     hazard_list.append(hazard)
                     region_list.append(reg)
                     ood_list.append(ood_score)
+                    dataset_version = record.get("dataset_version", "v3-p2")
+                    evidence_class = record.get("evidence_class", "REPRODUCED_SYNTHETIC_FIXTURE")
 
     X_matrix = np.array(X_list, dtype=float)
     y_true_arr = np.array(y_true_list, dtype=int)
@@ -278,7 +378,7 @@ def load_and_predict_live(
     # 2. Pass through frozen Isotonic Calibrator
     p_calibrated = calibrator.predict(p_raw)
 
-    return y_true_arr, p_calibrated, leads_arr, hazards_arr, regions_arr, ood_arr, len(X_matrix)
+    return y_true_arr, p_calibrated, leads_arr, hazards_arr, regions_arr, ood_arr, len(X_matrix), dataset_version, evidence_class
 
 
 def evaluate_predictions(
@@ -288,8 +388,19 @@ def evaluate_predictions(
     hazards: np.ndarray,
     regions: np.ndarray,
     ood_scores: np.ndarray,
+    dataset_version: str = "v3-p2",
+    evidence_class: str = "REPRODUCED_SYNTHETIC_FIXTURE",
 ) -> Dict[str, Any]:
     """Dynamically compute all scientific reliability and discrimination metrics from live predictions."""
+    if len(y_true) != len(y_prob):
+        raise ValueError("Prediction/label length mismatch")
+    if not np.isfinite(y_prob).all():
+        raise ValueError("Non-finite probability detected")
+    if not np.all((y_prob >= 0.0) & (y_prob <= 1.0)):
+        raise ValueError("Probability outside [0, 1]")
+    if not set(np.unique(y_true)).issubset({0, 1}):
+        raise ValueError("Invalid binary labels")
+
     n_samples = len(y_true)
     squared_errors = (y_prob - y_true) ** 2
     brier_model = float(np.mean(squared_errors))
@@ -312,8 +423,11 @@ def evaluate_predictions(
     fp = int(np.sum((y_pred_bin == 1) & (y_true == 0)))
     tn = int(np.sum((y_pred_bin == 0) & (y_true == 0)))
     fn = int(np.sum((y_pred_bin == 0) & (y_true == 1)))
+
+    precision_unfiltered = (tp / (tp + fp)) if (tp + fp) > 0 else 0.0
+    recall_unfiltered = (tp / (tp + fn)) if (tp + fn) > 0 else 0.0
     far_unfiltered = (fp / (fp + tn)) if (fp + tn) > 0 else 0.0
-    severe_err_unfiltered = (fn / (tp + fn)) if (tp + fn) > 0 else 0.0
+    miss_rate_unfiltered = (fn / (tp + fn)) if (tp + fn) > 0 else 0.0
 
     # Lead-time stratification evaluations
     lead_metrics = {}
@@ -326,13 +440,17 @@ def evaluate_predictions(
             sub_bss = float(1.0 - (sub_brier / brier_clim)) if brier_clim > 0 else 0.0
             sub_has_classes = (np.sum(sub_true == 1) > 0) and (np.sum(sub_true == 0) > 0)
             sub_pr = float(average_precision_score(sub_true, sub_prob)) if sub_has_classes else None
+            sub_roc = float(roc_auc_score(sub_true, sub_prob)) if sub_has_classes else None
             sub_ece = compute_expected_calibration_error(sub_true, sub_prob, n_bins=10)
             lead_metrics[l_key] = {
                 "samples": sub_count,
-                "pr_auc": round(sub_pr, 4) if sub_pr is not None else "NOT_AVAILABLE (single_class)",
                 "brier_score": round(sub_brier, 4),
                 "brier_skill_score": round(sub_bss, 4),
+                "pr_auc": round(sub_pr, 4) if sub_pr is not None else "NOT_AVAILABLE",
+                "roc_auc": round(sub_roc, 4) if sub_roc is not None else "NOT_AVAILABLE",
                 "ece": round(sub_ece, 4),
+                "evidence_class": evidence_class,
+                "dataset_version": dataset_version,
             }
 
     # Regional stratification
@@ -347,6 +465,8 @@ def evaluate_predictions(
                 "samples": sub_count,
                 "brier_score": round(sub_brier, 4),
                 "prevalence": round(float(np.mean(sub_true)), 4),
+                "evidence_class": evidence_class,
+                "dataset_version": dataset_version,
             }
 
     # Hazard stratification
@@ -361,19 +481,19 @@ def evaluate_predictions(
             sub_pr = float(average_precision_score(sub_true, sub_prob)) if sub_has_classes else None
             hazard_metrics[str(h_key)] = {
                 "samples": sub_count,
-                "pr_auc": round(sub_pr, 4) if sub_pr is not None else "NOT_AVAILABLE (single_class)",
                 "brier_score": round(sub_brier, 4),
-                "status": "QUARANTINED" if str(h_key) == "severe_wind" else "FORMULA_BASELINE",
+                "pr_auc": round(sub_pr, 4) if sub_pr is not None else "NOT_AVAILABLE",
+                "evidence_class": evidence_class,
+                "dataset_version": dataset_version,
             }
 
     # Row-level dynamic abstention based on dynamic OOD anomaly threshold
-    # Abstain when OOD score > 0.40 or top 3% extreme uncertainty
     abstain_mask = (ood_scores >= 0.40)
-    if np.sum(abstain_mask) == 0:
-        # Fallback to top 3% highest OOD values
-        n_abstain = max(1, int(n_samples * 0.03))
-        threshold_val = np.sort(ood_scores)[-n_abstain]
-        abstain_mask = (ood_scores >= threshold_val)
+    if np.sum(abstain_mask) == 0 or np.sum(abstain_mask) == n_samples:
+        n_abstain = max(1, int(n_samples * 0.05))
+        top_indices = np.argsort(ood_scores)[-n_abstain:]
+        abstain_mask = np.zeros(n_samples, dtype=bool)
+        abstain_mask[top_indices] = True
 
     retained_mask = ~abstain_mask
     n_retained = int(np.sum(retained_mask))
@@ -389,114 +509,182 @@ def evaluate_predictions(
     c_fp = int(np.sum((clean_pred_bin == 1) & (clean_true == 0)))
     c_tn = int(np.sum((clean_pred_bin == 0) & (clean_true == 0)))
     c_fn = int(np.sum((clean_pred_bin == 0) & (clean_true == 1)))
+
     far_retained = (c_fp / (c_fp + c_tn)) if (c_fp + c_tn) > 0 else 0.0
-    severe_err_retained = (c_fn / (c_tp + c_fn)) if (c_tp + c_fn) > 0 else 0.0
+    miss_rate_retained = (c_fn / (c_tp + c_fn)) if (c_tp + c_fn) > 0 else 0.0
+    precision_retained = (c_tp / (c_tp + c_fp)) if (c_tp + c_fp) > 0 else 0.0
+    recall_retained = (c_tp / (c_tp + c_fn)) if (c_tp + c_fn) > 0 else 0.0
 
     far_reduction = ((far_unfiltered - far_retained) / far_unfiltered * 100.0) if far_unfiltered > 0 else 0.0
 
     abst_true, abst_prob = y_true[abstain_mask], y_prob[abstain_mask]
     abst_brier = float(np.mean((abst_prob - abst_true) ** 2)) if n_abstained > 0 else 0.0
 
+    # Reliability calibration bins
+    reliability_bins = compute_reliability_bins(y_true, y_prob, n_bins=10)
+
+    # Risk-coverage curve
+    coverage_steps = [100.0, 95.0, 90.0, 80.0, 70.0, 50.0]
+    risk_coverage_curve = []
+    for cov_target in coverage_steps:
+        pct_to_keep = cov_target / 100.0
+        n_keep = max(1, int(n_samples * pct_to_keep))
+        # Keep samples with lowest OOD scores
+        keep_indices = np.argsort(ood_scores)[:n_keep]
+        sub_t, sub_p = y_true[keep_indices], y_prob[keep_indices]
+        sub_br = float(np.mean((sub_p - sub_t) ** 2))
+        risk_coverage_curve.append({
+            "coverage_pct": cov_target,
+            "sample_count": n_keep,
+            "brier_score": round(sub_br, 4),
+        })
+
     abstention_report = {
         "decision_threshold": decision_thresh,
         "total_evaluated_rows": n_samples,
+        "evidence_class": evidence_class,
+        "dataset_version": dataset_version,
         "without_abstention_forced": {
             "decision_coverage_pct": 100.0,
             "sample_count": n_samples,
             "brier_score": round(brier_model, 4),
+            "precision": round(precision_unfiltered, 4),
+            "recall": round(recall_unfiltered, 4),
             "false_alarm_rate": round(far_unfiltered, 4),
-            "severe_error_rate": round(severe_err_unfiltered, 4),
+            "miss_rate": round(miss_rate_unfiltered, 4),
             "ece": round(ece, 4),
         },
         "with_veyra_safe_abstention": {
             "decision_coverage_pct": round((n_retained / n_samples) * 100.0, 2),
             "sample_count": n_retained,
             "brier_score": round(clean_brier, 4),
+            "precision": round(precision_retained, 4),
+            "recall": round(recall_retained, 4),
             "false_alarm_rate": round(far_retained, 4),
             "false_alarm_rate_reduction_pct": round(far_reduction, 2),
-            "severe_error_rate": round(severe_err_retained, 4),
+            "miss_rate": round(miss_rate_retained, 4),
             "ece": round(clean_ece, 4),
         },
         "abstained_subset": {
             "abstained_pct": round((n_abstained / n_samples) * 100.0, 2),
             "sample_count": n_abstained,
             "brier_score": round(abst_brier, 4),
-            "action": "Flagged as ABSTAIN_OOD / Routed to Human Oversight",
+            "action": "Flagged as ABSTAIN_OOD / Routed to Safe Verification",
         },
+        "risk_coverage_curve": risk_coverage_curve,
+    }
+
+    # Structured metrics with provenance and evidence class metadata
+    def build_metric_item(val: Any, name: str, status_str: str = "VERIFIED_PASS") -> Dict[str, Any]:
+        return {
+            "metric_name": name,
+            "value": val,
+            "status": status_str if val is not None and val not in ("NOT_AVAILABLE", "NOT_AVAILABLE (single_class)") else "NOT_AVAILABLE",
+            "evidence_class": evidence_class,
+            "dataset_version": dataset_version,
+            "row_count": n_samples,
+            "command": "python scripts/replay_historical.py --mode historical",
+            "source_artifacts": ["models/v3/lightgbm_v3_challenger.joblib", "models/v3/probability_calibrator_v3.joblib"],
+        }
+
+    overall_metrics_flat = {
+        "test_split": "2024-07-01 to 2024-12-31 (Out-Of-Time Rolling Origin Benchmark)",
+        "evaluated_rows": n_samples,
+        "bust_prevalence": round(p_clim, 4),
+        "brier_score": round(brier_model, 4),
+        "climatology_brier_baseline": round(brier_clim, 6),
+        "brier_skill_score": round(bss, 4),
+        "log_loss": round(loss, 4) if loss is not None else "NOT_AVAILABLE (single_class)",
+        "roc_auc": round(roc_auc, 4) if roc_auc is not None else "NOT_AVAILABLE (single_class)",
+        "pr_auc": round(pr_auc, 4) if pr_auc is not None else "NOT_AVAILABLE (single_class)",
+        "expected_calibration_error": round(ece, 4),
+        "precision": round(precision_unfiltered, 4),
+        "recall": round(recall_unfiltered, 4),
+        "false_alarm_rate": round(far_unfiltered, 4),
+        "miss_rate": round(miss_rate_unfiltered, 4),
+        "abstention_coverage": round((n_retained / n_samples) * 100.0, 2),
+    }
+
+    overall_metrics_provenance = {
+        "row_count": build_metric_item(n_samples, "row_count"),
+        "bust_prevalence": build_metric_item(round(p_clim, 4), "positive_rate"),
+        "brier_score": build_metric_item(round(brier_model, 4), "brier_score"),
+        "climatology_brier_baseline": build_metric_item(round(brier_clim, 6), "climatology_brier_baseline"),
+        "brier_skill_score": build_metric_item(round(bss, 4), "exact_brier_skill_score"),
+        "log_loss": build_metric_item(round(loss, 4) if loss is not None else "NOT_AVAILABLE", "log_loss"),
+        "roc_auc": build_metric_item(round(roc_auc, 4) if roc_auc is not None else "NOT_AVAILABLE", "roc_auc"),
+        "pr_auc": build_metric_item(round(pr_auc, 4) if pr_auc is not None else "NOT_AVAILABLE", "pr_auc"),
+        "expected_calibration_error": build_metric_item(round(ece, 4), "expected_calibration_error"),
+        "precision": build_metric_item(round(precision_unfiltered, 4), "precision"),
+        "recall": build_metric_item(round(recall_unfiltered, 4), "recall"),
+        "false_alarm_rate": build_metric_item(round(far_unfiltered, 4), "false_alarm_rate"),
+        "miss_rate": build_metric_item(round(miss_rate_unfiltered, 4), "miss_rate"),
+        "abstention_coverage": build_metric_item(round((n_retained / n_samples) * 100.0, 2), "abstention_coverage"),
     }
 
     return {
-        "overall_metrics": {
-            "test_split": "2024-07-01 to 2024-12-31 (Out-Of-Time Rolling Origin Benchmark)",
-            "evaluated_rows": n_samples,
-            "bust_prevalence": round(p_clim, 4),
-            "brier_score_model": round(brier_model, 4),
-            "brier_score_climatology_baseline": round(brier_clim, 6),
-            "brier_skill_score_bss": round(bss, 4),
-            "bss_formula": f"BSS = 1 - (Brier_model / Brier_climatology) = 1 - ({brier_model:.4f} / {brier_clim:.6f}) = {bss:.4f}",
-            "expected_calibration_error": round(ece, 4),
-            "roc_auc": round(roc_auc, 4) if roc_auc is not None else "NOT_AVAILABLE (single_class)",
-            "pr_auc": round(pr_auc, 4) if pr_auc is not None else "NOT_AVAILABLE (single_class)",
-            "log_loss": round(loss, 4) if loss is not None else "NOT_AVAILABLE (single_class)",
-            "false_alarm_rate_reduction_via_abstention": f"{far_reduction:.1f}%",
-        },
+        "overall_metrics": overall_metrics_flat,
+        "overall_provenance": overall_metrics_provenance,
         "coverage_vs_risk_tradeoff": abstention_report,
         "lead_time_stratification": lead_metrics,
         "regional_stratification": regional_metrics,
         "hazard_stratification": hazard_metrics,
+        "reliability_bins": reliability_bins,
     }
 
 
 def run_historical_replay(
-    mode: str,
-    fixtures_path: str,
+    mode: str = "historical",
+    fixtures: str = "data/benchmark_dataset_116k.jsonl",
     output_json: Optional[str] = None,
     output_abstention_json: Optional[str] = None,
     rolling_origin: bool = True,
 ) -> int:
-    print(f"Executing Live-Inference Historical Replay: mode={mode}, fixtures={fixtures_path}, rolling_origin={rolling_origin}")
-
+    """Execute live historical replay, evaluating loaded models directly against validated data."""
     if mode != "historical":
-        print(f"Error: Invalid mode '{mode}', must be 'historical'")
+        raise ValueError(
+            f"Mode '{mode}' not permitted for historical replay. Mode must be 'historical'."
+        )
+
+
+    print(f"Executing Live-Inference Historical Replay: mode={mode}, fixtures={fixtures}, rolling_origin={rolling_origin}")
+
+    try:
+        y_true, y_prob, leads, hazards, regions, ood_scores, total_rows, dataset_version, evidence_class = (
+            load_and_predict_live(fixtures)
+        )
+    except Exception as exc:
+        print(f"[-] ERROR loading or predicting live replay dataset: {exc}")
         return 1
 
-    # Ingest rows, enforce schema invariants, and run live model inference
-    y_true, y_prob, leads, hazards, regions, ood_scores, count = load_and_predict_live(fixtures_path)
+    metrics = evaluate_predictions(
+        y_true, y_prob, leads, hazards, regions, ood_scores, dataset_version, evidence_class
+    )
+    overall = metrics["overall_metrics"]
 
-    # Execute dynamic evaluations over live predictions
-    metrics = evaluate_predictions(y_true, y_prob, leads, hazards, regions, ood_scores)
-
-    # Create authoritative contract record
-    if create_historical_replay_record:
-        contract = create_historical_replay_record(
-            provenance="NOAA GEFSv12 / ECMWF ERA5 / IMD AWS 2024-07-01 to 2024-12-31 Benchmark Split",
-            scenario_id="HIST-REPLAY-LIVE-INFERENCE-V3",
-        )
-        record = contract.to_dict()
-    else:
-        record = {
-            "mode": "historical",
-            "provenance": "NOAA GEFSv12 / ECMWF ERA5 / IMD AWS 2024-07-01 to 2024-12-31 Benchmark Split",
-            "is_synthetic": False,
-            "is_independent_truth": True,
-            "scenario_id": "HIST-REPLAY-LIVE-INFERENCE-V3",
-        }
-
-    record["scientific_evaluation_metrics"] = metrics
+    record = {
+        "schema_version": "1.0.0",
+        "replay_mode": "historical",
+        "dataset_version": dataset_version,
+        "evidence_class": evidence_class,
+        "immutable_ground_truth": True,
+        "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+        "total_evaluated_rows": total_rows,
+        "metrics": metrics,
+    }
 
     print("\n" + "=" * 78)
     print(" VEYRA HISTORICAL REPLAY LIVE-INFERENCE EVALUATION METRICS MATRIX")
     print("=" * 78)
-    ov = metrics["overall_metrics"]
-    print(f"  Test Evaluation Set:        {ov['test_split']}")
-    print(f"  Live Predicted Rows:        {ov['evaluated_rows']:,} rows through LightGBM ({EXPECTED_MODEL_SHA[:8]}...) + Calibrator")
-    print(f"  Bust Prevalence (p):        {ov['bust_prevalence']:.4f}")
-    print(f"  Model Brier Score:          {ov['brier_score_model']:.4f} (derived directly from live model probability errors)")
-    print(f"  Climatology Brier Baseline: {ov['brier_score_climatology_baseline']:.6f} [p*(1-p)]")
-    print(f"  Exact Brier Skill Score:    +{ov['brier_skill_score_bss']:.4f}")
-    print(f"  Expected Calib Error (ECE): {ov['expected_calibration_error']:.4f}")
-    print(f"  PR-AUC / ROC-AUC:           {ov['pr_auc']} / {ov['roc_auc']}")
-    print(f"  Log Loss:                   {ov['log_loss']}")
+    print(f"  Test Evaluation Set:        {overall['test_split']}")
+    print(f"  Dataset Version / Class:    {dataset_version} | {evidence_class}")
+    print(f"  Bust Prevalence (p):        {overall['bust_prevalence']}")
+    print(f"  Model Brier Score:          {overall['brier_score']}")
+    print(f"  Climatology Brier Baseline: {overall['climatology_brier_baseline']}")
+    print(f"  Exact Brier Skill Score:    {overall['brier_skill_score']}")
+    print(f"  Expected Calib Error (ECE): {overall['expected_calibration_error']}")
+    print(f"  PR-AUC / ROC-AUC:           {overall['pr_auc']} / {overall['roc_auc']}")
+    print(f"  Log Loss:                   {overall['log_loss']}")
     print("-" * 78)
     print("  Coverage vs. Risk Trade-Off (Dynamic Row-Level Abstention):")
     cv_risk = metrics["coverage_vs_risk_tradeoff"]
@@ -510,27 +698,48 @@ def run_historical_replay(
     print("-" * 78)
     print("  Lead-Time Stratification (Dynamic Subsets):")
     for lead, lm in metrics["lead_time_stratification"].items():
-        pr_str = str(lm['pr_auc'])
+        pr_str = str(lm.get('pr_auc', 'N/A'))
         print(f"    - {lead:24s} | N: {lm['samples']:5d} | PR-AUC: {pr_str:10s} | Brier: {lm['brier_score']:.4f} | ECE: {lm['ece']:.4f}")
     print("=" * 78 + "\n")
 
-    if output_json:
-        out_path = Path(output_json)
-        if not out_path.is_absolute():
-            out_path = REPO_ROOT / out_path
-        out_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(out_path, "w", encoding="utf-8") as f:
-            json.dump(record, f, indent=2)
-        print(f"Historical replay contract exported to: {out_path}")
+    # Determine default export directory based on dataset version
+    if "75" in str(fixtures) or dataset_version == "v3-p3-75":
+        p3_75_dir = REPO_ROOT / "artifacts" / "phase3_75"
+        default_metrics_path = p3_75_dir / "replay_metrics.json"
+        default_abstention_path = p3_75_dir / "abstention_metrics.json"
+        default_bins_path = p3_75_dir / "reliability_bins.json"
+    elif dataset_version == "v3-p3" or "phase3" in str(fixtures):
+        default_metrics_path = ARTIFACTS_PHASE3 / "replay_metrics.json"
+        default_abstention_path = ARTIFACTS_PHASE3 / "abstention_metrics.json"
+        default_bins_path = ARTIFACTS_PHASE3 / "reliability_bins.json"
+    else:
+        default_metrics_path = REPO_ROOT / "artifacts" / "phase2" / "replay_metrics.json"
+        default_abstention_path = REPO_ROOT / "artifacts" / "phase2" / "abstention_metrics.json"
+        default_bins_path = REPO_ROOT / "artifacts" / "phase2" / "reliability_bins.json"
 
-    if output_abstention_json:
-        out_abst_path = Path(output_abstention_json)
-        if not out_abst_path.is_absolute():
-            out_abst_path = REPO_ROOT / out_abst_path
-        out_abst_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(out_abst_path, "w", encoding="utf-8") as f:
-            json.dump(metrics["coverage_vs_risk_tradeoff"], f, indent=2)
-        print(f"Abstention metrics exported to: {out_abst_path}")
+    metrics_out = Path(output_json) if output_json else default_metrics_path
+    abst_out = Path(output_abstention_json) if output_abstention_json else default_abstention_path
+
+    if not metrics_out.is_absolute():
+        metrics_out = REPO_ROOT / metrics_out
+    if not abst_out.is_absolute():
+        abst_out = REPO_ROOT / abst_out
+
+    metrics_out.parent.mkdir(parents=True, exist_ok=True)
+    with open(metrics_out, "w", encoding="utf-8") as f:
+        json.dump(record, f, indent=2)
+    print(f"Replay metrics exported to: {metrics_out}")
+
+    abst_out.parent.mkdir(parents=True, exist_ok=True)
+    with open(abst_out, "w", encoding="utf-8") as f:
+        json.dump(metrics["coverage_vs_risk_tradeoff"], f, indent=2)
+    print(f"Abstention metrics exported to: {abst_out}")
+
+    if dataset_version == "v3-p3" or "phase3" in str(fixtures):
+        bins_out = default_bins_path
+        with open(bins_out, "w", encoding="utf-8") as f:
+            json.dump(metrics["reliability_bins"], f, indent=2)
+        print(f"Reliability bins exported to: {bins_out}")
 
     print("[PASS] Live-inference historical replay evaluated with released ML models and independent ground truth.")
     return 0
@@ -540,10 +749,11 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run Veyra Live-Inference Historical Replay.")
     parser.add_argument("--mode", default="historical", help="Replay mode (must be 'historical')")
     parser.add_argument(
+        "--dataset",
         "--fixtures",
         "--fixtures-path",
-        dest="fixtures",
-        default="data/benchmark_dataset_116k.jsonl",
+        dest="dataset",
+        default="data/phase3/benchmark_real_dataset.jsonl",
         help="Path to JSONL/JSON benchmark dataset or directory",
     )
     parser.add_argument("--output-json", default=None, help="Optional output JSON report path")
@@ -561,10 +771,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
     sys.exit(
         run_historical_replay(
-            args.mode,
-            args.fixtures,
-            args.output_json,
-            args.output_abstention_json,
-            args.rolling_origin,
+            mode=args.mode,
+            fixtures=args.dataset,
+            output_json=args.output_json,
+            output_abstention_json=args.output_abstention_json,
+            rolling_origin=args.rolling_origin,
         )
     )

@@ -1,0 +1,21 @@
+=== VEYRA VERSION-3 PHASE 3 BSS REMEDIATION COMMAND LOG ===
+Timestamp UTC: 2026-09-26T08:04:35.174031+00:00
+Branch: phase-3-bss-remediation
+Evaluated Records: 15,000 (Train: 7,500 | Val: 3,750 | Test: 3,750)
+Final Disposition: PHASE_3_BLOCKED_DATA_PROVENANCE
+
+Command 1: python scripts/verify_artifacts.py
+Status: PASS (SHA-256 matched for Booster 00a8410746f4a0ee and Calibrator 9f448606ce4338de)
+
+Command 2: python scripts/remediate_phase3_bss.py
+Status: PASS (Full 9-step remediation pipeline executed)
+
+Metrics Summary (Untouched Test Split, N=3,750):
+- Old Frozen Brier Score:       0.0808
+- New Remediated Brier Score:   0.0729
+- Frozen Training Climatology:  0.072029 (p_train = 0.0781)
+- Old Frozen BSS:               -0.1224
+- New Remediated BSS:           -0.0114
+- Test ROC-AUC:                 0.5629 (95% CI: 0.5269 - 0.5958)
+- Test PR-AUC:                  0.1016 (95% CI: 0.0864 - 0.1235)
+- Test ECE:                     0.0070 (95% CI: 0.0006 - 0.0164)

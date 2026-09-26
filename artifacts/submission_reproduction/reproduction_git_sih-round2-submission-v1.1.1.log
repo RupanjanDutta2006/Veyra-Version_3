@@ -1,0 +1,37 @@
+Veyra [GIT MODE] reproduction for sih-round2-submission-v1.1.1 SUCCESSFUL at commit 7603bf46ff13a7cf31cd760d02139fa04b0217ba
+Summary: {
+  "schema_version": "1.0.0",
+  "timestamp": "2026-09-26T03:46:00.875202+00:00",
+  "candidate_tag": "sih-round2-submission-v1.1.1",
+  "baseline_sha": "94745df06298ee5daab3144e329885f780958bad",
+  "checked_out_commit_sha": "7603bf46ff13a7cf31cd760d02139fa04b0217ba",
+  "total_tests": 1065,
+  "total_passed": 1065,
+  "total_failed": 0,
+  "total_errors": 0,
+  "total_skipped": 0,
+  "backend_result": {
+    "framework": "pytest",
+    "total_tests": 954,
+    "passed": 954,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "duration_seconds": 94.253,
+    "status": "PASSED"
+  },
+  "frontend_result": {
+    "framework": "vitest",
+    "test_files": 9,
+    "total_tests": 111,
+    "passed": 111,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "pending": 0,
+    "todo": 0,
+    "success": true,
+    "status": "PASSED"
+  },
+  "status": "PASSED"
+}

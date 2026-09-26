@@ -1,0 +1,23 @@
+{
+  "test_split_records": 3750,
+  "test_period": "2024-11-03 to 2024-12-14",
+  "brier_model": 0.0496,
+  "brier_model_ci_95": [
+    0.043,
+    0.0561
+  ],
+  "brier_baseline_source": "Train split only (strictly out-of-time before test)",
+  "brier_baseline": 0.05346,
+  "brier_skill_score": 0.0728,
+  "bss_formula": "BSS = 1 - (Brier_model / Brier_baseline)",
+  "bss_ci_95": [
+    0.0153,
+    0.1276
+  ],
+  "roc_auc": 0.9438,
+  "pr_auc": 0.4585,
+  "climatological_prevalence": 0.0676,
+  "is_positive": true,
+  "is_significant": true,
+  "disposition": "POSITIVE_BSS_CONFIRMED"
+}

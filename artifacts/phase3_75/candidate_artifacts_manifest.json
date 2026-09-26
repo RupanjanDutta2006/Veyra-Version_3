@@ -1,0 +1,7 @@
+{
+  "model_name": "Candidate_GBDT_Platt_Calibrated",
+  "model_file": "artifacts/phase3_75/models/candidate_lightgbm_v3.joblib",
+  "model_sha256": "a4ee5d158857cf5c303db6b8fc42edb587732cc061419ddd5817fc23a19911b8",
+  "calibrator_file": "artifacts/phase3_75/models/candidate_calibrator_v3.joblib",
+  "calibrator_sha256": "48d9223b57e613ddd312dddaaae27470b87cefa38cd16f63d901e208801f5b32"
+}

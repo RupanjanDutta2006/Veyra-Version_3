@@ -1,0 +1,50 @@
+{
+  "diagnostic_timestamp_utc": "2026-09-26T08:04:29.569057+00:00",
+  "model_artifact_sha256": "00a8410746f4a0eecbf7e76aaa0565143fc948d0e06aea65e7bcc4ce28a1c660",
+  "calibrator_artifact_sha256": "9f448606ce4338ded92f238a551b3a9d8e6d2cb5902e8bc687bce5f5850af531",
+  "feature_count": 50,
+  "total_evaluated_rows": 15000,
+  "positive_label_rate": 0.0802,
+  "raw_predictions": {
+    "mean": 0.1445,
+    "std": 0.1642,
+    "min": 0.0024,
+    "max": 0.78,
+    "quantiles": [
+      0.0136,
+      0.0245,
+      0.0682,
+      0.2082,
+      0.4154,
+      0.6696
+    ],
+    "unique_count": 12722,
+    "brier_score": 0.1032,
+    "brier_skill_score": -0.3984,
+    "roc_auc": 0.526,
+    "ece": 0.1112
+  },
+  "calibrated_predictions": {
+    "mean": 0.1666,
+    "std": 0.1858,
+    "min": 0.002,
+    "max": 1.0,
+    "quantiles": [
+      0.0145,
+      0.0245,
+      0.0764,
+      0.2927,
+      0.4839,
+      0.6667
+    ],
+    "unique_count": 136,
+    "brier_score": 0.1136,
+    "brier_skill_score": -0.5405,
+    "roc_auc": 0.5262,
+    "ece": 0.1303
+  },
+  "root_cause_diagnosis": {
+    "primary_defect": "PREDICTION_CALIBRATION_BIAS_AND_SIGNAL_MISMATCH",
+    "detailed_explanation": "1. Calibration Offset: The pre-frozen Isotonic Calibrator shifts model predictions up to mean 0.1666, which is more than 2x the true dataset prevalence of 0.0802. This calibration bias alone adds ~0.0075 to the Brier score, driving BSS deeply negative (-0.5405). 2. Fixture Noise: In the synthetic fixture generation, shock bust events were generated with uniform random probability uncorrelated with ensemble spread features, limiting discriminative AUC to ~0.526. 3. Remedy: Recalibration on an out-of-time validation split restores mean calibration to match base rate, and training-time baseline freezing ensures honest BSS calculation."
+  }
+}
