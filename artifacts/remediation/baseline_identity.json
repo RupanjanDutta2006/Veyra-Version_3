@@ -1,0 +1,18 @@
+{
+  "baseline_commit_sha": "42d174f82aceabaefa412a4a7b8f228aea34c716",
+  "baseline_branch": "phase-3-bss-remediation",
+  "new_work_branch": "phase-3-comprehensive-remediation",
+  "timestamp_utc": "2026-09-26T10:13:30Z",
+  "remote_url": "https://github.com/RupanjanDutta2006/Veyra-Version_3.git",
+  "clean_worktree_confirmed": true,
+  "immutable_releases": {
+    "phase1_tag": "sih-round2-submission-v1.1.3",
+    "phase1_commit_sha": "148f7b752b51824e9a04e0fac97c267561b1106d",
+    "phase2_tag": "sih-round2-phase2-v1.0.1",
+    "phase2_commit_sha": "9fff6362dbdb4a62299b927aa405598faa5a3514",
+    "phase3_tag": "sih-round2-phase3-v1.0.0",
+    "phase3_commit_sha": "20a1f642769e959b230be272198a93add251b7a9",
+    "phase3_remediation_tag": "sih-round2-phase3-remediation-v1.0.0",
+    "phase3_remediation_commit_sha": "42d174f82aceabaefa412a4a7b8f228aea34c716"
+  }
+}

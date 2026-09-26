@@ -1,0 +1,29 @@
+{
+  "audit_version": "remediation-v1",
+  "timestamp_utc": "2026-09-26T10:21:51.417413+00:00",
+  "repository": "https://github.com/RupanjanDutta2006/Veyra-Version_3.git",
+  "active_branch": "phase-3-comprehensive-remediation",
+  "file_existence_checks": {
+    "backend/app/builder2/failure_memory.py": true,
+    "backend/app/builder2/failure_motifs.py": true,
+    "backend/app/core/revision_store.py": true,
+    "backend/app/services/revision_service.py": true,
+    "data/real_sources/era5_obs_DEL.json": true,
+    "data/real_sources/multi_model_fcst_DEL.json": true,
+    "data/phase3/benchmark_real_75_dataset.jsonl": true,
+    "artifacts/phase3_75/raw_source_manifest.csv": true,
+    "artifacts/phase3_75/uncertainty_report.json": true,
+    "artifacts/phase3_75/candidate_artifacts_manifest.json": true
+  },
+  "dead_reference_audit": {
+    "total_broken_links": 0,
+    "notes": "All referenced artifacts under artifacts/phase3_75/ and data/real_sources/ verified to exist."
+  },
+  "stale_metric_reconciliation": {
+    "legacy_test_counts_in_docs": "946/996 (Round 1 historical docs)",
+    "verified_active_test_count": "1094 total (983 pytest + 111 vitest)",
+    "legacy_threshold": "0.280 (Day-4 comparator baseline)",
+    "active_threshold": "0.060 (Locked in release_manifest.json)",
+    "authoritative_score": "78.49 / 100.00"
+  }
+}

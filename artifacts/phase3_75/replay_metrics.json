@@ -4,7 +4,7 @@
   "dataset_version": "v3-p3-75",
   "evidence_class": "REPRODUCED_REAL_HELD_OUT",
   "immutable_ground_truth": true,
-  "timestamp_utc": "2026-09-26T08:41:33.989998+00:00",
+  "timestamp_utc": "2026-09-26T10:18:27.090039+00:00",
   "total_evaluated_rows": 15000,
   "metrics": {
     "overall_metrics": {
@@ -22,7 +22,7 @@
       "recall": 0.3996,
       "false_alarm_rate": 0.1974,
       "miss_rate": 0.6004,
-      "abstention_coverage": 0.0
+      "abstention_coverage": 95.0
     },
     "overall_provenance": {
       "row_count": {
@@ -196,7 +196,7 @@
       },
       "abstention_coverage": {
         "metric_name": "abstention_coverage",
-        "value": 0.0,
+        "value": 95.0,
         "status": "VERIFIED_PASS",
         "evidence_class": "REPRODUCED_REAL_HELD_OUT",
         "dataset_version": "v3-p3-75",
@@ -224,20 +224,20 @@
         "ece": 0.0349
       },
       "with_veyra_safe_abstention": {
-        "decision_coverage_pct": 0.0,
-        "sample_count": 0,
-        "brier_score": 0.0,
-        "precision": 0.0,
-        "recall": 0.0,
-        "false_alarm_rate": 0.0,
-        "false_alarm_rate_reduction_pct": 100.0,
-        "miss_rate": 0.0,
-        "ece": 0.0
+        "decision_coverage_pct": 95.0,
+        "sample_count": 14250,
+        "brier_score": 0.0653,
+        "precision": 0.1345,
+        "recall": 0.388,
+        "false_alarm_rate": 0.1884,
+        "false_alarm_rate_reduction_pct": 4.55,
+        "miss_rate": 0.612,
+        "ece": 0.0352
       },
       "abstained_subset": {
-        "abstained_pct": 100.0,
-        "sample_count": 15000,
-        "brier_score": 0.0654,
+        "abstained_pct": 5.0,
+        "sample_count": 750,
+        "brier_score": 0.0667,
         "action": "Flagged as ABSTAIN_OOD / Routed to Safe Verification"
       },
       "risk_coverage_curve": [

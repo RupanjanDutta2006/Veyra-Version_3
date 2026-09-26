@@ -215,12 +215,41 @@ def parse_and_validate_record(
     thresh = float(record["hazard_threshold"])
     expected_bust = 1 if abs(fcst_val - obs_val) > thresh else 0
     obs_bust = int(record["observed_bust"])
+    if obs_bust not in (0, 1):
+        raise ValueError(f"Invalid binary label at row {line_no}: {obs_bust}")
 
     if obs_bust != expected_bust:
         raise ValueError(
             f"Bust label mismatch at row {line_no}: record states {obs_bust}, "
             f"deterministic rule yields {expected_bust} (|{fcst_val} - {obs_val}| vs {thresh})"
         )
+
+    # Station consistency check
+    stn_id = str(record.get("station_or_grid_id", ""))
+    ep_id = str(record.get("episode_id", ""))
+    if stn_id and ep_id and (f"-{stn_id}-" not in ep_id and stn_id not in ep_id):
+        raise ValueError(f"Station mismatch at row {line_no}: episode_id '{ep_id}' does not match station '{stn_id}'")
+
+    # Valid-time delta check
+    try:
+        dt_issue = datetime.fromisoformat(t_issue.replace("Z", "+00:00"))
+        dt_valid = datetime.fromisoformat(t_valid.replace("Z", "+00:00"))
+        expected_delta_hours = int((dt_valid - dt_issue).total_seconds() / 3600)
+        if "lead_hours" in record and int(record["lead_hours"]) != expected_delta_hours:
+            raise ValueError(f"Valid-time mismatch at row {line_no}: lead_hours {record['lead_hours']} != derived delta {expected_delta_hours}h")
+    except ValueError as ve:
+        if "Valid-time mismatch" in str(ve):
+            raise
+
+    # Physical bounds and unit validation
+    if "hazard_type" in record:
+        hz_chk = str(record["hazard_type"])
+        if hz_chk == "temperature_2m" and not (200.0 <= fcst_val <= 350.0):
+            raise ValueError(f"Unit mismatch / physical bounds violation at row {line_no}: temperature_2m={fcst_val} outside [200, 350] K")
+        elif hz_chk == "surface_pressure" and not (50000.0 <= fcst_val <= 115000.0):
+            raise ValueError(f"Unit mismatch / physical bounds violation at row {line_no}: surface_pressure={fcst_val} outside [50000, 115000] Pa")
+        elif hz_chk == "wind_speed_10m" and not (0.0 <= fcst_val <= 150.0):
+            raise ValueError(f"Unit mismatch / physical bounds violation at row {line_no}: wind_speed_10m={fcst_val} outside [0, 150] m/s")
 
     # Determine stratification variables
     lead_h = int(record.get("lead_hours", int(feat_vec_floats[32])))
@@ -363,6 +392,15 @@ def evaluate_predictions(
     evidence_class: str = "REPRODUCED_SYNTHETIC_FIXTURE",
 ) -> Dict[str, Any]:
     """Dynamically compute all scientific reliability and discrimination metrics from live predictions."""
+    if len(y_true) != len(y_prob):
+        raise ValueError("Prediction/label length mismatch")
+    if not np.isfinite(y_prob).all():
+        raise ValueError("Non-finite probability detected")
+    if not np.all((y_prob >= 0.0) & (y_prob <= 1.0)):
+        raise ValueError("Probability outside [0, 1]")
+    if not set(np.unique(y_true)).issubset({0, 1}):
+        raise ValueError("Invalid binary labels")
+
     n_samples = len(y_true)
     squared_errors = (y_prob - y_true) ** 2
     brier_model = float(np.mean(squared_errors))
