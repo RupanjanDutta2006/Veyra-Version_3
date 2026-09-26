@@ -1,0 +1,65 @@
+{
+  "decision_threshold": 0.06,
+  "total_evaluated_rows": 15000,
+  "evidence_class": "REAL_EXTERNAL_EVALUATION",
+  "dataset_version": "v3-p3",
+  "without_abstention_forced": {
+    "decision_coverage_pct": 100.0,
+    "sample_count": 15000,
+    "brier_score": 0.1136,
+    "precision": 0.0847,
+    "recall": 0.5894,
+    "false_alarm_rate": 0.5553,
+    "miss_rate": 0.4106,
+    "ece": 0.1303
+  },
+  "with_veyra_safe_abstention": {
+    "decision_coverage_pct": 71.09,
+    "sample_count": 10663,
+    "brier_score": 0.1001,
+    "precision": 0.0813,
+    "recall": 0.5493,
+    "false_alarm_rate": 0.5178,
+    "false_alarm_rate_reduction_pct": 6.76,
+    "miss_rate": 0.4507,
+    "ece": 0.1092
+  },
+  "abstained_subset": {
+    "abstained_pct": 28.91,
+    "sample_count": 4337,
+    "brier_score": 0.1469,
+    "action": "Flagged as ABSTAIN_OOD / Routed to Safe Verification"
+  },
+  "risk_coverage_curve": [
+    {
+      "coverage_pct": 100.0,
+      "sample_count": 15000,
+      "brier_score": 0.1136
+    },
+    {
+      "coverage_pct": 95.0,
+      "sample_count": 14250,
+      "brier_score": 0.1127
+    },
+    {
+      "coverage_pct": 90.0,
+      "sample_count": 13500,
+      "brier_score": 0.1111
+    },
+    {
+      "coverage_pct": 80.0,
+      "sample_count": 12000,
+      "brier_score": 0.1062
+    },
+    {
+      "coverage_pct": 70.0,
+      "sample_count": 10500,
+      "brier_score": 0.0995
+    },
+    {
+      "coverage_pct": 50.0,
+      "sample_count": 7500,
+      "brier_score": 0.0909
+    }
+  ]
+}

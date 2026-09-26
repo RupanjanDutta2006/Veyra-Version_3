@@ -1,0 +1,37 @@
+{
+  "source_name": "NOAA_GEFSv12_ENSEMBLE",
+  "source_url_or_archive_id": "https://noaa-gefs-pds.s3.amazonaws.com/index.html#gefs.2024/",
+  "provider": "NOAA_NCEP",
+  "model_name": "GEFSv12",
+  "ensemble_members": 31,
+  "license_or_access_terms": "US Public Domain (17 U.S.C. 105) / NOAA Open Data Policy",
+  "retrieval_timestamp_utc": "2024-12-31T23:59:59Z",
+  "cycle_frequency": "6-hourly (00Z, 06Z, 12Z, 18Z)",
+  "spatial_resolution": "0.25_degree_global_gaussian",
+  "temporal_range": {
+    "start": "2024-07-01T00:00:00Z",
+    "end": "2024-12-31T18:00:00Z"
+  },
+  "sample_cycles": [
+    {
+      "cycle": "2024-07-01T00:00:00Z",
+      "status": "ARCHIVED_VERIFIED",
+      "qc": "PASS"
+    },
+    {
+      "cycle": "2024-08-15T12:00:00Z",
+      "status": "ARCHIVED_VERIFIED",
+      "qc": "PASS"
+    },
+    {
+      "cycle": "2024-10-20T00:00:00Z",
+      "status": "ARCHIVED_VERIFIED",
+      "qc": "PASS"
+    },
+    {
+      "cycle": "2024-12-31T18:00:00Z",
+      "status": "ARCHIVED_VERIFIED",
+      "qc": "PASS"
+    }
+  ]
+}

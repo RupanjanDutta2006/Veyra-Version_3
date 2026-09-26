@@ -1,0 +1,20 @@
+{
+  "retrieval_run_timestamp_utc": "2026-09-26T07:37:36.717078+00:00",
+  "providers_ingested": [
+    "NOAA_NCEP",
+    "ECMWF_COPERNICUS",
+    "IMD_NEW_DELHI"
+  ],
+  "models_ingested": [
+    "GEFSv12",
+    "ERA5_HOURLY",
+    "IN_SITU_SURFACE_AWS"
+  ],
+  "download_protocol": "HTTPS_API_REST",
+  "raw_source_hashes": {
+    "gefs_v12_raw_cycles_2024.json": "34dc2049325f6cf8b101cca842e2e0e230c7e8a0368b34ad07fb63cfffa836b8",
+    "era5_reanalysis_obs_2024.json": "de51ffcc9d951a68acdeda66fb0b90a3b598357d25dc27a483ae4ac3be010bca",
+    "imd_aws_surface_obs_2024.json": "4979b98a2c7eec7120700698a233b03225b103d030fd882dec6161a02346dd31"
+  },
+  "temporal_consistency": "VERIFIED_PASS (T_avail <= T_issue < T_valid <= T_obs)"
+}

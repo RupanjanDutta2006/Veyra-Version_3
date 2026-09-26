@@ -1,0 +1,18 @@
+{
+  "split_strategy": "Out-Of-Time Chronological Rolling Origin with Station Separation",
+  "historical_prior_window": {
+    "start": "2024-01-01T00:00:00Z",
+    "end": "2024-06-30T23:59:59Z",
+    "description": "Pre-evaluation physical prior and baseline calibration regime"
+  },
+  "held_out_evaluation_window": {
+    "start": "2024-07-01T00:00:00Z",
+    "end": "2024-12-31T23:59:59Z",
+    "total_rows": 15000,
+    "stations_evaluated": 25,
+    "hazards_evaluated": 3
+  },
+  "temporal_separation_gap_hours": 0,
+  "zero_cycle_overlap_verified": true,
+  "zero_target_derived_features_verified": true
+}

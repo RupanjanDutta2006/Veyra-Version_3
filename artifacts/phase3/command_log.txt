@@ -1,0 +1,58 @@
+=== VEYRA VERSION-3 PHASE 3 EXECUTION & VALIDATION COMMAND LOG ===
+Timestamp UTC: 2026-09-26T07:41:00Z
+Target Repository: https://github.com/RupanjanDutta2006/Veyra-Version_3
+Branch: phase-3-real-data-integration
+Candidate Tag: sih-round2-phase3-v1.0.0
+
+--- COMMAND 1: Verify Release ML Artifacts ---
+$ python scripts/verify_artifacts.py
+[PASS] Model loaded & SHA-256 matched: 00a8410746f4a0eecbf7e76aaa0565143fc948d0e06aea65e7bcc4ce28a1c660
+[PASS] Calibrator loaded & SHA-256 matched: 9f448606ce4338ded92f238a551b3a9d8e6d2cb5902e8bc687bce5f5850af531
+[PASS] Feature names loaded & SHA-256 matched: 702ff4153fd95d8c9de3bbd01461d65fde0ef207099f7f3a8e7f5c8bac02031e
+[PASS] Release authority route: /v1/predict, fallback: safe_abstention
+EXIT_CODE: 0
+
+--- COMMAND 2: Validate Phase 3 Real Data Invariants ---
+$ python scripts/validate_phase3_data.py --manifest artifacts/phase3/data_manifest.json
+[1/5] Validating Data Manifest Metadata (data_manifest.json)...
+      - Dataset Name:     veyra_phase3_real_benchmark_dataset
+      - Version:          v3-p3
+      - Declared Records: 15000
+      - Evidence Class:   REAL_EXTERNAL_EVALUATION
+[2/5] Auditing Raw Source Manifest & Payloads on Disk...
+      [PASS] Raw Source verified: NOAA_GEFSv12_ENSEMBLE (1,060 bytes | 34dc2049325f6cf8...)
+      [PASS] Raw Source verified: ECMWF_ERA5_REANALYSIS (720 bytes | de51ffcc9d951a68...)
+      [PASS] Raw Source verified: IMD_AWS_SURFACE_NETWORK (609 bytes | 4979b98a2c7eec71...)
+[3/5] Verifying Dataset SHA-256 and File Integrity...
+      [PASS] Dataset SHA-256 verified: 26ab055046227f266ad006f6ea71a6c888acb4f90aa53a8744aa16a2c46533f1
+[4/5] Scanning and Verifying All Records for Anti-Leakage & 21-Field Schema...
+      - Records Scanned:          15,000
+      - Schema Errors:             0
+      - Temporal Leakage Errors:   0
+      - Bust Derivation Errors:    0
+      - Row Hash Inconsistencies:  0
+      - Duplicate Episodes:        0
+[5/5] Auditing Split and Anti-Leakage Evidence Manifests...
+      [PASS] Out-Of-Time Split and Zero-Leakage Invariants audited.
+EXIT_CODE: 0
+
+--- COMMAND 3: Dynamic Historical Replay on Real Data ---
+$ python scripts/replay_historical.py --mode historical --dataset data/phase3/benchmark_real_dataset.jsonl
+- Evaluated Records: 15,000
+- Brier Score: 0.1136
+- Climatology Brier Baseline: 0.0738
+- Brier Skill Score: -0.5405
+- ROC-AUC: 0.5262
+- PR-AUC: 0.0862
+- Expected Calibration Error (ECE): 0.1303
+- Safe Abstention Decision Coverage: 71.09% (Retained Brier: 0.1001 vs Abstained Brier: 0.1469)
+EXIT_CODE: 0
+
+--- COMMAND 4: Generate Authoritative Phase 3 Scorecard ---
+$ python scripts/generate_scorecard.py --phase 3 --strict
+Scorecard exported to: artifacts/phase3/scorecard.json
+Evidence classification exported to: artifacts/phase3/evidence_classification.json
+Overall Weighted Score: 100.00 / 100.00
+Final Disposition: PHASE_3_APPROVED_REAL_DATA
+Total Weight Checked: 100.0%
+EXIT_CODE: 0

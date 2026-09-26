@@ -1,0 +1,14 @@
+{
+  "source_name": "IMD_AWS_SURFACE_NETWORK",
+  "source_url_or_archive_id": "https://internal.imd.gov.in/section/nhac/dynamic/aws_data_archive.htm",
+  "provider": "IMD_NEW_DELHI",
+  "model_name": "IN_SITU_SURFACE_AWS",
+  "license_or_access_terms": "National Data Sharing and Accessibility Policy (NDSAP) / CC-BY 4.0 compatible",
+  "retrieval_timestamp_utc": "2025-01-08T08:30:00Z",
+  "station_network_size": 25,
+  "temporal_cadence": "15-minute telemetry aggregated to hourly observation records",
+  "temporal_range": {
+    "start": "2024-07-01T00:00:00Z",
+    "end": "2025-01-10T00:00:00Z"
+  }
+}

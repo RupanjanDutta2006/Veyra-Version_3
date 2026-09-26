@@ -1,0 +1,621 @@
+{
+  "schema_version": "1.0.0",
+  "replay_mode": "historical",
+  "dataset_version": "v3-p3",
+  "evidence_class": "REAL_EXTERNAL_EVALUATION",
+  "immutable_ground_truth": true,
+  "timestamp_utc": "2026-09-26T07:48:25.237162+00:00",
+  "total_evaluated_rows": 15000,
+  "metrics": {
+    "overall_metrics": {
+      "test_split": "2024-07-01 to 2024-12-31 (Out-Of-Time Rolling Origin Benchmark)",
+      "evaluated_rows": 15000,
+      "bust_prevalence": 0.0802,
+      "brier_score": 0.1136,
+      "climatology_brier_baseline": 0.073768,
+      "brier_skill_score": -0.5405,
+      "log_loss": 0.4092,
+      "roc_auc": 0.5262,
+      "pr_auc": 0.0862,
+      "expected_calibration_error": 0.1303,
+      "precision": 0.0847,
+      "recall": 0.5894,
+      "false_alarm_rate": 0.5553,
+      "miss_rate": 0.4106,
+      "abstention_coverage": 71.09
+    },
+    "overall_provenance": {
+      "row_count": {
+        "metric_name": "row_count",
+        "value": 15000,
+        "status": "VERIFIED_PASS",
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3",
+        "row_count": 15000,
+        "command": "python scripts/replay_historical.py --mode historical",
+        "source_artifacts": [
+          "models/v3/lightgbm_v3_challenger.joblib",
+          "models/v3/probability_calibrator_v3.joblib"
+        ]
+      },
+      "bust_prevalence": {
+        "metric_name": "positive_rate",
+        "value": 0.0802,
+        "status": "VERIFIED_PASS",
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3",
+        "row_count": 15000,
+        "command": "python scripts/replay_historical.py --mode historical",
+        "source_artifacts": [
+          "models/v3/lightgbm_v3_challenger.joblib",
+          "models/v3/probability_calibrator_v3.joblib"
+        ]
+      },
+      "brier_score": {
+        "metric_name": "brier_score",
+        "value": 0.1136,
+        "status": "VERIFIED_PASS",
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3",
+        "row_count": 15000,
+        "command": "python scripts/replay_historical.py --mode historical",
+        "source_artifacts": [
+          "models/v3/lightgbm_v3_challenger.joblib",
+          "models/v3/probability_calibrator_v3.joblib"
+        ]
+      },
+      "climatology_brier_baseline": {
+        "metric_name": "climatology_brier_baseline",
+        "value": 0.073768,
+        "status": "VERIFIED_PASS",
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3",
+        "row_count": 15000,
+        "command": "python scripts/replay_historical.py --mode historical",
+        "source_artifacts": [
+          "models/v3/lightgbm_v3_challenger.joblib",
+          "models/v3/probability_calibrator_v3.joblib"
+        ]
+      },
+      "brier_skill_score": {
+        "metric_name": "exact_brier_skill_score",
+        "value": -0.5405,
+        "status": "VERIFIED_PASS",
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3",
+        "row_count": 15000,
+        "command": "python scripts/replay_historical.py --mode historical",
+        "source_artifacts": [
+          "models/v3/lightgbm_v3_challenger.joblib",
+          "models/v3/probability_calibrator_v3.joblib"
+        ]
+      },
+      "log_loss": {
+        "metric_name": "log_loss",
+        "value": 0.4092,
+        "status": "VERIFIED_PASS",
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3",
+        "row_count": 15000,
+        "command": "python scripts/replay_historical.py --mode historical",
+        "source_artifacts": [
+          "models/v3/lightgbm_v3_challenger.joblib",
+          "models/v3/probability_calibrator_v3.joblib"
+        ]
+      },
+      "roc_auc": {
+        "metric_name": "roc_auc",
+        "value": 0.5262,
+        "status": "VERIFIED_PASS",
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3",
+        "row_count": 15000,
+        "command": "python scripts/replay_historical.py --mode historical",
+        "source_artifacts": [
+          "models/v3/lightgbm_v3_challenger.joblib",
+          "models/v3/probability_calibrator_v3.joblib"
+        ]
+      },
+      "pr_auc": {
+        "metric_name": "pr_auc",
+        "value": 0.0862,
+        "status": "VERIFIED_PASS",
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3",
+        "row_count": 15000,
+        "command": "python scripts/replay_historical.py --mode historical",
+        "source_artifacts": [
+          "models/v3/lightgbm_v3_challenger.joblib",
+          "models/v3/probability_calibrator_v3.joblib"
+        ]
+      },
+      "expected_calibration_error": {
+        "metric_name": "expected_calibration_error",
+        "value": 0.1303,
+        "status": "VERIFIED_PASS",
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3",
+        "row_count": 15000,
+        "command": "python scripts/replay_historical.py --mode historical",
+        "source_artifacts": [
+          "models/v3/lightgbm_v3_challenger.joblib",
+          "models/v3/probability_calibrator_v3.joblib"
+        ]
+      },
+      "precision": {
+        "metric_name": "precision",
+        "value": 0.0847,
+        "status": "VERIFIED_PASS",
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3",
+        "row_count": 15000,
+        "command": "python scripts/replay_historical.py --mode historical",
+        "source_artifacts": [
+          "models/v3/lightgbm_v3_challenger.joblib",
+          "models/v3/probability_calibrator_v3.joblib"
+        ]
+      },
+      "recall": {
+        "metric_name": "recall",
+        "value": 0.5894,
+        "status": "VERIFIED_PASS",
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3",
+        "row_count": 15000,
+        "command": "python scripts/replay_historical.py --mode historical",
+        "source_artifacts": [
+          "models/v3/lightgbm_v3_challenger.joblib",
+          "models/v3/probability_calibrator_v3.joblib"
+        ]
+      },
+      "false_alarm_rate": {
+        "metric_name": "false_alarm_rate",
+        "value": 0.5553,
+        "status": "VERIFIED_PASS",
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3",
+        "row_count": 15000,
+        "command": "python scripts/replay_historical.py --mode historical",
+        "source_artifacts": [
+          "models/v3/lightgbm_v3_challenger.joblib",
+          "models/v3/probability_calibrator_v3.joblib"
+        ]
+      },
+      "miss_rate": {
+        "metric_name": "miss_rate",
+        "value": 0.4106,
+        "status": "VERIFIED_PASS",
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3",
+        "row_count": 15000,
+        "command": "python scripts/replay_historical.py --mode historical",
+        "source_artifacts": [
+          "models/v3/lightgbm_v3_challenger.joblib",
+          "models/v3/probability_calibrator_v3.joblib"
+        ]
+      },
+      "abstention_coverage": {
+        "metric_name": "abstention_coverage",
+        "value": 71.09,
+        "status": "VERIFIED_PASS",
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3",
+        "row_count": 15000,
+        "command": "python scripts/replay_historical.py --mode historical",
+        "source_artifacts": [
+          "models/v3/lightgbm_v3_challenger.joblib",
+          "models/v3/probability_calibrator_v3.joblib"
+        ]
+      }
+    },
+    "coverage_vs_risk_tradeoff": {
+      "decision_threshold": 0.06,
+      "total_evaluated_rows": 15000,
+      "evidence_class": "REAL_EXTERNAL_EVALUATION",
+      "dataset_version": "v3-p3",
+      "without_abstention_forced": {
+        "decision_coverage_pct": 100.0,
+        "sample_count": 15000,
+        "brier_score": 0.1136,
+        "precision": 0.0847,
+        "recall": 0.5894,
+        "false_alarm_rate": 0.5553,
+        "miss_rate": 0.4106,
+        "ece": 0.1303
+      },
+      "with_veyra_safe_abstention": {
+        "decision_coverage_pct": 71.09,
+        "sample_count": 10663,
+        "brier_score": 0.1001,
+        "precision": 0.0813,
+        "recall": 0.5493,
+        "false_alarm_rate": 0.5178,
+        "false_alarm_rate_reduction_pct": 6.76,
+        "miss_rate": 0.4507,
+        "ece": 0.1092
+      },
+      "abstained_subset": {
+        "abstained_pct": 28.91,
+        "sample_count": 4337,
+        "brier_score": 0.1469,
+        "action": "Flagged as ABSTAIN_OOD / Routed to Safe Verification"
+      },
+      "risk_coverage_curve": [
+        {
+          "coverage_pct": 100.0,
+          "sample_count": 15000,
+          "brier_score": 0.1136
+        },
+        {
+          "coverage_pct": 95.0,
+          "sample_count": 14250,
+          "brier_score": 0.1127
+        },
+        {
+          "coverage_pct": 90.0,
+          "sample_count": 13500,
+          "brier_score": 0.1111
+        },
+        {
+          "coverage_pct": 80.0,
+          "sample_count": 12000,
+          "brier_score": 0.1062
+        },
+        {
+          "coverage_pct": 70.0,
+          "sample_count": 10500,
+          "brier_score": 0.0995
+        },
+        {
+          "coverage_pct": 50.0,
+          "sample_count": 7500,
+          "brier_score": 0.0909
+        }
+      ]
+    },
+    "lead_time_stratification": {
+      "short_24_48h": {
+        "samples": 3450,
+        "brier_score": 0.0964,
+        "brier_skill_score": -0.3062,
+        "pr_auc": 0.0883,
+        "roc_auc": 0.5338,
+        "ece": 0.0978,
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3"
+      },
+      "medium_72_144h": {
+        "samples": 6600,
+        "brier_score": 0.1134,
+        "brier_skill_score": -0.5368,
+        "pr_auc": 0.0831,
+        "roc_auc": 0.5231,
+        "ece": 0.1317,
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3"
+      },
+      "extended_168_240h": {
+        "samples": 4950,
+        "brier_score": 0.1261,
+        "brier_skill_score": -0.7088,
+        "pr_auc": 0.0916,
+        "roc_auc": 0.5251,
+        "ece": 0.1511,
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3"
+      }
+    },
+    "regional_stratification": {
+      "AMD": {
+        "samples": 600,
+        "brier_score": 0.1186,
+        "prevalence": 0.0817,
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3"
+      },
+      "BBI": {
+        "samples": 600,
+        "brier_score": 0.1093,
+        "prevalence": 0.0717,
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3"
+      },
+      "BHO": {
+        "samples": 600,
+        "brier_score": 0.1095,
+        "prevalence": 0.0783,
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3"
+      },
+      "BLR": {
+        "samples": 600,
+        "brier_score": 0.1173,
+        "prevalence": 0.0783,
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3"
+      },
+      "BOM": {
+        "samples": 600,
+        "brier_score": 0.1197,
+        "prevalence": 0.0867,
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3"
+      },
+      "CCU": {
+        "samples": 600,
+        "brier_score": 0.1081,
+        "prevalence": 0.075,
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3"
+      },
+      "COK": {
+        "samples": 600,
+        "brier_score": 0.107,
+        "prevalence": 0.0817,
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3"
+      },
+      "DED": {
+        "samples": 600,
+        "brier_score": 0.1119,
+        "prevalence": 0.0833,
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3"
+      },
+      "DEL": {
+        "samples": 600,
+        "brier_score": 0.1111,
+        "prevalence": 0.075,
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3"
+      },
+      "GAU": {
+        "samples": 600,
+        "brier_score": 0.1036,
+        "prevalence": 0.0833,
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3"
+      },
+      "GOI": {
+        "samples": 600,
+        "brier_score": 0.1087,
+        "prevalence": 0.0733,
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3"
+      },
+      "HYD": {
+        "samples": 600,
+        "brier_score": 0.1159,
+        "prevalence": 0.0867,
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3"
+      },
+      "IXC": {
+        "samples": 600,
+        "brier_score": 0.112,
+        "prevalence": 0.08,
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3"
+      },
+      "IXL": {
+        "samples": 600,
+        "brier_score": 0.1349,
+        "prevalence": 0.0983,
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3"
+      },
+      "IXR": {
+        "samples": 600,
+        "brier_score": 0.1121,
+        "prevalence": 0.0767,
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3"
+      },
+      "JAI": {
+        "samples": 600,
+        "brier_score": 0.1354,
+        "prevalence": 0.0933,
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3"
+      },
+      "LKO": {
+        "samples": 600,
+        "brier_score": 0.1053,
+        "prevalence": 0.07,
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3"
+      },
+      "MAA": {
+        "samples": 600,
+        "brier_score": 0.124,
+        "prevalence": 0.0933,
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3"
+      },
+      "NAG": {
+        "samples": 600,
+        "brier_score": 0.1203,
+        "prevalence": 0.0833,
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3"
+      },
+      "PNQ": {
+        "samples": 600,
+        "brier_score": 0.1173,
+        "prevalence": 0.0833,
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3"
+      },
+      "RPR": {
+        "samples": 600,
+        "brier_score": 0.1002,
+        "prevalence": 0.0617,
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3"
+      },
+      "SML": {
+        "samples": 600,
+        "brier_score": 0.1098,
+        "prevalence": 0.085,
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3"
+      },
+      "SXR": {
+        "samples": 600,
+        "brier_score": 0.1084,
+        "prevalence": 0.0767,
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3"
+      },
+      "TRV": {
+        "samples": 600,
+        "brier_score": 0.1114,
+        "prevalence": 0.0783,
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3"
+      },
+      "VTZ": {
+        "samples": 600,
+        "brier_score": 0.1092,
+        "prevalence": 0.07,
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3"
+      }
+    },
+    "hazard_stratification": {
+      "surface_pressure": {
+        "samples": 5000,
+        "brier_score": 0.0733,
+        "pr_auc": 0.0782,
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3"
+      },
+      "temperature_2m": {
+        "samples": 5000,
+        "brier_score": 0.0831,
+        "pr_auc": 0.0848,
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3"
+      },
+      "wind_speed_10m": {
+        "samples": 5000,
+        "brier_score": 0.1845,
+        "pr_auc": 0.0902,
+        "evidence_class": "REAL_EXTERNAL_EVALUATION",
+        "dataset_version": "v3-p3"
+      }
+    },
+    "reliability_bins": [
+      {
+        "bin_index": 1,
+        "bin_lower": 0.0,
+        "bin_upper": 0.1,
+        "bin_range": "[0.0, 0.1)",
+        "sample_count": 8279,
+        "proportion": 0.5519,
+        "mean_predicted_probability": 0.0361,
+        "empirical_observed_frequency": 0.0759,
+        "calibration_error": 0.0397
+      },
+      {
+        "bin_index": 2,
+        "bin_lower": 0.1,
+        "bin_upper": 0.2,
+        "bin_range": "[0.1, 0.2)",
+        "sample_count": 1859,
+        "proportion": 0.1239,
+        "mean_predicted_probability": 0.144,
+        "empirical_observed_frequency": 0.0818,
+        "calibration_error": 0.0622
+      },
+      {
+        "bin_index": 3,
+        "bin_lower": 0.2,
+        "bin_upper": 0.3,
+        "bin_range": "[0.2, 0.3)",
+        "sample_count": 1709,
+        "proportion": 0.1139,
+        "mean_predicted_probability": 0.2537,
+        "empirical_observed_frequency": 0.0884,
+        "calibration_error": 0.1654
+      },
+      {
+        "bin_index": 4,
+        "bin_lower": 0.3,
+        "bin_upper": 0.4,
+        "bin_range": "[0.3, 0.4)",
+        "sample_count": 1380,
+        "proportion": 0.092,
+        "mean_predicted_probability": 0.3567,
+        "empirical_observed_frequency": 0.0812,
+        "calibration_error": 0.2755
+      },
+      {
+        "bin_index": 5,
+        "bin_lower": 0.4,
+        "bin_upper": 0.5,
+        "bin_range": "[0.4, 0.5)",
+        "sample_count": 879,
+        "proportion": 0.0586,
+        "mean_predicted_probability": 0.4752,
+        "empirical_observed_frequency": 0.0796,
+        "calibration_error": 0.3955
+      },
+      {
+        "bin_index": 6,
+        "bin_lower": 0.5,
+        "bin_upper": 0.6,
+        "bin_range": "[0.5, 0.6)",
+        "sample_count": 14,
+        "proportion": 0.0009,
+        "mean_predicted_probability": 0.5107,
+        "empirical_observed_frequency": 0.1429,
+        "calibration_error": 0.3678
+      },
+      {
+        "bin_index": 7,
+        "bin_lower": 0.6,
+        "bin_upper": 0.7,
+        "bin_range": "[0.6, 0.7)",
+        "sample_count": 829,
+        "proportion": 0.0553,
+        "mean_predicted_probability": 0.6493,
+        "empirical_observed_frequency": 0.0989,
+        "calibration_error": 0.5504
+      },
+      {
+        "bin_index": 8,
+        "bin_lower": 0.7,
+        "bin_upper": 0.8,
+        "bin_range": "[0.7, 0.8)",
+        "sample_count": 17,
+        "proportion": 0.0011,
+        "mean_predicted_probability": 0.7556,
+        "empirical_observed_frequency": 0.1176,
+        "calibration_error": 0.6379
+      },
+      {
+        "bin_index": 9,
+        "bin_lower": 0.8,
+        "bin_upper": 0.9,
+        "bin_range": "[0.8, 0.9)",
+        "sample_count": 17,
+        "proportion": 0.0011,
+        "mean_predicted_probability": 0.8392,
+        "empirical_observed_frequency": 0.2353,
+        "calibration_error": 0.6039
+      },
+      {
+        "bin_index": 10,
+        "bin_lower": 0.9,
+        "bin_upper": 1.0,
+        "bin_range": "[0.9, 1.0)",
+        "sample_count": 17,
+        "proportion": 0.0011,
+        "mean_predicted_probability": 0.974,
+        "empirical_observed_frequency": 0.0,
+        "calibration_error": 0.974
+      }
+    ]
+  }
+}

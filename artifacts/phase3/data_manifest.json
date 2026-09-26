@@ -1,0 +1,33 @@
+{
+  "dataset_name": "veyra_phase3_real_benchmark_dataset",
+  "dataset_version": "v3-p3",
+  "total_records": 15000,
+  "total_busts": 1203,
+  "bust_prevalence": 0.0802,
+  "evaluation_period": {
+    "start_time_utc": "2024-07-01T00:00:00Z",
+    "end_time_utc": "2024-12-31T23:59:59Z"
+  },
+  "station_count": 25,
+  "lead_horizons": [
+    24,
+    48,
+    72,
+    96,
+    120,
+    144,
+    168,
+    216,
+    240
+  ],
+  "hazard_types": [
+    "temperature_2m",
+    "surface_pressure",
+    "wind_speed_10m"
+  ],
+  "schema_fields_count": 21,
+  "sha256": "26ab055046227f266ad006f6ea71a6c888acb4f90aa53a8744aa16a2c46533f1",
+  "file_size_bytes": 14037254,
+  "evidence_class": "REAL_EXTERNAL_EVALUATION",
+  "raw_source_manifest": "artifacts/phase3/raw_source_manifest.csv"
+}
