@@ -1,0 +1,9 @@
+{
+  "calibrator_type": "Logistic Platt Scaling (Empirical Base Rate Alignment)",
+  "fit_split": "train (N=7,500)",
+  "validation_brier_before": 0.08070663764863548,
+  "validation_brier_after": 0.03222309466723084,
+  "validation_ece_before": 0.06291709973681237,
+  "validation_ece_after": 0.02882312137361935,
+  "status": "CALIBRATION_OPTIMIZED"
+}

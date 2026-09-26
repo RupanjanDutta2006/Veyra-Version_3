@@ -451,10 +451,11 @@ def evaluate_predictions(
 
     # Row-level dynamic abstention based on dynamic OOD anomaly threshold
     abstain_mask = (ood_scores >= 0.40)
-    if np.sum(abstain_mask) == 0:
-        n_abstain = max(1, int(n_samples * 0.03))
-        threshold_val = np.sort(ood_scores)[-n_abstain]
-        abstain_mask = (ood_scores >= threshold_val)
+    if np.sum(abstain_mask) == 0 or np.sum(abstain_mask) == n_samples:
+        n_abstain = max(1, int(n_samples * 0.05))
+        top_indices = np.argsort(ood_scores)[-n_abstain:]
+        abstain_mask = np.zeros(n_samples, dtype=bool)
+        abstain_mask[top_indices] = True
 
     retained_mask = ~abstain_mask
     n_retained = int(np.sum(retained_mask))

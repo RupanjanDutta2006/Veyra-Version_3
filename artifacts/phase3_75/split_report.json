@@ -1,0 +1,34 @@
+{
+  "dataset_name": "benchmark_real_75_dataset",
+  "total_records": 15000,
+  "splits": {
+    "train": {
+      "count": 7500,
+      "proportion": 0.5,
+      "start_issue_utc": "2024-07-01T00:00:00Z",
+      "end_issue_utc": "2024-09-22T00:00:00Z",
+      "positive_count": 507,
+      "positive_rate": 0.0676
+    },
+    "validation": {
+      "count": 3750,
+      "proportion": 0.25,
+      "start_issue_utc": "2024-09-22T00:00:00Z",
+      "end_issue_utc": "2024-11-02T12:00:00Z",
+      "positive_count": 337,
+      "positive_rate": 0.0899
+    },
+    "test": {
+      "count": 3750,
+      "proportion": 0.25,
+      "start_issue_utc": "2024-11-03T00:00:00Z",
+      "end_issue_utc": "2024-12-14T12:00:00Z",
+      "positive_count": 212,
+      "positive_rate": 0.0565,
+      "status": "UNTOUCHED_UNTIL_FINAL_EVAL"
+    }
+  },
+  "zero_cycle_overlap_verified": true,
+  "zero_episode_overlap_verified": true,
+  "temporal_isolation": "train_end < val_start <= val_end < test_start"
+}

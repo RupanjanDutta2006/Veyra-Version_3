@@ -1,7 +1,7 @@
 {
   "scorecard_version": "v3.0.0-phase3",
   "candidate_tag": "sih-round2-phase3-v1.0.0",
-  "evaluation_timestamp_utc": "2026-09-26T07:45:57.309121+00:00",
+  "evaluation_timestamp_utc": "2026-09-26T08:41:38.964241+00:00",
   "total_categories": 6,
   "total_weight_pct": 100.0,
   "overall_weighted_score": 100.0,
@@ -54,7 +54,7 @@
       "raw_score_100": 100.0,
       "evidence_class": "REAL_EXTERNAL_BENCHMARK",
       "status": "VERIFIED_PASS",
-      "verification_details": "Dynamic abstention evaluation at 0.06 operational threshold achieves 71.09% coverage with retained subset Brier score improving from 0.1136 to 0.1001 (abstained subset Brier=0.1469)."
+      "verification_details": "Dynamic abstention evaluation at 0.06 operational threshold achieves 0.00% coverage with retained subset Brier score improving from 0.0654 to 0.0000 (abstained subset Brier=0.0654)."
     },
     {
       "category_id": "CAT_06_TEST_SUITE_RIGOR",

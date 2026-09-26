@@ -1,0 +1,10 @@
+{
+  "dataset": "benchmark_real_75_dataset.jsonl",
+  "audit_timestamp_utc": "2026-09-26T08:41:16.752052+00:00",
+  "temporal_invariant_check": "t_feat_avail <= t_issue < t_valid <= t_obs_avail",
+  "violations_found": 0,
+  "lookahead_features_found": 0,
+  "target_leakage_found": 0,
+  "status": "VERIFIED_LEAK_FREE",
+  "evidence_class": "REPRODUCED_REAL_HELD_OUT"
+}

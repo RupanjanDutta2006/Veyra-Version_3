@@ -26,8 +26,8 @@
     "wind_speed_10m"
   ],
   "schema_fields_count": 21,
-  "sha256": "26ab055046227f266ad006f6ea71a6c888acb4f90aa53a8744aa16a2c46533f1",
-  "file_size_bytes": 14037254,
+  "sha256": "18556df7c3d11cf884e94ab38ca05b2c1789e9ec0382d607e9131702fd8a88a6",
+  "file_size_bytes": 18799909,
   "evidence_class": "REAL_EXTERNAL_EVALUATION",
   "raw_source_manifest": "artifacts/phase3/raw_source_manifest.csv"
 }

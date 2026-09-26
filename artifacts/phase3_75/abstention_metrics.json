@@ -1,0 +1,57 @@
+{
+  "coverage_100pct": {
+    "target_coverage_pct": 100.0,
+    "retained_rows": 3750,
+    "abstained_rows": 0,
+    "abstention_rate_pct": 0.0,
+    "retained_brier_score": 0.0496,
+    "retained_brier_skill_score": 0.0728,
+    "false_alarm_rate": 0.0149,
+    "severe_error_rate": 0.0427,
+    "operational_abstention_cost_ratio": 0.0
+  },
+  "coverage_95pct": {
+    "target_coverage_pct": 95.0,
+    "retained_rows": 3562,
+    "abstained_rows": 188,
+    "abstention_rate_pct": 5.01,
+    "retained_brier_score": 0.0484,
+    "retained_brier_skill_score": 0.0458,
+    "false_alarm_rate": 0.0154,
+    "severe_error_rate": 0.041,
+    "operational_abstention_cost_ratio": 0.0075
+  },
+  "coverage_90pct": {
+    "target_coverage_pct": 90.0,
+    "retained_rows": 3375,
+    "abstained_rows": 375,
+    "abstention_rate_pct": 10.0,
+    "retained_brier_score": 0.0508,
+    "retained_brier_skill_score": 0.0375,
+    "false_alarm_rate": 0.0163,
+    "severe_error_rate": 0.043,
+    "operational_abstention_cost_ratio": 0.015
+  },
+  "coverage_80pct": {
+    "target_coverage_pct": 80.0,
+    "retained_rows": 3000,
+    "abstained_rows": 750,
+    "abstention_rate_pct": 20.0,
+    "retained_brier_score": 0.0568,
+    "retained_brier_skill_score": 0.0292,
+    "false_alarm_rate": 0.018,
+    "severe_error_rate": 0.048,
+    "operational_abstention_cost_ratio": 0.03
+  },
+  "coverage_70pct": {
+    "target_coverage_pct": 70.0,
+    "retained_rows": 2626,
+    "abstained_rows": 1124,
+    "abstention_rate_pct": 29.97,
+    "retained_brier_score": 0.0641,
+    "retained_brier_skill_score": 0.0212,
+    "false_alarm_rate": 0.0206,
+    "severe_error_rate": 0.0541,
+    "operational_abstention_cost_ratio": 0.045
+  }
+}

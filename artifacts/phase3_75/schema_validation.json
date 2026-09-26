@@ -1,0 +1,17 @@
+{
+  "dataset_name": "benchmark_real_75_dataset.jsonl",
+  "dataset_version": "v3-p3-75",
+  "total_records": 15000,
+  "schema_fields_verified": 22,
+  "feature_count_verified": 50,
+  "temporal_ordering_violations": 0,
+  "ground_truth_derivation_errors": 0,
+  "row_hash_mismatches": 0,
+  "duplicate_episodes": 0,
+  "units": {
+    "temperature_2m": "Kelvin (K)",
+    "surface_pressure": "Pascal (Pa)",
+    "wind_speed_10m": "Meters per second (m/s)"
+  },
+  "status": "VERIFIED_PASS"
+}

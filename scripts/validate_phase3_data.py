@@ -107,7 +107,7 @@ def validate_phase3(manifest_path_str: str) -> bool:
     with open(raw_manifest_path, "r", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
-            src_name = row["source_name"]
+            src_name = row.get("source_name") or row.get("source_provider") or row.get("local_path", "unknown")
             loc_path = REPO_ROOT / row["local_path"]
             expected_sha = row["sha256"]
             if not loc_path.is_file():
@@ -123,7 +123,11 @@ def validate_phase3(manifest_path_str: str) -> bool:
             print(f"      [PASS] Raw Source verified: {src_name} ({loc_path.stat().st_size:,} bytes | {actual_sha[:16]}...)")
 
     # 2. Verify Canonical Dataset File
-    dataset_file = PHASE3_DATA_DIR / "benchmark_real_dataset.jsonl"
+    dataset_file_rel = manifest_data.get("local_path") or manifest_data.get("dataset_file")
+    if dataset_file_rel:
+        dataset_file = REPO_ROOT / dataset_file_rel
+    else:
+        dataset_file = PHASE3_DATA_DIR / "benchmark_real_dataset.jsonl"
     if not dataset_file.is_file():
         print(f"[-] ERROR: Processed real dataset missing: {dataset_file}")
         return False
@@ -223,10 +227,15 @@ def validate_phase3(manifest_path_str: str) -> bool:
 
     # 4. Verify Split & Leakage Reports
     print(f"\n[5/5] Auditing Split and Anti-Leakage Evidence Manifests...")
-    split_file = ARTIFACTS_PHASE3 / "split_report.json"
-    leak_file = ARTIFACTS_PHASE3 / "leakage_report.json"
+    manifest_dir = manifest_path.parent
+    split_file = manifest_dir / "split_report.json"
+    if not split_file.is_file():
+        split_file = ARTIFACTS_PHASE3 / "split_report.json"
+    leak_file = manifest_dir / "leakage_report.json"
+    if not leak_file.is_file():
+        leak_file = ARTIFACTS_PHASE3 / "leakage_report.json"
     if not split_file.is_file() or not leak_file.is_file():
-        print(f"[-] ERROR: Missing split or leakage reports in artifacts/phase3/")
+        print(f"[-] ERROR: Missing split or leakage reports in {manifest_dir} or {ARTIFACTS_PHASE3}")
         return False
 
     with open(split_file, "r", encoding="utf-8") as sf:

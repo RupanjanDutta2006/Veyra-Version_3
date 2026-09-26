@@ -1,0 +1,27 @@
+{
+  "dataset_name": "benchmark_real_75_dataset",
+  "dataset_version": "v3-p3-75",
+  "sha256": "f811bc05e5bfea2855dbce9c38727fa2b0e069ee066052de52c9826ce1815ee3",
+  "local_path": "data/phase3/benchmark_real_75_dataset.jsonl",
+  "total_records": 15000,
+  "evidence_class": "REPRODUCED_REAL_HELD_OUT",
+  "raw_source_manifest": "artifacts/phase3_75/raw_source_manifest.csv",
+  "stations_covered": 15,
+  "hazards": [
+    "temperature_2m",
+    "surface_pressure",
+    "wind_speed_10m"
+  ],
+  "lead_hours": [
+    24,
+    48,
+    72,
+    96,
+    120,
+    144,
+    168,
+    216,
+    240
+  ],
+  "anti_leakage_status": "VERIFIED_LEAK_FREE"
+}

@@ -1,0 +1,217 @@
+{
+  "version": "v3.0.0-phase3-75",
+  "timestamp_utc": "2026-09-26T08:41:19.612030+00:00",
+  "final_status": "PHASE_3_75_PLUS_APPROVED_REAL_DATA",
+  "datasets": {
+    "data/phase3/benchmark_real_75_dataset.jsonl": {
+      "rows": 15000,
+      "sha256": "f811bc05e5bfea2855dbce9c38727fa2b0e069ee066052de52c9826ce1815ee3",
+      "evidence_class": "REPRODUCED_REAL_HELD_OUT",
+      "anti_leakage_status": "VERIFIED_LEAK_FREE",
+      "schema_fields": 22
+    },
+    "data/phase3/benchmark_real_dataset.jsonl": {
+      "rows": 15000,
+      "sha256": "f811bc05e5bfea2855dbce9c38727fa2b0e069ee066052de52c9826ce1815ee3",
+      "evidence_class": "REPRODUCED_REAL_HELD_OUT",
+      "anti_leakage_status": "VERIFIED_LEAK_FREE",
+      "schema_fields": 22
+    },
+    "backend/tests/fixtures/ml/benchmark_real_dataset_sample.json": {
+      "rows": 500,
+      "evidence_class": "REPRODUCED_REAL_HELD_OUT_SAMPLE",
+      "anti_leakage_status": "VERIFIED_LEAK_FREE",
+      "schema_fields": 22
+    }
+  },
+  "raw_source_archives": [
+    {
+      "local_path": "data/real_sources/era5_obs_DEL.json",
+      "byte_size": 169106,
+      "sha256": "7bfb9148d7679aa58ac43fa0f7fbed71bca681adae673575ad3c3e1e794cac24",
+      "provider": "ECMWF_Copernicus_Climate_Change_Service"
+    },
+    {
+      "local_path": "data/real_sources/multi_model_fcst_DEL.json",
+      "byte_size": 410737,
+      "sha256": "d7b7f65879e5889ba2831a341235a69f596c4e2e6ac063cf932fa4571c1ff68f",
+      "provider": "NOAA_NCEP_ECMWF_DWD_ECCC_OpenMeteo"
+    },
+    {
+      "local_path": "data/real_sources/era5_obs_BOM.json",
+      "byte_size": 174672,
+      "sha256": "99ebd4ff7c693c27182aa3e3e9f58b1dcb655bdaae007c1748a7f1013b1706aa",
+      "provider": "ECMWF_Copernicus_Climate_Change_Service"
+    },
+    {
+      "local_path": "data/real_sources/multi_model_fcst_BOM.json",
+      "byte_size": 432440,
+      "sha256": "7be5f24ca52a771bbc92f9db7e2acf12eb7b495e1ed8fb1346646fe0daa78969",
+      "provider": "NOAA_NCEP_ECMWF_DWD_ECCC_OpenMeteo"
+    },
+    {
+      "local_path": "data/real_sources/era5_obs_CCU.json",
+      "byte_size": 172947,
+      "sha256": "c21e52744dfbf85e5d9216073d1a41c40886afc4a1a6300b3b982d768d2b0785",
+      "provider": "ECMWF_Copernicus_Climate_Change_Service"
+    },
+    {
+      "local_path": "data/real_sources/multi_model_fcst_CCU.json",
+      "byte_size": 426815,
+      "sha256": "a7964335d6a43f390c7edb2e262fb23eac402e7873a5dbde78852091c3f9316f",
+      "provider": "NOAA_NCEP_ECMWF_DWD_ECCC_OpenMeteo"
+    },
+    {
+      "local_path": "data/real_sources/era5_obs_BLR.json",
+      "byte_size": 170958,
+      "sha256": "a5673ffe25a8285d226455737bb1f11d55022e928b23e19aeec0e15e1e349771",
+      "provider": "ECMWF_Copernicus_Climate_Change_Service"
+    },
+    {
+      "local_path": "data/real_sources/multi_model_fcst_BLR.json",
+      "byte_size": 417808,
+      "sha256": "33a3ed24ee592efff5e33b404ad8e490910162d1e7a52f7b6dfc345cfb38ae86",
+      "provider": "NOAA_NCEP_ECMWF_DWD_ECCC_OpenMeteo"
+    },
+    {
+      "local_path": "data/real_sources/era5_obs_MAA.json",
+      "byte_size": 175387,
+      "sha256": "28702b393b18427ebfa1a799d1d594cf183984ef8c0777c143ffc0fdcc21d09b",
+      "provider": "ECMWF_Copernicus_Climate_Change_Service"
+    },
+    {
+      "local_path": "data/real_sources/multi_model_fcst_MAA.json",
+      "byte_size": 435309,
+      "sha256": "78bf09f19c20cc678e68822bc602fbf0415e5a05f0f53f376da7bf04fdaa4a06",
+      "provider": "NOAA_NCEP_ECMWF_DWD_ECCC_OpenMeteo"
+    },
+    {
+      "local_path": "data/real_sources/era5_obs_HYD.json",
+      "byte_size": 170285,
+      "sha256": "ef963ed93d48609b7a02712ba3f80bcc85c45a96d2e3fd84c67a6d9893e600cd",
+      "provider": "ECMWF_Copernicus_Climate_Change_Service"
+    },
+    {
+      "local_path": "data/real_sources/multi_model_fcst_HYD.json",
+      "byte_size": 416410,
+      "sha256": "101d0b35b16601d522c3c19cb4b86a63b12bbc9aba4d45e0ca8be2d00d3064eb",
+      "provider": "NOAA_NCEP_ECMWF_DWD_ECCC_OpenMeteo"
+    },
+    {
+      "local_path": "data/real_sources/era5_obs_SXR.json",
+      "byte_size": 167640,
+      "sha256": "0c19443230a1b06a77c590e643aed4f6e4db91e8055fb9abe825f943552f0e9d",
+      "provider": "ECMWF_Copernicus_Climate_Change_Service"
+    },
+    {
+      "local_path": "data/real_sources/multi_model_fcst_SXR.json",
+      "byte_size": 404189,
+      "sha256": "4f0645bc96a2bbe677176a30db4a61f9536d3a1f8441897b6db1520c599c5e02",
+      "provider": "NOAA_NCEP_ECMWF_DWD_ECCC_OpenMeteo"
+    },
+    {
+      "local_path": "data/real_sources/era5_obs_JAI.json",
+      "byte_size": 169332,
+      "sha256": "ae86fbeb95ce504622474ea7682edd02cbe65acfcaa6e8bbed8b9f7b0175ab99",
+      "provider": "ECMWF_Copernicus_Climate_Change_Service"
+    },
+    {
+      "local_path": "data/real_sources/multi_model_fcst_JAI.json",
+      "byte_size": 412083,
+      "sha256": "2c66f71563105c518b8561ca636a25f2148e0b67bf32b06612fd1a2838e62027",
+      "provider": "NOAA_NCEP_ECMWF_DWD_ECCC_OpenMeteo"
+    },
+    {
+      "local_path": "data/real_sources/era5_obs_AMD.json",
+      "byte_size": 172369,
+      "sha256": "7d44e96c8bb49025b9ed9550866220f7887515964169281499d97f7721734685",
+      "provider": "ECMWF_Copernicus_Climate_Change_Service"
+    },
+    {
+      "local_path": "data/real_sources/multi_model_fcst_AMD.json",
+      "byte_size": 424175,
+      "sha256": "09dc06d09ffc50eddf02d5b9be12c573ced7526e6e2e3f38e033c22076ea443d",
+      "provider": "NOAA_NCEP_ECMWF_DWD_ECCC_OpenMeteo"
+    },
+    {
+      "local_path": "data/real_sources/era5_obs_BHO.json",
+      "byte_size": 169742,
+      "sha256": "4d0ccb5e754c75bc35fdadb8fc26d0cda0a096b31f1812204a3115935fd19571",
+      "provider": "ECMWF_Copernicus_Climate_Change_Service"
+    },
+    {
+      "local_path": "data/real_sources/multi_model_fcst_BHO.json",
+      "byte_size": 412880,
+      "sha256": "0e86fefc7b7f173788726072f3de2a4e0c2d803e136ef1d7cd4164fab616b345",
+      "provider": "NOAA_NCEP_ECMWF_DWD_ECCC_OpenMeteo"
+    },
+    {
+      "local_path": "data/real_sources/era5_obs_NAG.json",
+      "byte_size": 169462,
+      "sha256": "2e733388bdc11abc28d04c24a0bf8a9f9a64c9bc5fe5556e40b976e11a3bb357",
+      "provider": "ECMWF_Copernicus_Climate_Change_Service"
+    },
+    {
+      "local_path": "data/real_sources/multi_model_fcst_NAG.json",
+      "byte_size": 411983,
+      "sha256": "14d39f755f5d4b5c03692e6b3d14e9e989e8aea69734e05ffaf9478ff01cd2ae",
+      "provider": "NOAA_NCEP_ECMWF_DWD_ECCC_OpenMeteo"
+    },
+    {
+      "local_path": "data/real_sources/era5_obs_BBI.json",
+      "byte_size": 172471,
+      "sha256": "536818a367dc638028b2ffc84d6a77daf8d18b1e42794b13b9da1b71dcba4024",
+      "provider": "ECMWF_Copernicus_Climate_Change_Service"
+    },
+    {
+      "local_path": "data/real_sources/multi_model_fcst_BBI.json",
+      "byte_size": 422727,
+      "sha256": "ee6f94b2cdae7dfea07ece41b9353628038256c350604ec63c8451b221c557ed",
+      "provider": "NOAA_NCEP_ECMWF_DWD_ECCC_OpenMeteo"
+    },
+    {
+      "local_path": "data/real_sources/era5_obs_GAU.json",
+      "byte_size": 170992,
+      "sha256": "ea0c9e48d44ecafbbfae98b51ad1ee43ba520b92c653dfb0d4bf48f720f91df8",
+      "provider": "ECMWF_Copernicus_Climate_Change_Service"
+    },
+    {
+      "local_path": "data/real_sources/multi_model_fcst_GAU.json",
+      "byte_size": 418830,
+      "sha256": "963fb2c8ef6f747f4628f6aa63839631d91a576be9b809d4d3f691459fd52f6a",
+      "provider": "NOAA_NCEP_ECMWF_DWD_ECCC_OpenMeteo"
+    },
+    {
+      "local_path": "data/real_sources/era5_obs_COK.json",
+      "byte_size": 173797,
+      "sha256": "480b90fd99f7ad39aaa87050a6d63c2b132f849d39ac169ee06daad3768f5d08",
+      "provider": "ECMWF_Copernicus_Climate_Change_Service"
+    },
+    {
+      "local_path": "data/real_sources/multi_model_fcst_COK.json",
+      "byte_size": 430326,
+      "sha256": "7c1bc5bebe771c940e5c4cf55a27e1c11eb9a32a78d52301d053d43923fda68f",
+      "provider": "NOAA_NCEP_ECMWF_DWD_ECCC_OpenMeteo"
+    },
+    {
+      "local_path": "data/real_sources/era5_obs_TRV.json",
+      "byte_size": 174580,
+      "sha256": "4ce86c1db1f118b14ff6d8ee2461e6abd2b39e93593750c16fade950412065be",
+      "provider": "ECMWF_Copernicus_Climate_Change_Service"
+    },
+    {
+      "local_path": "data/real_sources/multi_model_fcst_TRV.json",
+      "byte_size": 432201,
+      "sha256": "a1a1ab459e4309785f02d2ce4e5e67a050190c5825163eb0ba95a01bfb99a989",
+      "provider": "NOAA_NCEP_ECMWF_DWD_ECCC_OpenMeteo"
+    }
+  ],
+  "specialists": {
+    "precipitation_specialist": "FORMULA_BASELINE (UNPROMOTED)",
+    "cyclone_specialist": "FORMULA_BASELINE (UNPROMOTED)",
+    "monsoon_specialist": "FORMULA_BASELINE (UNPROMOTED)",
+    "western_disturbance_specialist": "FORMULA_BASELINE (UNPROMOTED)",
+    "heatwave_specialist": "FORMULA_BASELINE (UNPROMOTED)",
+    "severe_wind_specialist": "QUARANTINED (MISSING_PACKAGE)"
+  }
+}

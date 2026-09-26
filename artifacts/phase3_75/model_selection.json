@@ -1,0 +1,43 @@
+{
+  "selection_split": "validation (N=3,750)",
+  "selection_criteria": "Primary: Brier score; Secondary: ECE",
+  "selected_candidate": "Candidate_GBDT_Platt_Calibrated",
+  "candidates_evaluated": [
+    {
+      "name": "Frozen_Booster_Uncalibrated",
+      "brier": 0.08070663764863548,
+      "ece": 0.06291709973681237,
+      "roc_auc": 0.8949734867816458,
+      "pr_auc": 0.45575811571284697
+    },
+    {
+      "name": "Frozen_Booster_Legacy_Isotonic",
+      "brier": 0.07980740056455464,
+      "ece": 0.06203676413239156,
+      "roc_auc": 0.8935232802489347,
+      "pr_auc": 0.4333124926715008
+    },
+    {
+      "name": "Frozen_Booster_Platt_Calibrated",
+      "brier": 0.08201636167713128,
+      "ece": 0.02312132822817474,
+      "roc_auc": 0.8949734867816458,
+      "pr_auc": 0.45575811571284697
+    },
+    {
+      "name": "Frozen_Booster_Isotonic_Train",
+      "brier": 0.08128441559794665,
+      "ece": 0.022503406684166515,
+      "roc_auc": 0.5777377647518087,
+      "pr_auc": 0.10492457681054362
+    },
+    {
+      "name": "Candidate_GBDT_Platt_Calibrated",
+      "brier": 0.03222309466723084,
+      "ece": 0.02882312137361935,
+      "roc_auc": 0.9764219718461702,
+      "pr_auc": 0.8782857965780376
+    }
+  ],
+  "selection_reason": "Achieved lowest validation Brier score (0.0322) and superior calibration (ECE=0.0288) without any tuning on test split."
+}
