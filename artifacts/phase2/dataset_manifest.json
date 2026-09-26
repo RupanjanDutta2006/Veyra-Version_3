@@ -1,0 +1,23 @@
+{
+  "manifest_version": "v3.0.0-phase2",
+  "generated_timestamp_utc": "2026-09-26T07:17:08.430493+00:00",
+  "total_datasets": 2,
+  "datasets": {
+    "data/benchmark_dataset_116k.jsonl": {
+      "sha256": "3ddf3c8e81cbe99f83d513f9d23ffd5f5b3aa37bc50cf9aead1228be49e8b057",
+      "size_bytes": 90087444,
+      "size_mb": 90.09,
+      "rows": 116250,
+      "evidence_class": "REPRODUCED_SYNTHETIC_FIXTURE",
+      "anti_leakage_status": "VERIFIED_LEAK_FREE"
+    },
+    "backend/tests/fixtures/ml/benchmark_dataset_500.json": {
+      "sha256": "ffec0d438d30be0a0b608415207bba86608b97033f8c627311fb0dbaeb3605b9",
+      "size_bytes": 668763,
+      "size_mb": 0.67,
+      "rows": 500,
+      "evidence_class": "REPRODUCED_SYNTHETIC_FIXTURE",
+      "anti_leakage_status": "VERIFIED_LEAK_FREE"
+    }
+  }
+}

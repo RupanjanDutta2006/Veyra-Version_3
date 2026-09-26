@@ -1,0 +1,27 @@
+{
+  "decision_threshold": 0.06,
+  "total_evaluated_rows": 116250,
+  "without_abstention_forced": {
+    "decision_coverage_pct": 100.0,
+    "sample_count": 116250,
+    "brier_score": 0.1239,
+    "false_alarm_rate": 0.4807,
+    "severe_error_rate": 0.5454,
+    "ece": 0.1432
+  },
+  "with_veyra_safe_abstention": {
+    "decision_coverage_pct": 98.08,
+    "sample_count": 114016,
+    "brier_score": 0.1241,
+    "false_alarm_rate": 0.4846,
+    "false_alarm_rate_reduction_pct": -0.82,
+    "severe_error_rate": 0.5402,
+    "ece": 0.1443
+  },
+  "abstained_subset": {
+    "abstained_pct": 1.92,
+    "sample_count": 2234,
+    "brier_score": 0.1141,
+    "action": "Flagged as ABSTAIN_OOD / Routed to Human Oversight"
+  }
+}

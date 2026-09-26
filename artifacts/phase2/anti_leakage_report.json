@@ -1,0 +1,27 @@
+{
+  "report_version": "v3.0.0-phase2",
+  "timestamp_utc": "2026-09-26T07:17:08.431130+00:00",
+  "anti_leakage_invariants": {
+    "temporal_availability_ordering": "t_feat_avail <= t_issue < t_valid <= t_obs_avail",
+    "target_conditioning_elimination": "Feature array X synthesized strictly from physical priors, zero conditional branch on bust label",
+    "row_level_hash_sealing": "Cryptographic SHA-256 seal per episode row"
+  },
+  "verification_results": [
+    {
+      "file": "data/benchmark_dataset_116k.jsonl",
+      "evaluated_rows": 116250,
+      "temporal_ordering_violations": 0,
+      "duplicate_ids": 0,
+      "hash_errors": 0,
+      "anti_leakage_verdict": "VERIFIED_LEAK_FREE"
+    },
+    {
+      "file": "backend/tests/fixtures/ml/benchmark_dataset_500.json",
+      "evaluated_rows": 500,
+      "temporal_ordering_violations": 0,
+      "duplicate_ids": 0,
+      "hash_errors": 0,
+      "anti_leakage_verdict": "VERIFIED_LEAK_FREE"
+    }
+  ]
+}

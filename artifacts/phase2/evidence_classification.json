@@ -1,0 +1,32 @@
+{
+  "version": "v3.0.1-phase2",
+  "candidate_tag": "sih-round2-phase2-v1.0.1",
+  "timestamp_utc": "2026-09-26T07:17:12.465662+00:00",
+  "disposition": "PHASE_2_APPROVED_FIXTURE_ONLY",
+  "datasets": {
+    "data/benchmark_dataset_116k.jsonl": {
+      "rows": 116250,
+      "evidence_class": "REPRODUCED_SYNTHETIC_FIXTURE",
+      "anti_leakage_status": "VERIFIED_LEAK_FREE",
+      "schema_fields": 18
+    },
+    "backend/tests/fixtures/ml/benchmark_dataset_500.json": {
+      "rows": 500,
+      "evidence_class": "REPRODUCED_SYNTHETIC_FIXTURE",
+      "anti_leakage_status": "VERIFIED_LEAK_FREE",
+      "schema_fields": 18
+    },
+    "external_operational_archives_ecmwf_imd": {
+      "evidence_class": "NOT_AVAILABLE",
+      "status": "REQUIRES_PROPRIETARY_API_KEYS"
+    }
+  },
+  "specialists": {
+    "precipitation_specialist": "FORMULA_BASELINE (UNPROMOTED)",
+    "cyclone_specialist": "FORMULA_BASELINE (UNPROMOTED)",
+    "monsoon_specialist": "FORMULA_BASELINE (UNPROMOTED)",
+    "western_disturbance_specialist": "FORMULA_BASELINE (UNPROMOTED)",
+    "heatwave_specialist": "FORMULA_BASELINE (UNPROMOTED)",
+    "severe_wind_specialist": "QUARANTINED (MISSING_PACKAGE)"
+  }
+}

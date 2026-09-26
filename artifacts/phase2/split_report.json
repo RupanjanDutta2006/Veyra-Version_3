@@ -1,0 +1,50 @@
+{
+  "report_version": "v3.0.0-phase2",
+  "timestamp_utc": "2026-09-26T07:17:08.431368+00:00",
+  "temporal_split_strategy": "Out-of-time Rolling Origin (Issue Cycle Partitioning)",
+  "evaluation_period": "2024-07-01 to 2024-12-31",
+  "stations": {
+    "CCU": 4660,
+    "RPR": 4701,
+    "IDR": 4749,
+    "BBI": 4785,
+    "IXA": 4635,
+    "VNS": 4645,
+    "HYD": 4653,
+    "IXC": 4681,
+    "SHL": 4707,
+    "VTZ": 4751,
+    "SXR": 4615,
+    "MAA": 4612,
+    "JLR": 4607,
+    "GHY": 4569,
+    "PAT": 4500,
+    "BLR": 4675,
+    "DIB": 4620,
+    "IXR": 4562,
+    "BOM": 4602,
+    "AMD": 4694,
+    "NAG": 4714,
+    "LKO": 4698,
+    "TRV": 4465,
+    "JAI": 4671,
+    "DEL": 4679
+  },
+  "lead_hours_distribution": {
+    "120h": 11744,
+    "96h": 17419,
+    "144h": 5751,
+    "24h": 23244,
+    "72h": 17300,
+    "240h": 3510,
+    "48h": 23304,
+    "168h": 5744,
+    "216h": 3478,
+    "192h": 4756
+  },
+  "hazard_types_distribution": {
+    "precipitation": 57853,
+    "severe_wind": 38874,
+    "monsoon_lps": 19523
+  }
+}
