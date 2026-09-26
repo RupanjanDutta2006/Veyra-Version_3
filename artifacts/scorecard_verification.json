@@ -1,0 +1,13 @@
+{
+  "scorecard_version": "authoritative-v1",
+  "source_commit": "0f2838830b3364062d92b2af2c9845d1bbaad1d1",
+  "verification_timestamp_utc": "2026-09-26T10:01:05.462917+00:00",
+  "total_categories": 13,
+  "weight_sum_pct": 100.0,
+  "total_unrounded_score": 78.49,
+  "overall_score_rounded": 78.49,
+  "csv_independent_recalculation": 78.49,
+  "arithmetic_verification": "PASSED",
+  "evidence_verification": "PASSED",
+  "final_disposition": "SCORECARD_VERIFIED_75_PLUS"
+}

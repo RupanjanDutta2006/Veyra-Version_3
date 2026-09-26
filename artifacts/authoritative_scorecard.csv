@@ -1,0 +1,14 @@
+category_id,name,weight_pct,raw_score_100,contribution,evidence_class,status,primary_artifact
+CAT_01,"Scientific correctness, claim discipline & leakage safety",15.0%,100.0,15.0000,REAL_EXTERNAL_BENCHMARK,VERIFIED_PASS,artifacts/phase3_75/leakage_report.json
+CAT_02,Alignment with SIH documentation and research corpus,8.0%,85.0,6.8000,REAL_EXTERNAL_BENCHMARK,VERIFIED_PASS,artifacts/phase3_75/source_license_notes.md
+CAT_03,"Core V3 quality, calibration & artifact reproducibility",10.0%,85.0,8.5000,REAL_EXTERNAL_BENCHMARK,VERIFIED_PASS,artifacts/phase3_75/uncertainty_report.json
+CAT_04,"Data pipeline, issue-time contracts, provenance & QC",7.0%,85.0,5.9500,REAL_EXTERNAL_BENCHMARK,VERIFIED_PASS,artifacts/phase3_75/raw_source_manifest.csv
+CAT_05,Reliability intelligence,8.0%,80.0,6.4000,REAL_EXTERNAL_BENCHMARK,VERIFIED_PASS,artifacts/phase3_75/reliability_bins.json
+CAT_06,Hazard-specific specialists and empirical validation,10.0%,30.0,3.0000,SUPPORTED_BY_TEST_FIXTURE_ONLY,VERIFIED_LIMITED,manifests/specialist_promotion_decisions.json
+CAT_07,"Certification, OOD, abstention, drift & independent truth",9.0%,80.0,7.2000,REAL_EXTERNAL_BENCHMARK,VERIFIED_PASS,artifacts/phase3_75/abstention_metrics.json
+CAT_08,"Spatial, ensemble, provider and cross-system intelligence",6.0%,75.0,4.5000,REAL_EXTERNAL_BENCHMARK,VERIFIED_PASS,artifacts/phase3_75/retrieval_metadata.json
+CAT_09,Backend/API architecture & robustness,6.0%,90.0,5.4000,REPRODUCED_REAL_HELD_OUT,VERIFIED_PASS,artifacts/test_results/backend_report.json
+CAT_10,Frontend/demo quality & scientific communication,5.0%,70.0,3.5000,REPRODUCED_REAL_HELD_OUT,VERIFIED_PASS,artifacts/test_results/frontend.json
+CAT_11,"Testing, reproducibility, replay & release engineering",8.0%,80.0,6.4000,REPRODUCED_REAL_HELD_OUT,VERIFIED_PASS,artifacts/phase3_75/command_log.txt
+CAT_12,"Documentation accuracy, traceability & maintainability",4.0%,72.0,2.8800,REPRODUCED_REAL_HELD_OUT,VERIFIED_PASS,artifacts/phase3_75/final_report.md
+CAT_13,SIH Round-2 submission readiness,4.0%,74.0,2.9600,REPRODUCED_REAL_HELD_OUT,VERIFIED_PASS,artifacts/release_gates_report.json
