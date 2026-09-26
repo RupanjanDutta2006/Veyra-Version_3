@@ -12,6 +12,7 @@ Supports two explicit reproduction modes:
    verifying candidate SHA provenance, artifact integrity, specialist containment, and loadability.
 """
 import argparse
+import csv
 import datetime
 import json
 import os
