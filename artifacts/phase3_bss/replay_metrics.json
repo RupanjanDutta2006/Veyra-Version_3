@@ -1,0 +1,31 @@
+{
+  "evaluation_timestamp_utc": "2026-09-26T08:04:32.164362+00:00",
+  "split_evaluated": "test_split_untouched",
+  "total_test_records": 3750,
+  "test_positive_prevalence": 0.0792,
+  "frozen_training_climatology_brier": 0.072029,
+  "released_frozen_pipeline": {
+    "model_name": "LightGBM_V3_Challenger_Frozen",
+    "brier_score": 0.0808,
+    "brier_skill_score": -0.1224,
+    "expected_calibration_error": 0.0704,
+    "roc_auc": 0.5638,
+    "pr_auc": 0.0996,
+    "log_loss": 0.3353
+  },
+  "remediated_selected_pipeline": {
+    "model_name": "Frozen_Booster_Platt_Calibrated",
+    "brier_score": 0.0729,
+    "brier_skill_score": -0.0114,
+    "expected_calibration_error": 0.007,
+    "roc_auc": 0.5629,
+    "pr_auc": 0.1016,
+    "log_loss": 0.2763
+  },
+  "bss_remediation_summary": {
+    "brier_improvement": 0.008,
+    "bss_delta": 0.111,
+    "ece_improvement": 0.0634
+  },
+  "evidence_class": "REPRODUCED_SYNTHETIC_FIXTURE"
+}

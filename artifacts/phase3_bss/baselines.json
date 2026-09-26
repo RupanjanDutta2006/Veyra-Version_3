@@ -1,0 +1,241 @@
+{
+  "frozen_baseline_policy": "FROZEN_TRAINING_SPLIT_ONLY",
+  "training_time_range": {
+    "start_time_utc": "2024-07-01T00:00:00Z",
+    "end_time_utc": "2024-09-30T18:00:00Z"
+  },
+  "training_sample_count": 7500,
+  "global_training_climatology": {
+    "positive_rate": 0.0781,
+    "brier_baseline": 0.072029,
+    "formula": "p_train * (1 - p_train)"
+  },
+  "hazard_specific_climatologies": {
+    "surface_pressure": {
+      "samples": 2500,
+      "bust_count": 183,
+      "positive_rate": 0.0732,
+      "brier_baseline": 0.067842
+    },
+    "temperature_2m": {
+      "samples": 2500,
+      "bust_count": 209,
+      "positive_rate": 0.0836,
+      "brier_baseline": 0.076611
+    },
+    "wind_speed_10m": {
+      "samples": 2500,
+      "bust_count": 194,
+      "positive_rate": 0.0776,
+      "brier_baseline": 0.071578
+    }
+  },
+  "lead_specific_climatologies": {
+    "24": {
+      "samples": 900,
+      "bust_count": 68,
+      "positive_rate": 0.0756,
+      "brier_baseline": 0.069847
+    },
+    "48": {
+      "samples": 825,
+      "bust_count": 65,
+      "positive_rate": 0.0788,
+      "brier_baseline": 0.07258
+    },
+    "72": {
+      "samples": 825,
+      "bust_count": 60,
+      "positive_rate": 0.0727,
+      "brier_baseline": 0.067438
+    },
+    "96": {
+      "samples": 825,
+      "bust_count": 53,
+      "positive_rate": 0.0642,
+      "brier_baseline": 0.060115
+    },
+    "120": {
+      "samples": 825,
+      "bust_count": 70,
+      "positive_rate": 0.0848,
+      "brier_baseline": 0.077649
+    },
+    "144": {
+      "samples": 825,
+      "bust_count": 70,
+      "positive_rate": 0.0848,
+      "brier_baseline": 0.077649
+    },
+    "168": {
+      "samples": 825,
+      "bust_count": 59,
+      "positive_rate": 0.0715,
+      "brier_baseline": 0.066401
+    },
+    "216": {
+      "samples": 825,
+      "bust_count": 59,
+      "positive_rate": 0.0715,
+      "brier_baseline": 0.066401
+    },
+    "240": {
+      "samples": 825,
+      "bust_count": 82,
+      "positive_rate": 0.0994,
+      "brier_baseline": 0.089515
+    }
+  },
+  "station_climatologies": {
+    "AMD": {
+      "samples": 300,
+      "bust_count": 28,
+      "positive_rate": 0.0933,
+      "brier_baseline": 0.084622
+    },
+    "BBI": {
+      "samples": 300,
+      "bust_count": 20,
+      "positive_rate": 0.0667,
+      "brier_baseline": 0.062222
+    },
+    "BHO": {
+      "samples": 300,
+      "bust_count": 20,
+      "positive_rate": 0.0667,
+      "brier_baseline": 0.062222
+    },
+    "BLR": {
+      "samples": 300,
+      "bust_count": 21,
+      "positive_rate": 0.07,
+      "brier_baseline": 0.0651
+    },
+    "BOM": {
+      "samples": 300,
+      "bust_count": 20,
+      "positive_rate": 0.0667,
+      "brier_baseline": 0.062222
+    },
+    "CCU": {
+      "samples": 300,
+      "bust_count": 22,
+      "positive_rate": 0.0733,
+      "brier_baseline": 0.067956
+    },
+    "COK": {
+      "samples": 300,
+      "bust_count": 28,
+      "positive_rate": 0.0933,
+      "brier_baseline": 0.084622
+    },
+    "DED": {
+      "samples": 300,
+      "bust_count": 24,
+      "positive_rate": 0.08,
+      "brier_baseline": 0.0736
+    },
+    "DEL": {
+      "samples": 300,
+      "bust_count": 16,
+      "positive_rate": 0.0533,
+      "brier_baseline": 0.050489
+    },
+    "GAU": {
+      "samples": 300,
+      "bust_count": 31,
+      "positive_rate": 0.1033,
+      "brier_baseline": 0.092656
+    },
+    "GOI": {
+      "samples": 300,
+      "bust_count": 21,
+      "positive_rate": 0.07,
+      "brier_baseline": 0.0651
+    },
+    "HYD": {
+      "samples": 300,
+      "bust_count": 28,
+      "positive_rate": 0.0933,
+      "brier_baseline": 0.084622
+    },
+    "IXC": {
+      "samples": 300,
+      "bust_count": 19,
+      "positive_rate": 0.0633,
+      "brier_baseline": 0.059322
+    },
+    "IXL": {
+      "samples": 300,
+      "bust_count": 31,
+      "positive_rate": 0.1033,
+      "brier_baseline": 0.092656
+    },
+    "IXR": {
+      "samples": 300,
+      "bust_count": 20,
+      "positive_rate": 0.0667,
+      "brier_baseline": 0.062222
+    },
+    "JAI": {
+      "samples": 300,
+      "bust_count": 26,
+      "positive_rate": 0.0867,
+      "brier_baseline": 0.079156
+    },
+    "LKO": {
+      "samples": 300,
+      "bust_count": 22,
+      "positive_rate": 0.0733,
+      "brier_baseline": 0.067956
+    },
+    "MAA": {
+      "samples": 300,
+      "bust_count": 28,
+      "positive_rate": 0.0933,
+      "brier_baseline": 0.084622
+    },
+    "NAG": {
+      "samples": 300,
+      "bust_count": 27,
+      "positive_rate": 0.09,
+      "brier_baseline": 0.0819
+    },
+    "PNQ": {
+      "samples": 300,
+      "bust_count": 21,
+      "positive_rate": 0.07,
+      "brier_baseline": 0.0651
+    },
+    "RPR": {
+      "samples": 300,
+      "bust_count": 19,
+      "positive_rate": 0.0633,
+      "brier_baseline": 0.059322
+    },
+    "SML": {
+      "samples": 300,
+      "bust_count": 26,
+      "positive_rate": 0.0867,
+      "brier_baseline": 0.079156
+    },
+    "SXR": {
+      "samples": 300,
+      "bust_count": 24,
+      "positive_rate": 0.08,
+      "brier_baseline": 0.0736
+    },
+    "TRV": {
+      "samples": 300,
+      "bust_count": 22,
+      "positive_rate": 0.0733,
+      "brier_baseline": 0.067956
+    },
+    "VTZ": {
+      "samples": 300,
+      "bust_count": 22,
+      "positive_rate": 0.0733,
+      "brier_baseline": 0.067956
+    }
+  }
+}

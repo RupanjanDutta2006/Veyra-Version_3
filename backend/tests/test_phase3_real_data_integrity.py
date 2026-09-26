@@ -358,26 +358,107 @@ def test_phase3_validation_engine_execution():
     assert result is True, "validate_phase3 returned False"
 
 
-def test_scorecard_weights_sum_to_100_and_strict_generation():
-    """Verify Phase 3 scorecard category weights sum strictly to 100.0% and strict generation passes."""
-    scorecard, evidence = build_phase3_scorecard(strict=True)
+# =========================================================================
+# Phase 3 BSS Remediation & Diagnostic Test Suite
+# =========================================================================
+PHASE3_BSS_DIR = REPO_ROOT / "artifacts" / "phase3_bss"
 
-    assert scorecard["total_weight_pct"] == pytest.approx(100.0)
-    assert scorecard["overall_weighted_score"] == pytest.approx(100.0)
-    assert scorecard["final_disposition"] == "PHASE_3_APPROVED_REAL_DATA"
-    assert len(scorecard["categories"]) == 6
+REQUIRED_BSS_ARTIFACTS = [
+    "raw_source_manifest.csv",
+    "data_manifest.json",
+    "retrieval_metadata.json",
+    "schema_validation.json",
+    "leakage_report.json",
+    "split_report.json",
+    "baselines.json",
+    "model_diagnostics.json",
+    "model_selection.json",
+    "calibration_report.json",
+    "replay_metrics.json",
+    "reliability_bins.json",
+    "abstention_metrics.json",
+    "uncertainty_report.json",
+    "subgroup_metrics.json",
+    "evidence_classification.json",
+    "command_log.txt",
+    "final_report.md",
+]
 
-    # Verify arithmetic
-    manual_weighted = sum((c["weight_pct"] * c["raw_score_100"]) / 100.0 for c in scorecard["categories"])
-    assert scorecard["overall_weighted_score"] == pytest.approx(manual_weighted)
 
-    # Verify evidence classification structure
-    assert evidence["disposition"] == "PHASE_3_APPROVED_REAL_DATA"
-    assert "data/phase3/benchmark_real_dataset.jsonl" in evidence["datasets"]
-    assert len(evidence["raw_sources"]) >= 3
+def test_phase3_bss_artifacts_completeness():
+    """Verify all 18 required Phase 3 BSS remediation artifacts are generated and non-empty."""
+    assert PHASE3_BSS_DIR.is_dir(), "artifacts/phase3_bss/ directory missing"
+    for fname in REQUIRED_BSS_ARTIFACTS:
+        fpath = PHASE3_BSS_DIR / fname
+        assert fpath.is_file(), f"Missing required BSS artifact: {fname}"
+        assert fpath.stat().st_size > 0, f"Artifact {fname} is empty"
 
 
-def test_phase3_validation_engine_execution():
-    """Run validate_phase3_data programmatically and ensure it passes cleanly."""
-    result = validate_phase3(str(DATA_MANIFEST_PATH))
-    assert result is True, "validate_phase3 returned False"
+def test_phase3_bss_baselines_training_only():
+    """Verify baselines are calculated exclusively on the training split."""
+    baselines_path = PHASE3_BSS_DIR / "baselines.json"
+    assert baselines_path.is_file()
+    with open(baselines_path, "r", encoding="utf-8") as f:
+        base = json.load(f)
+
+    assert base["frozen_baseline_policy"] == "FROZEN_TRAINING_SPLIT_ONLY"
+    assert "global_training_climatology" in base
+    g_clim = base["global_training_climatology"]
+    assert "positive_rate" in g_clim
+    assert "brier_baseline" in g_clim
+    p = g_clim["positive_rate"]
+    assert g_clim["brier_baseline"] == pytest.approx(p * (1.0 - p), abs=1e-3)
+
+
+def test_phase3_bss_model_diagnostics():
+    """Verify model diagnostics captures calibration bias root-cause decomposition."""
+    diag_path = PHASE3_BSS_DIR / "model_diagnostics.json"
+    assert diag_path.is_file()
+    with open(diag_path, "r", encoding="utf-8") as f:
+        diag = json.load(f)
+
+    assert diag["total_evaluated_rows"] == 15000
+    assert "raw_predictions" in diag
+    assert "calibrated_predictions" in diag
+    assert "root_cause_diagnosis" in diag
+    assert len(diag["raw_predictions"]["quantiles"]) == 6
+    assert 0.0 <= diag["raw_predictions"]["mean"] <= 1.0
+
+
+def test_phase3_bss_uncertainty_and_bootstrap():
+    """Verify bootstrap uncertainty report includes 95% confidence intervals."""
+    unc_path = PHASE3_BSS_DIR / "uncertainty_report.json"
+    assert unc_path.is_file()
+    with open(unc_path, "r", encoding="utf-8") as f:
+        unc = json.load(f)
+
+    assert unc["bootstrap_resamples"] == 1000
+    cis = unc["metrics_confidence_intervals"]
+    for m in ["brier_score", "brier_skill_score", "roc_auc", "pr_auc", "expected_calibration_error"]:
+        assert m in cis, f"Missing CI for {m}"
+        assert cis[m]["ci_lower_2.5"] <= cis[m]["ci_upper_97.5"]
+
+
+def test_phase3_bss_abstention_curve_tradeoff():
+    """Verify abstention metrics includes 5 coverage steps."""
+    abst_path = PHASE3_BSS_DIR / "abstention_metrics.json"
+    assert abst_path.is_file()
+    with open(abst_path, "r", encoding="utf-8") as f:
+        abst = json.load(f)
+
+    curve = abst["risk_coverage_curve"]
+    assert len(curve) == 5
+    coverages = [c["coverage_pct"] for c in curve]
+    assert coverages == [100.0, 95.0, 90.0, 80.0, 70.0]
+
+
+def test_phase3_bss_evidence_classification_and_provenance_gate():
+    """Verify evidence classification honestly marks descriptor seeds as blocked provenance."""
+    ev_path = PHASE3_BSS_DIR / "evidence_classification.json"
+    assert ev_path.is_file()
+    with open(ev_path, "r", encoding="utf-8") as f:
+        ev = json.load(f)
+
+    assert ev["disposition"] == "PHASE_3_BLOCKED_DATA_PROVENANCE"
+    assert "REPRODUCED_SYNTHETIC_FIXTURE" in ev["disposition_rationale"]
+    assert ev["datasets"]["data/phase3/benchmark_real_dataset.jsonl"]["evidence_class"] == "REPRODUCED_SYNTHETIC_FIXTURE"

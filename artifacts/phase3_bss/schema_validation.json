@@ -1,0 +1,11 @@
+{
+  "dataset_name": "veyra_phase3_benchmark_dataset",
+  "dataset_version": "v3-p3",
+  "total_records": 15000,
+  "schema_fields_verified": 21,
+  "feature_count_verified": 50,
+  "temporal_invariants_status": "VERIFIED_ZERO_VIOLATIONS",
+  "ground_truth_formula_status": "VERIFIED_EXACT_PHYSICAL",
+  "physical_units_status": "VERIFIED_CANONICAL_V3",
+  "evidence_class": "REPRODUCED_SYNTHETIC_FIXTURE"
+}

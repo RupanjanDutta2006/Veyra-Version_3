@@ -1,0 +1,4 @@
+source_name,source_url_or_archive_id,local_path,byte_size,sha256,evidence_classification,is_descriptor_metadata_only
+NOAA_GEFSv12_ENSEMBLE,https://noaa-gefs-pds.s3.amazonaws.com/index.html#gefs.2024/,data/raw_sources/gefs_v12_raw_cycles_2024.json,1060,34dc2049325f6cf8b101cca842e2e0e230c7e8a0368b34ad07fb63cfffa836b8,REPRODUCED_SYNTHETIC_FIXTURE,True
+ECMWF_ERA5_REANALYSIS,https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels,data/raw_sources/era5_reanalysis_obs_2024.json,720,de51ffcc9d951a68acdeda66fb0b90a3b598357d25dc27a483ae4ac3be010bca,REPRODUCED_SYNTHETIC_FIXTURE,True
+IMD_AWS_SURFACE_NETWORK,https://internal.imd.gov.in/section/nhac/dynamic/aws_data_archive.htm,data/raw_sources/imd_aws_surface_obs_2024.json,609,4979b98a2c7eec7120700698a233b03225b103d030fd882dec6161a02346dd31,REPRODUCED_SYNTHETIC_FIXTURE,True

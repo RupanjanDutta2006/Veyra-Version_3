@@ -1,0 +1,36 @@
+{
+  "bootstrap_resamples": 1000,
+  "test_sample_count": 3750,
+  "metrics_confidence_intervals": {
+    "brier_score": {
+      "mean": 0.0731,
+      "std": 0.0038,
+      "ci_lower_2.5": 0.0656,
+      "ci_upper_97.5": 0.0809
+    },
+    "brier_skill_score": {
+      "mean": -0.0155,
+      "std": 0.0532,
+      "ci_lower_2.5": -0.1234,
+      "ci_upper_97.5": 0.0893
+    },
+    "roc_auc": {
+      "mean": 0.5627,
+      "std": 0.0178,
+      "ci_lower_2.5": 0.5269,
+      "ci_upper_97.5": 0.5958
+    },
+    "pr_auc": {
+      "mean": 0.1036,
+      "std": 0.0096,
+      "ci_lower_2.5": 0.0864,
+      "ci_upper_97.5": 0.1235
+    },
+    "expected_calibration_error": {
+      "mean": 0.0075,
+      "std": 0.0042,
+      "ci_lower_2.5": 0.0006,
+      "ci_upper_97.5": 0.0164
+    }
+  }
+}

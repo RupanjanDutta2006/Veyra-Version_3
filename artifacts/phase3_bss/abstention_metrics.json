@@ -1,0 +1,57 @@
+{
+  "decision_threshold": 0.06,
+  "total_test_rows": 3750,
+  "selected_abstention_policy": "OOD_DYNAMIC_FILTERING",
+  "risk_coverage_curve": [
+    {
+      "coverage_pct": 100.0,
+      "retained_rows": 3750,
+      "abstained_rows": 0,
+      "retained_brier": 0.0729,
+      "retained_bss": -0.0114,
+      "false_alarm_rate": 1.0,
+      "severe_error_rate": 0.0,
+      "abstention_cost": 0.0
+    },
+    {
+      "coverage_pct": 95.0,
+      "retained_rows": 3562,
+      "abstained_rows": 188,
+      "retained_brier": 0.0733,
+      "retained_bss": -0.0176,
+      "false_alarm_rate": 1.0,
+      "severe_error_rate": 0.0,
+      "abstention_cost": 3.76
+    },
+    {
+      "coverage_pct": 90.0,
+      "retained_rows": 3375,
+      "abstained_rows": 375,
+      "retained_brier": 0.0718,
+      "retained_bss": 0.0038,
+      "false_alarm_rate": 1.0,
+      "severe_error_rate": 0.0,
+      "abstention_cost": 7.5
+    },
+    {
+      "coverage_pct": 80.0,
+      "retained_rows": 3000,
+      "abstained_rows": 750,
+      "retained_brier": 0.0712,
+      "retained_bss": 0.0109,
+      "false_alarm_rate": 1.0,
+      "severe_error_rate": 0.0,
+      "abstention_cost": 15.0
+    },
+    {
+      "coverage_pct": 70.0,
+      "retained_rows": 2625,
+      "abstained_rows": 1125,
+      "retained_brier": 0.0703,
+      "retained_bss": 0.0238,
+      "false_alarm_rate": 1.0,
+      "severe_error_rate": 0.0,
+      "abstention_cost": 22.5
+    }
+  ]
+}

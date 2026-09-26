@@ -1,0 +1,27 @@
+{
+  "total_records": 15000,
+  "train_split": {
+    "rows": 7500,
+    "pct": 50.0,
+    "start_time_utc": "2024-07-01T00:00:00Z",
+    "end_time_utc": "2024-09-30T18:00:00Z",
+    "positive_rate": 0.0781
+  },
+  "validation_split": {
+    "rows": 3750,
+    "pct": 25.0,
+    "start_time_utc": "2024-09-30T18:00:00Z",
+    "end_time_utc": "2024-11-15T18:00:00Z",
+    "positive_rate": 0.0853
+  },
+  "test_split": {
+    "rows": 3750,
+    "pct": 25.0,
+    "start_time_utc": "2024-11-15T18:00:00Z",
+    "end_time_utc": "2024-12-31T12:00:00Z",
+    "positive_rate": 0.0792
+  },
+  "episode_isolation_verified": true,
+  "zero_cycle_overlap_verified": true,
+  "temporal_ordering_strictly_preserved": true
+}

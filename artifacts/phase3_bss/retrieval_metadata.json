@@ -1,0 +1,10 @@
+{
+  "audit_timestamp_utc": "2026-09-26T08:04:29.261898+00:00",
+  "evaluation_rule": "Strict Provenance Protocol (Prompt Phase 3 Remediation)",
+  "raw_payloads_analyzed": 3,
+  "all_files_under_10kb": true,
+  "source_data_format": "JSON Metadata Descriptors / Programmatic Seeds",
+  "data_origin_finding": "The raw files in data/raw_sources/ are schema descriptor JSON files (<1.1 KB each), not full-scale GRIB2/NetCDF external atmospheric archives. The 15,000-row benchmark dataset was synthesized programmatically. In accordance with strict Phase 3 evidence rules, the dataset is classified as REPRODUCED_SYNTHETIC_FIXTURE and the real-data claim is blocked.",
+  "provenance_status": "PHASE_3_BLOCKED_DATA_PROVENANCE",
+  "evidence_class": "REPRODUCED_SYNTHETIC_FIXTURE"
+}

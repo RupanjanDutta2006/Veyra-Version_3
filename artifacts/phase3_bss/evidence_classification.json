@@ -1,0 +1,22 @@
+{
+  "version": "v3.0.0-phase3-bss",
+  "timestamp_utc": "2026-09-26T08:04:35.173687+00:00",
+  "disposition": "PHASE_3_BLOCKED_DATA_PROVENANCE",
+  "disposition_rationale": "Comprehensive diagnostic analysis identified the root cause of the negative BSS (-0.5405) as an un-centered calibration bias (+0.0864 probability gap) combined with synthetic fixture noise. Recalibration on an out-of-time validation split successfully eliminates the calibration bias. However, because raw source files in data/raw_sources/ are schema descriptor payloads (<1.1 KB) and cannot be verified as full external atmospheric binary feeds in this offline environment, the evidence classification is strictly maintained as REPRODUCED_SYNTHETIC_FIXTURE, and the real-data release path is gated under PHASE_3_BLOCKED_DATA_PROVENANCE.",
+  "datasets": {
+    "data/phase3/benchmark_real_dataset.jsonl": {
+      "rows": 15000,
+      "evidence_class": "REPRODUCED_SYNTHETIC_FIXTURE",
+      "anti_leakage_status": "VERIFIED_LEAK_FREE",
+      "schema_fields": 21
+    }
+  },
+  "specialists": {
+    "precipitation_specialist": "FORMULA_BASELINE (UNPROMOTED)",
+    "cyclone_specialist": "FORMULA_BASELINE (UNPROMOTED)",
+    "monsoon_specialist": "FORMULA_BASELINE (UNPROMOTED)",
+    "western_disturbance_specialist": "FORMULA_BASELINE (UNPROMOTED)",
+    "heatwave_specialist": "FORMULA_BASELINE (UNPROMOTED)",
+    "severe_wind_specialist": "QUARANTINED (MISSING_PACKAGE)"
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "selection_rule": "Lowest Validation Brier Score (Selected Strictly on Validation Split, Test Untouched)",
+  "selected_model": "Frozen_Booster_Platt_Calibrated",
+  "selected_calibration_method": "Platt_On_Train",
+  "validation_brier": 0.0781,
+  "validation_bss": -0.0845,
+  "validation_ece": 0.0107,
+  "validation_roc_auc": 0.5323,
+  "all_evaluated_candidates": [
+    {
+      "name": "Frozen_Release_V3_Challenger_Isotonic",
+      "val_brier": 0.10619593696896788,
+      "val_bss": -0.4743596497842444,
+      "val_ece": 0.11110723395663093,
+      "val_roc_auc": 0.5322052660349854,
+      "method": "Frozen_Pipeline"
+    },
+    {
+      "name": "Frozen_Booster_Uncalibrated",
+      "val_brier": 0.09935536842930097,
+      "val_bss": -0.3793893663221233,
+      "val_ece": 0.10032561036298149,
+      "val_roc_auc": 0.5323296282798834,
+      "method": "Raw_Booster"
+    },
+    {
+      "name": "Frozen_Booster_Train_Isotonic",
+      "val_brier": 0.07849247675457878,
+      "val_bss": -0.08974169673172816,
+      "val_ece": 0.02227523134239809,
+      "val_roc_auc": 0.5338474854227406,
+      "method": "Isotonic_On_Train"
+    },
+    {
+      "name": "Frozen_Booster_Platt_Calibrated",
+      "val_brier": 0.07811702047632295,
+      "val_bss": -0.0845290906498184,
+      "val_ece": 0.010652748486118899,
+      "val_roc_auc": 0.5323296282798834,
+      "method": "Platt_On_Train"
+    },
+    {
+      "name": "Retrained_LGBM_Uncalibrated",
+      "val_brier": 0.07928855314705412,
+      "val_bss": -0.10079393606132148,
+      "val_ece": 0.029256125117422812,
+      "val_roc_auc": 0.52247722303207,
+      "method": "Retrained_LightGBM"
+    },
+    {
+      "name": "Retrained_LGBM_Platt_Calibrated",
+      "val_brier": 0.10772609579805484,
+      "val_bss": -0.4956034421529314,
+      "val_ece": 0.10690078917246262,
+      "val_roc_auc": 0.52247722303207,
+      "method": "Retrained_LGBM_Platt"
+    }
+  ]
+}
