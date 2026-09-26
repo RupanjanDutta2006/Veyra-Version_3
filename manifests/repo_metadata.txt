@@ -1,15 +1,14 @@
-=== repo_a ===
+=== Veyra Version-3 Release Candidate ===
+Repository URL: https://github.com/RupanjanDutta2006/Veyra-Version_3
+Baseline Commit SHA: 94745df06298ee5daab3144e329885f780958bad
+Candidate Tag: sih-round2-submission-v1.1.1
+Status: clean
 Branch: main
-Commit Date: '2026-09-21T09:44:50+05:30'
-Remote URL: https://github.com/RupanjanDutta2006/Veyra-Know-When-Forecasts-May-Fail
-Status: clean
-History Commit Count: 112
-Tags: audit-repo-a-b9f52d3
 
-=== repo_b ===
-Branch: integration/sih-round2-selective-merge
-Commit Date: '2026-09-21T00:02:06+05:30'
-Remote URL: https://github.com/adishxm/Veyra-Know-When-Forecasts-May-Fail-VERSION-2
-Status: clean
-History Commit Count: 127
-Tags: audit-repo-b-82eded8
+=== Historical Lineage & Predecessors ===
+Predecessor Repo A (Read-Only Reference):
+  Remote URL: https://github.com/RupanjanDutta2006/Veyra-Know-When-Forecasts-May-Fail
+  Audited SHA: b9f52d3eeec8676e06b1879f05b404605e2501be
+Predecessor Repo B (Baseline Source):
+  Remote URL: https://github.com/adishxm/Veyra-Know-When-Forecasts-May-Fail-VERSION-2
+  Audited SHA: 82eded8194151e37fb9b3eecf273010dc62d7b29

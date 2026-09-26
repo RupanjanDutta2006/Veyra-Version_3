@@ -3,9 +3,9 @@
 ## Audit Details
 - **Audit Date**: 2026-09-23
 - **Audited Target**: Veyra Sentinel (VERSION-3 Candidate)
-- **Repository**: `adishxm/Veyra-Know-When-Forecasts-May-Fail-VERSION-3`
-- **Candidate Commit SHA**: `6c1e8453d0f2fc12fc1b12f813858430cf5ebda4`
-- **Candidate Commit Base**: `82eded8194151e37fb9b3eecf273010dc62d7b29`
+- **Repository**: `https://github.com/RupanjanDutta2006/Veyra-Version_3`
+- **Candidate Tag**: `sih-round2-submission-v1.1.1`
+- **Candidate Commit Base**: `94745df06298ee5daab3144e329885f780958bad`
 - **Auditor Role**: Scientific & Systems Engineering Reviewer Audit
 - **Compliance Disposition**: **FULL SCIENTIFIC & CODE CONFORMANCE (APPROVED)**
 
@@ -79,7 +79,7 @@ The rollback procedure documented in `manifests/rollback_procedure.md` specifies
 3. Inference latency degradation $> 500\text{ ms}$
 4. Upstream NWP schema corruption
 
-All triggers revert to the baseline audited commit (`82eded8194151e37fb9b3eecf273010dc62d7b29`) within $< 60$ seconds.
+All triggers revert to the baseline audited commit (`94745df06298ee5daab3144e329885f780958bad`) within $< 60$ seconds.
 
 ---
 

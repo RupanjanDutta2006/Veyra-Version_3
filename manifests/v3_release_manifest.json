@@ -3,9 +3,10 @@
   "manifest_schema_version": "v1.1.0",
   "generation_timestamp": "2026-09-23T15:30:00Z",
   "git_provenance": {
-    "base_commit_sha": "82eded8194151e37fb9b3eecf273010dc62d7b29",
-    "candidate_commit_sha": "6c1e8453d0f2fc12fc1b12f813858430cf5ebda4",
-    "integration_branch": "integration/sih-round2-selective-merge",
+    "base_commit_sha": "94745df06298ee5daab3144e329885f780958bad",
+    "candidate_commit_sha": null,
+    "candidate_tag": "sih-round2-submission-v1.1.1",
+    "integration_branch": "main",
     "strategy": "base_commit_provenance"
   },
   "verification_metrics": {
@@ -37,9 +38,9 @@
   "route_authority": "/v1/predict",
   "fallback_policy": "safe_abstention",
   "environment_pins": {
-    "python": "3.10+",
-    "scikit_learn": "1.7.2",
-    "lightgbm": "4.7.0",
+    "python": "3.12+",
+    "scikit_learn": "1.9.0",
+    "lightgbm": "4.5.0",
     "joblib": "1.5.3"
   },
   "scientific_policies": {

@@ -6,11 +6,10 @@
 - **Problem Statement**: PS 26079 (SIH 2026) — Ministry of Earth Sciences (MoES) & NCMRWF
 - **Team**: HEXARK
 - **Release Candidate ID**: `veyra-v3.0.0-release-candidate`
-- **Release Tag**: `sih-round2-submission-v1.0.0` / `sih-round2-candidate-v1`
-- **Candidate Commit SHA**: `6c1e8453d0f2fc12fc1b12f813858430cf5ebda4`
-- **Base Audited SHA**: `82eded8194151e37fb9b3eecf273010dc62d7b29`
+- **Release Tag**: `sih-round2-submission-v1.1.1`
+- **Baseline Commit SHA**: `94745df06298ee5daab3144e329885f780958bad`
 - **Candidate Head Branch**: `main`
-- **Target Repository**: `adishxm/Veyra-Know-When-Forecasts-May-Fail-VERSION-3`
+- **Target Repository**: `https://github.com/RupanjanDutta2006/Veyra-Version_3`
 
 ---
 
@@ -83,7 +82,7 @@ Authoritative document: [`manifests/rollback_procedure.md`](file:///c:/Users/adi
 ```bash
 # 1. Stop operational daemon
 # 2. Reset worktree to base audited commit
-git checkout -f 82eded8194151e37fb9b3eecf273010dc62d7b29
+git checkout -f 94745df06298ee5daab3144e329885f780958bad
 # 3. Verify base artifact hashes
 python scripts/verify_artifacts.py
 # 4. Restart services under safe fallback mode
@@ -111,7 +110,7 @@ python scripts/validate_claim_register.py --input manifests/claim_register.csv
 python scripts/validate_specialist_evidence.py
 
 # Run clean-clone reproduction test
-python scripts/clean_clone_reproduction.py --tag sih-round2-candidate-v1
+python scripts/clean_clone_reproduction.py --tag sih-round2-submission-v1.1.1
 
 # Run frontend tests & production build
 npm test --prefix frontend -- --run

@@ -1,0 +1,93 @@
+name: Veyra Version-3 CI
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'sih-round2-*' ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
+          cache: pip
+
+      - name: Install hash-locked Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install --require-hashes -r requirements.lock
+
+      - name: Run artifact verification
+        run: |
+          python scripts/verify_artifacts.py
+
+      - name: Run backend tests
+        run: |
+          mkdir -p artifacts/test_results
+          pytest backend/tests --junitxml=artifacts/test_results/backend.xml
+
+      - name: Generate machine-readable backend JSON report
+        run: |
+          python - <<'PY'
+          import json
+          import xml.etree.ElementTree as ET
+          root = ET.parse("artifacts/test_results/backend.xml").getroot()
+          suite = root.find("testsuite") if root.tag == "testsuites" else root
+          tests = int(suite.attrib.get("tests", 0))
+          failures = int(suite.attrib.get("failures", 0))
+          errors = int(suite.attrib.get("errors", 0))
+          skipped = int(suite.attrib.get("skipped", 0))
+          time_taken = float(suite.attrib.get("time", 0.0))
+          result = {
+              "framework": "pytest",
+              "total_tests": tests,
+              "passed": tests - failures - errors - skipped,
+              "failed": failures,
+              "errors": errors,
+              "skipped": skipped,
+              "duration_seconds": time_taken,
+              "status": "PASSED" if failures == 0 and errors == 0 and tests > 0 else "FAILED",
+          }
+          with open("artifacts/test_results/backend.json", "w", encoding="utf-8") as f:
+              json.dump(result, f, indent=2)
+          print("Backend JSON test report generated successfully.")
+          PY
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install frontend dependencies
+        run: |
+          npm ci --prefix frontend
+
+      - name: Run frontend tests with raw JSON reporter
+        run: |
+          npm test --prefix frontend -- --run --reporter=json --outputFile=artifacts/test_results/frontend-raw.json
+
+      - name: Build frontend production bundle
+        run: |
+          npm run build --prefix frontend
+
+      - name: Validate claim register
+        run: |
+          python scripts/validate_claim_register.py --input manifests/claim_register.csv
+
+      - name: Verify candidate tag alignment (if running on tag)
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          TAG_NAME="${GITHUB_REF#refs/tags/}"
+          echo "Running on tag: $TAG_NAME"
+          if [ "$TAG_NAME" = "sih-round2-submission-v1.1.1" ]; then
+            echo "Candidate tag aligned: sih-round2-submission-v1.1.1"
+          fi
