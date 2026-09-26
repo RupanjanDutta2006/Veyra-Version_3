@@ -1,0 +1,223 @@
+{
+  "mode": "historical",
+  "provenance": "NOAA GEFSv12 / ECMWF ERA5 / IMD AWS 2024-07-01 to 2024-12-31 Benchmark Split",
+  "is_synthetic": false,
+  "is_independent_truth": true,
+  "scenario_id": "HIST-REPLAY-LIVE-INFERENCE-V3",
+  "disclosure_notice": null,
+  "immutable_fixture_hash": null,
+  "created_at": "2026-09-26T05:51:14.648717+00:00",
+  "scientific_evaluation_metrics": {
+    "overall_metrics": {
+      "test_split": "2024-07-01 to 2024-12-31 (Out-Of-Time Rolling Origin Benchmark)",
+      "evaluated_rows": 116250,
+      "bust_prevalence": 0.0873,
+      "brier_score_model": 0.1239,
+      "brier_score_climatology_baseline": 0.079653,
+      "brier_skill_score_bss": -0.5558,
+      "bss_formula": "BSS = 1 - (Brier_model / Brier_climatology) = 1 - (0.1239 / 0.079653) = -0.5558",
+      "expected_calibration_error": 0.1432,
+      "roc_auc": 0.4899,
+      "pr_auc": 0.0862,
+      "log_loss": 0.4343,
+      "false_alarm_rate_reduction_via_abstention": "-0.8%"
+    },
+    "coverage_vs_risk_tradeoff": {
+      "decision_threshold": 0.06,
+      "total_evaluated_rows": 116250,
+      "without_abstention_forced": {
+        "decision_coverage_pct": 100.0,
+        "sample_count": 116250,
+        "brier_score": 0.1239,
+        "false_alarm_rate": 0.4807,
+        "severe_error_rate": 0.5454,
+        "ece": 0.1432
+      },
+      "with_veyra_safe_abstention": {
+        "decision_coverage_pct": 98.08,
+        "sample_count": 114016,
+        "brier_score": 0.1241,
+        "false_alarm_rate": 0.4846,
+        "false_alarm_rate_reduction_pct": -0.82,
+        "severe_error_rate": 0.5402,
+        "ece": 0.1443
+      },
+      "abstained_subset": {
+        "abstained_pct": 1.92,
+        "sample_count": 2234,
+        "brier_score": 0.1141,
+        "action": "Flagged as ABSTAIN_OOD / Routed to Human Oversight"
+      }
+    },
+    "lead_time_stratification": {
+      "short_24_48h": {
+        "samples": 46548,
+        "pr_auc": 0.0864,
+        "brier_score": 0.1161,
+        "brier_skill_score": -0.458,
+        "ece": 0.1328
+      },
+      "medium_72_144h": {
+        "samples": 52214,
+        "pr_auc": 0.087,
+        "brier_score": 0.128,
+        "brier_skill_score": -0.6068,
+        "ece": 0.1492
+      },
+      "extended_168_240h": {
+        "samples": 17488,
+        "pr_auc": 0.0843,
+        "brier_score": 0.1325,
+        "brier_skill_score": -0.6638,
+        "ece": 0.1531
+      }
+    },
+    "regional_stratification": {
+      "AMD": {
+        "samples": 4694,
+        "brier_score": 0.1284,
+        "prevalence": 0.0901
+      },
+      "BBI": {
+        "samples": 4785,
+        "brier_score": 0.1253,
+        "prevalence": 0.0886
+      },
+      "BLR": {
+        "samples": 4675,
+        "brier_score": 0.1177,
+        "prevalence": 0.077
+      },
+      "BOM": {
+        "samples": 4602,
+        "brier_score": 0.1246,
+        "prevalence": 0.0867
+      },
+      "CCU": {
+        "samples": 4660,
+        "brier_score": 0.1263,
+        "prevalence": 0.0916
+      },
+      "DEL": {
+        "samples": 4679,
+        "brier_score": 0.1233,
+        "prevalence": 0.0893
+      },
+      "DIB": {
+        "samples": 4620,
+        "brier_score": 0.1265,
+        "prevalence": 0.092
+      },
+      "GHY": {
+        "samples": 4569,
+        "brier_score": 0.1244,
+        "prevalence": 0.0871
+      },
+      "HYD": {
+        "samples": 4653,
+        "brier_score": 0.1276,
+        "prevalence": 0.0913
+      },
+      "IDR": {
+        "samples": 4749,
+        "brier_score": 0.1186,
+        "prevalence": 0.0815
+      },
+      "IXA": {
+        "samples": 4635,
+        "brier_score": 0.1263,
+        "prevalence": 0.0906
+      },
+      "IXC": {
+        "samples": 4681,
+        "brier_score": 0.1212,
+        "prevalence": 0.0842
+      },
+      "IXR": {
+        "samples": 4562,
+        "brier_score": 0.1253,
+        "prevalence": 0.0899
+      },
+      "JAI": {
+        "samples": 4671,
+        "brier_score": 0.1174,
+        "prevalence": 0.0803
+      },
+      "JLR": {
+        "samples": 4607,
+        "brier_score": 0.126,
+        "prevalence": 0.0942
+      },
+      "LKO": {
+        "samples": 4698,
+        "brier_score": 0.1241,
+        "prevalence": 0.0868
+      },
+      "MAA": {
+        "samples": 4612,
+        "brier_score": 0.1159,
+        "prevalence": 0.075
+      },
+      "NAG": {
+        "samples": 4714,
+        "brier_score": 0.1212,
+        "prevalence": 0.0859
+      },
+      "PAT": {
+        "samples": 4500,
+        "brier_score": 0.1219,
+        "prevalence": 0.0858
+      },
+      "RPR": {
+        "samples": 4701,
+        "brier_score": 0.1237,
+        "prevalence": 0.0857
+      },
+      "SHL": {
+        "samples": 4707,
+        "brier_score": 0.1329,
+        "prevalence": 0.0977
+      },
+      "SXR": {
+        "samples": 4615,
+        "brier_score": 0.1221,
+        "prevalence": 0.0839
+      },
+      "TRV": {
+        "samples": 4465,
+        "brier_score": 0.1318,
+        "prevalence": 0.0936
+      },
+      "VNS": {
+        "samples": 4645,
+        "brier_score": 0.1258,
+        "prevalence": 0.0904
+      },
+      "VTZ": {
+        "samples": 4751,
+        "brier_score": 0.1201,
+        "prevalence": 0.0827
+      }
+    },
+    "hazard_stratification": {
+      "monsoon_lps": {
+        "samples": 19523,
+        "pr_auc": 0.0959,
+        "brier_score": 0.0966,
+        "status": "FORMULA_BASELINE"
+      },
+      "precipitation": {
+        "samples": 57853,
+        "pr_auc": 0.094,
+        "brier_score": 0.0934,
+        "status": "FORMULA_BASELINE"
+      },
+      "severe_wind": {
+        "samples": 38874,
+        "pr_auc": 0.0863,
+        "brier_score": 0.1831,
+        "status": "QUARANTINED"
+      }
+    }
+  }
+}

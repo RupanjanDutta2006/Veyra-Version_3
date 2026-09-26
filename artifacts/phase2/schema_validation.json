@@ -1,0 +1,41 @@
+{
+  "report_version": "v3.0.0-phase2",
+  "timestamp_utc": "2026-09-26T07:17:08.430876+00:00",
+  "canonical_schema_fields": [
+    "episode_id",
+    "station_or_grid_id",
+    "provider",
+    "model_cycle",
+    "issue_time_utc",
+    "valid_time_utc",
+    "feature_availability_time_utc",
+    "observation_availability_time_utc",
+    "forecast_features",
+    "forecast_value",
+    "observed_value",
+    "observation_source",
+    "hazard_threshold",
+    "observed_bust",
+    "source_file_hash",
+    "row_hash",
+    "dataset_version",
+    "quality_flags"
+  ],
+  "total_fields": 18,
+  "dataset_validations": [
+    {
+      "file": "data/benchmark_dataset_116k.jsonl",
+      "total_rows_validated": 116250,
+      "schema_errors": 0,
+      "field_completeness_pct": 100.0,
+      "status": "PASSED"
+    },
+    {
+      "file": "backend/tests/fixtures/ml/benchmark_dataset_500.json",
+      "total_rows_validated": 500,
+      "schema_errors": 0,
+      "field_completeness_pct": 100.0,
+      "status": "PASSED"
+    }
+  ]
+}
