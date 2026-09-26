@@ -1,8 +1,8 @@
 # Veyra Version-3 — Authoritative Scientific Integrity Scorecard
 
 ## Executive Summary
-- **Source Commit**: `42d174f82aceabaefa412a4a7b8f228aea34c716`
-- **Calculation Timestamp (UTC)**: `2026-09-26T10:21:48.211490+00:00`
+- **Source Commit**: `2a060ec563bc00da71e6a754ee1157f00581a584`
+- **Calculation Timestamp (UTC)**: `2026-09-26T10:22:42.948124+00:00`
 - **Arithmetic Check**: **`PASSED`**
 - **Evidence Check**: **`PASSED`**
 - **Unrounded Weighted Total**: **`78.4900`**

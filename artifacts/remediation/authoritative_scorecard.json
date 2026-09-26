@@ -1,7 +1,7 @@
 {
   "scorecard_version": "authoritative-v1",
-  "source_commit": "42d174f82aceabaefa412a4a7b8f228aea34c716",
-  "calculation_timestamp_utc": "2026-09-26T10:21:48.211490+00:00",
+  "source_commit": "2a060ec563bc00da71e6a754ee1157f00581a584",
+  "calculation_timestamp_utc": "2026-09-26T10:22:42.948124+00:00",
   "categories": [
     {
       "category_id": "CAT_01",
