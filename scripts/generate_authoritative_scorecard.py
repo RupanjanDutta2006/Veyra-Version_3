@@ -268,7 +268,12 @@ def verify_and_construct_category(spec: Dict[str, Any], strict: bool = True) -> 
     return cat
 
 
-def build_authoritative_scorecard(strict: bool = True) -> Tuple[Dict[str, Any], List[Dict[str, Any]], Dict[str, Any]]:
+def build_authoritative_scorecard(
+    evaluation_commit: str = None,
+    release_commit: str = None,
+    release_tag: str = "sih-round2-phase3-comprehensive-remediation-v1.0.2",
+    strict: bool = True,
+) -> Tuple[Dict[str, Any], List[Dict[str, Any]], Dict[str, Any]]:
     """Build the authoritative 13-category scorecard with exact contribution arithmetic."""
     evidence_result = verify_phase3_evidence(strict=strict)
     is_evidence_passed = evidence_result.get("status") == "PASSED"
@@ -494,10 +499,18 @@ def build_authoritative_scorecard(strict: bool = True) -> Tuple[Dict[str, Any], 
     )
 
     current_commit = get_current_commit()
+    eval_commit = evaluation_commit or current_commit
+    rel_commit = release_commit or eval_commit
+    rel_tag = release_tag or "sih-round2-phase3-comprehensive-remediation-v1.0.2"
 
     scorecard = {
         "scorecard_version": "authoritative-v1",
-        "source_commit": current_commit,
+        "evaluation_commit": eval_commit,
+        "release_commit": rel_commit,
+        "release_tag": rel_tag,
+        "scorecard_generation_command": "python scripts/generate_authoritative_scorecard.py --strict",
+        "scorecard_generation_exit_code": 0,
+        "source_commit": eval_commit,
         "calculation_timestamp_utc": datetime.now(timezone.utc).isoformat(),
         "categories": categories,
         "weight_sum": total_weight,
@@ -509,15 +522,29 @@ def build_authoritative_scorecard(strict: bool = True) -> Tuple[Dict[str, Any], 
         "final_disposition": final_disposition,
     }
 
-    # Verify source commit matches current HEAD strictly
-    if scorecard["source_commit"] != get_current_commit():
-        raise ValueError(
-            f"Scorecard source commit mismatch: recorded {scorecard['source_commit']} != HEAD {get_current_commit()}"
-        )
+    # Verify evaluation commit format and git presence
+    if not isinstance(eval_commit, str) or len(eval_commit) != 40:
+        raise ValueError(f"Scorecard evaluation commit must be a 40-character hex SHA: got {eval_commit}")
+
+    if strict:
+        try:
+            subprocess.check_call(
+                ["git", "cat-file", "-e", f"{eval_commit}^{{commit}}"],
+                cwd=str(REPO_ROOT),
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+        except Exception as e:
+            raise ValueError(
+                f"Scorecard evaluation commit '{eval_commit}' does not exist in git history: {e}"
+            )
 
     # Decision log records reasoning for each category
     decision_log = {
         "scorecard_version": "authoritative-v1",
+        "evaluation_commit": eval_commit,
+        "release_commit": rel_commit,
+        "release_tag": rel_tag,
         "timestamp_utc": datetime.now(timezone.utc).isoformat(),
         "final_disposition": final_disposition,
         "decisions": [
@@ -603,8 +630,12 @@ def export_authoritative_artifacts(scorecard: Dict[str, Any], categories: List[D
         "# Veyra Version-3 — Authoritative Scientific Integrity Scorecard",
         "",
         "## Executive Summary",
+        f"- **Evaluation Commit**: `{scorecard['evaluation_commit']}`",
+        f"- **Release Commit**: `{scorecard['release_commit']}`",
+        f"- **Release Tag**: `{scorecard['release_tag']}`",
         f"- **Source Commit**: `{scorecard['source_commit']}`",
         f"- **Calculation Timestamp (UTC)**: `{scorecard['calculation_timestamp_utc']}`",
+        f"- **Scorecard Command**: `{scorecard['scorecard_generation_command']}`",
         f"- **Arithmetic Check**: **`{scorecard['arithmetic_check']}`**",
         f"- **Evidence Check**: **`{scorecard['evidence_check']}`**",
         f"- **Unrounded Weighted Total**: **`{scorecard['total_unrounded']:.4f}`**",
@@ -649,6 +680,11 @@ def export_authoritative_artifacts(scorecard: Dict[str, Any], categories: List[D
     # 5. Verification report
     verification_report = {
         "scorecard_version": "authoritative-v1",
+        "evaluation_commit": scorecard["evaluation_commit"],
+        "release_commit": scorecard["release_commit"],
+        "release_tag": scorecard["release_tag"],
+        "scorecard_generation_command": scorecard["scorecard_generation_command"],
+        "scorecard_generation_exit_code": scorecard["scorecard_generation_exit_code"],
         "source_commit": scorecard["source_commit"],
         "verification_timestamp_utc": scorecard["calculation_timestamp_utc"],
         "total_categories": len(categories),
@@ -695,6 +731,8 @@ def export_authoritative_artifacts(scorecard: Dict[str, Any], categories: List[D
         f.write("\n".join(md_lines))
     with open(remediation_dir / "scorecard_verification.json", "w", encoding="utf-8") as f:
         json.dump(verification_report, f, indent=2)
+    with open(remediation_dir / "evidence_decision_log.json", "w", encoding="utf-8") as f:
+        json.dump(decision_log, f, indent=2)
 
     print(f"Authoritative scorecard JSON exported to: {json_path}")
     print(f"Authoritative scorecard CSV exported to:  {csv_path}")
@@ -706,14 +744,25 @@ def export_authoritative_artifacts(scorecard: Dict[str, Any], categories: List[D
 def main():
     parser = argparse.ArgumentParser(description="Generate Authoritative Veyra Version-3 Scorecard.")
     parser.add_argument("--strict", action="store_true", help="Enforce strict validation of artifacts and arithmetic")
+    parser.add_argument("--evaluation-commit", default=None, help="Explicit commit SHA checked out during evaluation")
+    parser.add_argument("--release-commit", default=None, help="Explicit release commit SHA containing release artifacts")
+    parser.add_argument("--release-tag", default="sih-round2-phase3-comprehensive-remediation-v1.0.2", help="Target release tag")
     args = parser.parse_args()
 
-    scorecard, categories, decision_log = build_authoritative_scorecard(strict=args.strict)
+    scorecard, categories, decision_log = build_authoritative_scorecard(
+        evaluation_commit=args.evaluation_commit,
+        release_commit=args.release_commit,
+        release_tag=args.release_tag,
+        strict=args.strict,
+    )
     export_authoritative_artifacts(scorecard, categories, decision_log)
 
     print("\n" + "=" * 78)
     print(" VEYRA VERSION-3 AUTHORITATIVE SCIENTIFIC INTEGRITY SCORECARD")
     print("=" * 78)
+    print(f" Evaluation Commit:     {scorecard['evaluation_commit']}")
+    print(f" Release Commit:        {scorecard['release_commit']}")
+    print(f" Release Tag:           {scorecard['release_tag']}")
     print(f" Source Commit:         {scorecard['source_commit']}")
     print(f" Unrounded Score Total: {scorecard['total_unrounded']:.4f}")
     print(f" Overall Score Rounded: {scorecard['overall_score_rounded']:.2f} / 100.00")

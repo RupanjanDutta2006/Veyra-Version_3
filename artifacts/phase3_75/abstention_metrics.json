@@ -1,57 +1,65 @@
 {
-  "coverage_100pct": {
-    "target_coverage_pct": 100.0,
-    "retained_rows": 3750,
-    "abstained_rows": 0,
-    "abstention_rate_pct": 0.0,
-    "retained_brier_score": 0.0496,
-    "retained_brier_skill_score": 0.0728,
-    "false_alarm_rate": 0.0149,
-    "severe_error_rate": 0.0427,
-    "operational_abstention_cost_ratio": 0.0
+  "decision_threshold": 0.06,
+  "total_evaluated_rows": 15000,
+  "evidence_class": "REAL_EXTERNAL_EVALUATION",
+  "dataset_version": "v3-p3-75",
+  "without_abstention_forced": {
+    "decision_coverage_pct": 100.0,
+    "sample_count": 15000,
+    "brier_score": 0.0654,
+    "precision": 0.133,
+    "recall": 0.3996,
+    "false_alarm_rate": 0.1974,
+    "miss_rate": 0.6004,
+    "ece": 0.0349
   },
-  "coverage_95pct": {
-    "target_coverage_pct": 95.0,
-    "retained_rows": 3562,
-    "abstained_rows": 188,
-    "abstention_rate_pct": 5.01,
-    "retained_brier_score": 0.0484,
-    "retained_brier_skill_score": 0.0458,
-    "false_alarm_rate": 0.0154,
-    "severe_error_rate": 0.041,
-    "operational_abstention_cost_ratio": 0.0075
+  "with_veyra_safe_abstention": {
+    "decision_coverage_pct": 95.0,
+    "sample_count": 14250,
+    "brier_score": 0.0653,
+    "precision": 0.1345,
+    "recall": 0.388,
+    "false_alarm_rate": 0.1884,
+    "false_alarm_rate_reduction_pct": 4.55,
+    "miss_rate": 0.612,
+    "ece": 0.0352
   },
-  "coverage_90pct": {
-    "target_coverage_pct": 90.0,
-    "retained_rows": 3375,
-    "abstained_rows": 375,
-    "abstention_rate_pct": 10.0,
-    "retained_brier_score": 0.0508,
-    "retained_brier_skill_score": 0.0375,
-    "false_alarm_rate": 0.0163,
-    "severe_error_rate": 0.043,
-    "operational_abstention_cost_ratio": 0.015
+  "abstained_subset": {
+    "abstained_pct": 5.0,
+    "sample_count": 750,
+    "brier_score": 0.0667,
+    "action": "Flagged as ABSTAIN_OOD / Routed to Safe Verification"
   },
-  "coverage_80pct": {
-    "target_coverage_pct": 80.0,
-    "retained_rows": 3000,
-    "abstained_rows": 750,
-    "abstention_rate_pct": 20.0,
-    "retained_brier_score": 0.0568,
-    "retained_brier_skill_score": 0.0292,
-    "false_alarm_rate": 0.018,
-    "severe_error_rate": 0.048,
-    "operational_abstention_cost_ratio": 0.03
-  },
-  "coverage_70pct": {
-    "target_coverage_pct": 70.0,
-    "retained_rows": 2626,
-    "abstained_rows": 1124,
-    "abstention_rate_pct": 29.97,
-    "retained_brier_score": 0.0641,
-    "retained_brier_skill_score": 0.0212,
-    "false_alarm_rate": 0.0206,
-    "severe_error_rate": 0.0541,
-    "operational_abstention_cost_ratio": 0.045
-  }
+  "risk_coverage_curve": [
+    {
+      "coverage_pct": 100.0,
+      "sample_count": 15000,
+      "brier_score": 0.0654
+    },
+    {
+      "coverage_pct": 95.0,
+      "sample_count": 14250,
+      "brier_score": 0.0653
+    },
+    {
+      "coverage_pct": 90.0,
+      "sample_count": 13500,
+      "brier_score": 0.0661
+    },
+    {
+      "coverage_pct": 80.0,
+      "sample_count": 12000,
+      "brier_score": 0.0696
+    },
+    {
+      "coverage_pct": 70.0,
+      "sample_count": 10500,
+      "brier_score": 0.069
+    },
+    {
+      "coverage_pct": 50.0,
+      "sample_count": 7500,
+      "brier_score": 0.0655
+    }
+  ]
 }

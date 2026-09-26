@@ -162,7 +162,7 @@ def parse_raw_vitest_json(json_path: str) -> dict:
     return frontend_metrics
 
 
-def run_reproduction_test(tag: str = "sih-round2-phase3-comprehensive-remediation-v1.0.1", log_dir: str = "artifacts/submission_reproduction", mode: str = "auto") -> int:
+def run_reproduction_test(tag: str = "sih-round2-phase3-comprehensive-remediation-v1.0.2", log_dir: str = "artifacts/submission_reproduction", mode: str = "auto") -> int:
     # ── Recursion Guard ──────────────────────────────────────────────────
     if os.environ.get("VEYRA_CLEAN_CLONE_ACTIVE") == "1":
         print("[FAIL] Recursion detected: clean-clone reproduction cannot be invoked nested inside another clean-clone run.")
@@ -193,7 +193,23 @@ def run_reproduction_test(tag: str = "sih-round2-phase3-comprehensive-remediatio
     try:
         # Step 1: Clone candidate tag or stage archive
         if resolved_mode == "git":
-            print(f"\n[SOURCE_MODE=GIT] Step 1: Validating tag '{tag}' and cloning repository...")
+            print(f"\n[SOURCE_MODE=GIT] Step 1: Validating historical immutable tags and candidate tag '{tag}'...")
+
+            # Verify historical immutable tags
+            historical_tags = {
+                "sih-round2-submission-v1.1.3": "148f7b752b51824e9a04e0fac97c267561b1106d",
+                "sih-round2-phase2-v1.0.1": "9fff6362dbdb4a62299b927aa405598faa5a3514",
+                "sih-round2-phase3-comprehensive-remediation-v1.0.0": "19ae5b47f25d2d59c4b6fe80b77355569fc165f1",
+            }
+            for htag, hsha in historical_tags.items():
+                code_h, out_h, _ = run_cmd(f'git rev-parse -q --verify "refs/tags/{htag}^{{commit}}"', cwd=SOURCE_REPO)
+                if code_h != 0 or not out_h.strip():
+                    code_h, out_h, _ = run_cmd(f'git rev-parse -q --verify "{htag}^{{commit}}"', cwd=SOURCE_REPO)
+                if code_h != 0 or out_h.strip() != hsha:
+                    print(f"[FAIL] Historical immutable tag '{htag}' mismatch! Expected {hsha}, got {out_h}")
+                    return 1
+                print(f"  [PASS] Verified immutable baseline tag: {htag} -> {hsha}")
+
             code_t, tag_sha, err_t = run_cmd(f'git rev-parse -q --verify "refs/tags/{tag}^{{commit}}"', cwd=SOURCE_REPO)
             if code_t != 0 or not tag_sha.strip():
                 code_t, tag_sha, err_t = run_cmd(f'git rev-parse -q --verify "{tag}^{{commit}}"', cwd=SOURCE_REPO)
@@ -426,6 +442,27 @@ def run_reproduction_test(tag: str = "sih-round2-phase3-comprehensive-remediatio
                 print(f"[FAIL] Remediation audit suite failed:\n{out[-400:]}\n{err[-400:]}")
                 return 1
             print("  [PASS] Remediation audit suite executed cleanly.")
+
+            # 8f: Release manifest integrity verification
+            print("  [8f] Verifying release manifest integrity in clone...")
+            manifest_file = os.path.join(temp_dir, "artifacts", "remediation", "release_manifest_v1.0.2.json")
+            if not os.path.isfile(manifest_file):
+                print(f"[FAIL] Release manifest missing in clone: {manifest_file}")
+                return 1
+            import hashlib
+            with open(manifest_file, "r", encoding="utf-8") as mf:
+                manifest_obj = json.load(mf)
+            for rel_path, exp_hash in manifest_obj.get("artifacts_sha256", {}).items():
+                target_f = os.path.join(temp_dir, rel_path)
+                if not os.path.isfile(target_f):
+                    print(f"[FAIL] Manifest referenced file missing in clone: {rel_path}")
+                    return 1
+                with open(target_f, "rb") as bf:
+                    act_hash = hashlib.sha256(bf.read()).hexdigest()
+                if act_hash != exp_hash:
+                    print(f"[FAIL] Release manifest hash mismatch for {rel_path}: expected {exp_hash}, got {act_hash}")
+                    return 1
+            print(f"  [PASS] Release manifest verified with {len(manifest_obj.get('artifacts_sha256', {}))} cryptographic artifact hashes.")
         else:
             # Step 8 for Phase 1: Run gate_test_phase9.py --skip-clean-clone in clone
             print("\nStep 8: Executing Phase 9 Gate Verification in clone (--skip-clean-clone)...")
@@ -448,6 +485,15 @@ def run_reproduction_test(tag: str = "sih-round2-phase3-comprehensive-remediatio
         clone_scorecard_json = os.path.join(temp_dir, "artifacts", "authoritative_scorecard.json")
         if os.path.isfile(clone_scorecard_json):
             shutil.copy2(clone_scorecard_json, os.path.join(log_dir, f"scorecard_{tag}.json"))
+
+        # Sync regenerated release manifest from clone to reproduction directory
+        clone_manifest_json = os.path.join(temp_dir, "artifacts", "remediation", "release_manifest_v1.0.2.json")
+        if os.path.isfile(clone_manifest_json):
+            shutil.copy2(clone_manifest_json, os.path.join(log_dir, f"release_manifest_{tag}.json"))
+
+        # Sync raw frontend json to reproduction directory
+        if os.path.isfile(raw_vitest_path):
+            shutil.copy2(raw_vitest_path, os.path.join(log_dir, f"frontend_raw_{tag}.json"))
 
         # Generate official attestation inside clean clone
         tag_version = tag.replace("sih-round2-submission-", "").replace("sih-round2-", "")
@@ -542,7 +588,7 @@ def run_reproduction_test(tag: str = "sih-round2-phase3-comprehensive-remediatio
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--tag", default="sih-round2-phase3-comprehensive-remediation-v1.0.1")
+    parser.add_argument("--tag", default="sih-round2-phase3-comprehensive-remediation-v1.0.2")
     parser.add_argument("--log-dir", default="artifacts/submission_reproduction")
     parser.add_argument("--mode", choices=["auto", "git", "archive"], default="auto")
     args = parser.parse_args()

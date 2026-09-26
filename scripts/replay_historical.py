@@ -703,7 +703,12 @@ def run_historical_replay(
     print("=" * 78 + "\n")
 
     # Determine default export directory based on dataset version
-    if dataset_version == "v3-p3" or "phase3" in str(fixtures):
+    if "75" in str(fixtures) or dataset_version == "v3-p3-75":
+        p3_75_dir = REPO_ROOT / "artifacts" / "phase3_75"
+        default_metrics_path = p3_75_dir / "replay_metrics.json"
+        default_abstention_path = p3_75_dir / "abstention_metrics.json"
+        default_bins_path = p3_75_dir / "reliability_bins.json"
+    elif dataset_version == "v3-p3" or "phase3" in str(fixtures):
         default_metrics_path = ARTIFACTS_PHASE3 / "replay_metrics.json"
         default_abstention_path = ARTIFACTS_PHASE3 / "abstention_metrics.json"
         default_bins_path = ARTIFACTS_PHASE3 / "reliability_bins.json"

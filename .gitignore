@@ -150,6 +150,6 @@ Audits/
 *.db-shm
 data/*.db
 .github/workflows/
-artifacts/submission_reproduction/*.log
+!artifacts/submission_reproduction/*.log
 
 

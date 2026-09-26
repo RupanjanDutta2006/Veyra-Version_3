@@ -1,6 +1,6 @@
 {
   "model_version": "v3-challenger",
-  "timestamp_utc": "2026-09-26T10:44:51.832258+00:00",
+  "timestamp_utc": "2026-09-26T12:18:12.992107+00:00",
   "candidate_model": "Candidate_GBDT_Platt_Calibrated",
   "model_sha256": "a4ee5d158857cf5c303db6b8fc42edb587732cc061419ddd5817fc23a19911b8",
   "calibrator_sha256": "48d9223b57e613ddd312dddaaae27470b87cefa38cd16f63d901e208801f5b32",

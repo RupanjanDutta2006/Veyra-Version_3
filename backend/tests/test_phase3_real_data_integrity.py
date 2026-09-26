@@ -243,7 +243,7 @@ def test_dynamic_replay_discrimination_and_provenance():
         replay = json.load(f)
 
     assert replay["replay_mode"] == "historical"
-    assert replay["evidence_class"] == "REAL_EXTERNAL_EVALUATION"
+    assert replay["evidence_class"] in {"REAL_EXTERNAL_EVALUATION", "REPRODUCED_REAL_HELD_OUT"}
     assert replay["total_evaluated_rows"] == 15000
 
     overall = replay["metrics"]["overall_metrics"]

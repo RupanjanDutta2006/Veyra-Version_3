@@ -1,8 +1,12 @@
 # Veyra Version-3 — Authoritative Scientific Integrity Scorecard
 
 ## Executive Summary
-- **Source Commit**: `19ae5b47f25d2d59c4b6fe80b77355569fc165f1`
-- **Calculation Timestamp (UTC)**: `2026-09-26T10:44:55.798472+00:00`
+- **Evaluation Commit**: `45d725540c9ececf4cae9ea3eec7f3bc378bdc79`
+- **Release Commit**: `45d725540c9ececf4cae9ea3eec7f3bc378bdc79`
+- **Release Tag**: `sih-round2-phase3-comprehensive-remediation-v1.0.2`
+- **Source Commit**: `45d725540c9ececf4cae9ea3eec7f3bc378bdc79`
+- **Calculation Timestamp (UTC)**: `2026-09-26T12:17:32.157139+00:00`
+- **Scorecard Command**: `python scripts/generate_authoritative_scorecard.py --strict`
 - **Arithmetic Check**: **`PASSED`**
 - **Evidence Check**: **`PASSED`**
 - **Unrounded Weighted Total**: **`78.4900`**
@@ -66,7 +70,7 @@
 ### `CAT_05`: Reliability intelligence
 - **Target Weight**: `8.0%` | **Awarded Raw Score**: `80.0/100` | **Contribution**: `6.4000`
 - **Evidence Class**: `REAL_EXTERNAL_BENCHMARK` | **Status**: `VERIFIED_PASS`
-- **Primary Artifact**: `artifacts/phase3_75/reliability_bins.json` (SHA-256: `1c9ee385bf49a4e42af72cd4752f6cae6d6a6457d8a18913df595e797fb228c1`)
+- **Primary Artifact**: `artifacts/phase3_75/reliability_bins.json` (SHA-256: `3b783554178c6d141712dd5c061840ae196c8913b2810ed8e6894f3b9a4a4946`)
 - **Verification Command**: `python -c 'import json; d=json.load(open("artifacts/phase3_75/reliability_bins.json")); assert "bins" in d'` -> `PASSED` (Exit code 0)
 - **Rationale**: 10-bin empirical probability calibration curves and failure memory stratification across lead times (24h to 240h) and 3 hazards (temperature, surface pressure, wind speed).
 
@@ -80,7 +84,7 @@
 ### `CAT_07`: Certification, OOD, abstention, drift & independent truth
 - **Target Weight**: `9.0%` | **Awarded Raw Score**: `80.0/100` | **Contribution**: `7.2000`
 - **Evidence Class**: `REAL_EXTERNAL_BENCHMARK` | **Status**: `VERIFIED_PASS`
-- **Primary Artifact**: `artifacts/phase3_75/abstention_metrics.json` (SHA-256: `f31f20d109f0acc1b13996a2e8653c3c7b3962696acbb5d3b1b59b3db63fc475`)
+- **Primary Artifact**: `artifacts/phase3_75/abstention_metrics.json` (SHA-256: `0e2575038cf2bbfaf441036515b643404582b893723a4dbe7c63972c5bac6adc`)
 - **Verification Command**: `python scripts/replay_historical.py --mode historical --dataset data/phase3/benchmark_real_75_dataset.jsonl --output-json artifacts/phase3_75/replay_metrics.json` -> `PASSED` (Exit code 0)
 - **Rationale**: Non-circular physical domain OOD scoring and pre-inference safe abstention curve evaluated across [100%, 95%, 90%, 80%, 70%] coverages; retained subset Brier score improves under selective abstention.
 
@@ -94,7 +98,7 @@
 ### `CAT_09`: Backend/API architecture & robustness
 - **Target Weight**: `6.0%` | **Awarded Raw Score**: `90.0/100` | **Contribution**: `5.4000`
 - **Evidence Class**: `REPRODUCED_REAL_HELD_OUT` | **Status**: `VERIFIED_PASS`
-- **Primary Artifact**: `artifacts/test_results/backend.json` (SHA-256: `8fef15c584631ed3c7d5f9bd3b6922d1f20a861cf565bb3890b3749e929c63fc`)
+- **Primary Artifact**: `artifacts/test_results/backend.json` (SHA-256: `d6ed7f17d46d07bce18235e1f4f85d92c76e0cba6d38c0f840ef439af532f9f1`)
 - **Verification Command**: `pytest backend/tests -q` -> `PASSED` (Exit code 0)
 - **Rationale**: 994 automated backend test cases passing (100% pass rate); async FastAPI lifespan handlers, robust contract validation, and dependency-isolated endpoints.
 
@@ -108,7 +112,7 @@
 ### `CAT_11`: Testing, reproducibility, replay & release engineering
 - **Target Weight**: `8.0%` | **Awarded Raw Score**: `80.0/100` | **Contribution**: `6.4000`
 - **Evidence Class**: `REPRODUCED_REAL_HELD_OUT` | **Status**: `VERIFIED_PASS`
-- **Primary Artifact**: `artifacts/phase3_75/replay_metrics.json` (SHA-256: `daa5710f432060fff62ae2920625270c15e8012e61701fbdc303c6a8b24b71e9`)
+- **Primary Artifact**: `artifacts/phase3_75/replay_metrics.json` (SHA-256: `71fb4d99c79384e25744c0d660dd25c95fbf84a3fe4ad7806371814584e7c869`)
 - **Verification Command**: `python scripts/replay_historical.py --mode historical --dataset data/phase3/benchmark_real_75_dataset.jsonl` -> `PASSED` (Exit code 0)
 - **Rationale**: Deterministic evaluation replay, frozen training baseline governance, clean-clone reproduction suite, and cryptographic tracking of all pipeline stages.
 

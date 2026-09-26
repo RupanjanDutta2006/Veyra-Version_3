@@ -1,4 +1,14 @@
-{
+Veyra [GIT MODE] reproduction for sih-round2-phase3-comprehensive-remediation-v1.0.2 SUCCESSFUL at commit 45d725540c9ececf4cae9ea3eec7f3bc378bdc79
+Tag Dereference Commit SHA: 45d725540c9ececf4cae9ea3eec7f3bc378bdc79
+Final HEAD Commit SHA:       45d725540c9ececf4cae9ea3eec7f3bc378bdc79
+Scorecard Version:           authoritative-v1
+Overall Authoritative Score: 78.49 / 100.00
+Scorecard Disposition:       SCORECARD_VERIFIED_75_PLUS
+Arithmetic Verification:     PASSED
+Evidence Verification:       PASSED
+Backend Tests Passed:        1003 (0 failed, 0 errors)
+Frontend Tests Passed:       111 across 21 suites
+Summary: {
   "schema_version": "1.0.0",
   "timestamp": "2026-09-26T12:17:23.384234+00:00",
   "candidate_tag": "sih-round2-phase3-comprehensive-remediation-v1.0.2",

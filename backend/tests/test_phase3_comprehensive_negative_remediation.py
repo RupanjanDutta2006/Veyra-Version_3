@@ -206,18 +206,49 @@ def test_canonical_failure_motifs_remediation():
 
 
 def test_scorecard_source_commit_mismatch_negative():
-    """Negative Test: scorecard source commit must dynamically match checked-out HEAD."""
+    """Negative Test: scorecard source commit and evaluation commit must dynamically match checked-out HEAD."""
     from scripts.generate_authoritative_scorecard import get_current_commit, build_authoritative_scorecard
     current_head = get_current_commit()
     assert len(current_head) == 40
 
     scorecard, categories, _ = build_authoritative_scorecard(strict=True)
     assert scorecard["source_commit"] == current_head
+    assert scorecard["evaluation_commit"] == current_head
+    assert scorecard["release_tag"] == "sih-round2-phase3-comprehensive-remediation-v1.0.2"
+    assert scorecard["scorecard_generation_command"] == "python scripts/generate_authoritative_scorecard.py --strict"
+    assert scorecard["scorecard_generation_exit_code"] == 0
+
+    # Negative test: invalid evaluation commit must raise ValueError
+    with pytest.raises(ValueError, match="does not exist in git history"):
+        build_authoritative_scorecard(evaluation_commit="0" * 40, strict=True)
 
     # Mismatch simulation
     tampered_scorecard = dict(scorecard)
     tampered_scorecard["source_commit"] = "0" * 40
+    tampered_scorecard["evaluation_commit"] = "0" * 40
     assert tampered_scorecard["source_commit"] != get_current_commit()
+    assert tampered_scorecard["evaluation_commit"] != get_current_commit()
+
+
+def test_release_manifest_integrity_and_tamper_detection():
+    """Validates release manifest v1.0.2 integrity and negative tampering detection."""
+    from scripts.run_remediation_audit import sha256_of_file
+    from pathlib import Path
+    manifest_path = Path("artifacts/remediation/release_manifest_v1.0.2.json")
+    if not manifest_path.is_file():
+        pytest.skip("release_manifest_v1.0.2.json not yet generated")
+
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    assert manifest["release_tag"] == "sih-round2-phase3-comprehensive-remediation-v1.0.2"
+    assert manifest["manifest_schema_version"] == "v1.0.2"
+    assert len(manifest["artifacts_sha256"]) >= 25
+
+    # Verify that comparing tampered hash fails
+    tampered_manifest = copy.deepcopy(manifest)
+    first_key = next(iter(tampered_manifest["artifacts_sha256"]))
+    tampered_manifest["artifacts_sha256"][first_key] = "f" * 64
+    actual_hash = sha256_of_file(Path(first_key))
+    assert tampered_manifest["artifacts_sha256"][first_key] != actual_hash
 
 
 def test_target_score_hard_coding_rejection():

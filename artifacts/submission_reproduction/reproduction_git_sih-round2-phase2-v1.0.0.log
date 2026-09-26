@@ -1,22 +1,23 @@
-{
+Veyra [GIT MODE] reproduction for sih-round2-phase2-v1.0.0 SUCCESSFUL at commit 88234a439d88d57d92862c28fd65173bdb9f668c
+Summary: {
   "schema_version": "1.0.0",
-  "timestamp": "2026-09-26T12:17:23.384234+00:00",
-  "candidate_tag": "sih-round2-phase3-comprehensive-remediation-v1.0.2",
+  "timestamp": "2026-09-26T05:34:00.994309+00:00",
+  "candidate_tag": "sih-round2-phase2-v1.0.0",
   "baseline_sha": "94745df06298ee5daab3144e329885f780958bad",
-  "checked_out_commit_sha": "45d725540c9ececf4cae9ea3eec7f3bc378bdc79",
-  "total_tests": 1114,
-  "total_passed": 1114,
+  "checked_out_commit_sha": "88234a439d88d57d92862c28fd65173bdb9f668c",
+  "total_tests": 1075,
+  "total_passed": 1075,
   "total_failed": 0,
   "total_errors": 0,
   "total_skipped": 0,
   "backend_result": {
     "framework": "pytest",
-    "total_tests": 1003,
-    "passed": 1003,
+    "total_tests": 964,
+    "passed": 964,
     "failed": 0,
     "errors": 0,
     "skipped": 0,
-    "duration_seconds": 50.965,
+    "duration_seconds": 100.972,
     "status": "PASSED"
   },
   "frontend_result": {
@@ -33,7 +34,5 @@
     "success": true,
     "status": "PASSED"
   },
-  "acceptance_gates_passed": 10,
-  "total_acceptance_gates": 10,
-  "gate_pass_rate": "100%"
+  "status": "PASSED"
 }
