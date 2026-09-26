@@ -4,7 +4,7 @@
   "dataset_version": "v3-p3-75",
   "evidence_class": "REPRODUCED_REAL_HELD_OUT",
   "immutable_ground_truth": true,
-  "timestamp_utc": "2026-09-26T10:18:27.090039+00:00",
+  "timestamp_utc": "2026-09-26T10:44:47.169158+00:00",
   "total_evaluated_rows": 15000,
   "metrics": {
     "overall_metrics": {

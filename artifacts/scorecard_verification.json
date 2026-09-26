@@ -1,7 +1,7 @@
 {
   "scorecard_version": "authoritative-v1",
-  "source_commit": "2a060ec563bc00da71e6a754ee1157f00581a584",
-  "verification_timestamp_utc": "2026-09-26T10:22:42.948124+00:00",
+  "source_commit": "19ae5b47f25d2d59c4b6fe80b77355569fc165f1",
+  "verification_timestamp_utc": "2026-09-26T10:44:55.798472+00:00",
   "total_categories": 13,
   "weight_sum_pct": 100.0,
   "total_unrounded_score": 78.49,

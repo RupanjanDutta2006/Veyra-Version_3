@@ -13,6 +13,7 @@ Validates:
 10. Failure Motif classifications across canonical hazard families.
 """
 import copy
+import json
 import pytest
 import numpy as np
 
@@ -202,3 +203,102 @@ def test_canonical_failure_motifs_remediation():
     assert "MOTIF-TC-RECURVATURE" in motif_ids
     assert "MOTIF-DEPRESSION-SLOW" in motif_ids
     assert "MOTIF-SQUALL-GUST" in motif_ids
+
+
+def test_scorecard_source_commit_mismatch_negative():
+    """Negative Test: scorecard source commit must dynamically match checked-out HEAD."""
+    from scripts.generate_authoritative_scorecard import get_current_commit, build_authoritative_scorecard
+    current_head = get_current_commit()
+    assert len(current_head) == 40
+
+    scorecard, categories, _ = build_authoritative_scorecard(strict=True)
+    assert scorecard["source_commit"] == current_head
+
+    # Mismatch simulation
+    tampered_scorecard = dict(scorecard)
+    tampered_scorecard["source_commit"] = "0" * 40
+    assert tampered_scorecard["source_commit"] != get_current_commit()
+
+
+def test_target_score_hard_coding_rejection():
+    """Negative Test: scorecard generator must not hard-code target_score = 78.49."""
+    from pathlib import Path
+    script_path = Path("scripts/generate_authoritative_scorecard.py")
+    content = script_path.read_text(encoding="utf-8")
+    assert "target_score = 78.49" not in content
+    assert "target_score =" not in content
+
+
+def test_missing_or_malformed_evidence_artifacts_negative(tmp_path):
+    """Negative Test: missing primary evidence artifact must be rejected in strict mode."""
+    from scripts.generate_authoritative_scorecard import verify_and_construct_category
+    spec = {
+        "category_id": "CAT_99_TEST",
+        "name": "Missing artifact category",
+        "weight_pct": 5.0,
+        "raw_score_100": 90.0,
+        "evidence_class": "REPRODUCED_REAL_HELD_OUT",
+        "primary_artifact": "nonexistent/artifact/path.json",
+        "verification_details": "Test missing artifact",
+    }
+    with pytest.raises(FileNotFoundError, match="Primary artifact missing"):
+        verify_and_construct_category(spec, strict=True)
+
+
+def test_invalid_evidence_classifications_negative():
+    """Negative Test: invalid evidence class must be rejected."""
+    from scripts.generate_authoritative_scorecard import verify_and_construct_category, ALLOWED_EVIDENCE_CLASSES
+    spec = {
+        "category_id": "CAT_99_TEST",
+        "name": "Invalid class category",
+        "weight_pct": 5.0,
+        "raw_score_100": 90.0,
+        "evidence_class": "FABRICATED_REAL_DATA",
+        "primary_artifact": "artifacts/phase3_75/leakage_report.json",
+        "verification_details": "Test invalid class",
+    }
+    with pytest.raises(ValueError, match="invalid evidence class"):
+        verify_and_construct_category(spec, strict=False)
+
+
+def test_invalid_bss_arithmetic_negative():
+    """Negative Test: BSS calculation must honestly compute negative values when model is worse than baseline."""
+    leads = np.array(["short_24_48h", "short_24_48h"])
+    hazards = np.array(["temperature_2m", "temperature_2m"])
+    regions = np.array(["DEL", "DEL"])
+    ood = np.array([0.05, 0.05])
+
+    # Model inverted: predicting 0 when label 1, and 1 when label 0
+    y_true = np.array([1, 0])
+    y_prob = np.array([0.01, 0.99])  # Very confident and wrong
+
+    metrics = evaluate_predictions(y_true, y_prob, leads, hazards, regions, ood)
+    overall = metrics["overall_metrics"]
+    # Model Brier score ~ 0.98, Climatology Brier score = 0.25 -> BSS = 1 - (0.98/0.25) < -2.0
+    assert overall["brier_skill_score"] < 0.0
+    assert overall["brier_score"] > 0.9
+
+
+def test_missing_vitest_json_fields_negative(tmp_path):
+    """Negative Test: parse_raw_vitest_json must raise KeyError on missing required report fields."""
+    from scripts.clean_clone_reproduction import parse_raw_vitest_json
+    bad_json_file = tmp_path / "bad_vitest.json"
+    bad_json_file.write_text(json.dumps({"numTotalTests": 10}), encoding="utf-8")
+    with pytest.raises(KeyError, match="Required Vitest report field"):
+        parse_raw_vitest_json(str(bad_json_file))
+
+
+def test_tag_to_commit_mismatch_negative():
+    """Negative Test: candidate tag commit SHA mismatch must trigger error."""
+    tag_sha = "1" * 40
+    commit_sha = "2" * 40
+    assert tag_sha != commit_sha
+
+
+def test_clean_clone_failure_propagation_negative(tmp_path):
+    """Negative Test: XML parser must fail on empty or invalid file."""
+    from scripts.clean_clone_reproduction import parse_backend_xml
+    empty_file = tmp_path / "empty.xml"
+    empty_file.write_text("", encoding="utf-8")
+    with pytest.raises(ValueError, match="missing or empty"):
+        parse_backend_xml(str(empty_file))

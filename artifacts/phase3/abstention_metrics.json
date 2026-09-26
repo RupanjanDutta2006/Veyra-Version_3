@@ -1,7 +1,7 @@
 {
   "decision_threshold": 0.06,
   "total_evaluated_rows": 15000,
-  "evidence_class": "REAL_EXTERNAL_EVALUATION",
+  "evidence_class": "REPRODUCED_REAL_HELD_OUT",
   "dataset_version": "v3-p3-75",
   "without_abstention_forced": {
     "decision_coverage_pct": 100.0,

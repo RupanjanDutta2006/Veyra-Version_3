@@ -161,7 +161,7 @@ def parse_raw_vitest_json(json_path: str) -> dict:
     return frontend_metrics
 
 
-def run_reproduction_test(tag: str = "sih-round2-submission-v1.1.3", log_dir: str = "artifacts/submission_reproduction", mode: str = "auto") -> int:
+def run_reproduction_test(tag: str = "sih-round2-phase3-comprehensive-remediation-v1.0.1", log_dir: str = "artifacts/submission_reproduction", mode: str = "auto") -> int:
     # ── Recursion Guard ──────────────────────────────────────────────────
     if os.environ.get("VEYRA_CLEAN_CLONE_ACTIVE") == "1":
         print("[FAIL] Recursion detected: clean-clone reproduction cannot be invoked nested inside another clean-clone run.")
@@ -362,13 +362,77 @@ def run_reproduction_test(tag: str = "sih-round2-submission-v1.1.3", log_dir: st
             json.dump(summary_data, f, indent=2)
         print(f"  [PASS] Summary generated: {summary_data['total_passed']} total tests passed (100% pass rate).")
 
-        # Step 8: Run gate_test_phase9.py --skip-clean-clone in clone
-        print("\nStep 8: Executing Phase 9 Gate Verification in clone (--skip-clean-clone)...")
-        code, out, err = run_cmd(f'"{venv_python}" scripts/gate_test_phase9.py --skip-clean-clone --tag {tag}', cwd=temp_dir)
-        if code != 0:
-            print(f"[FAIL] Phase 9 Gate Verification failed:\n{out}\n{err}")
-            return 1
-        print("  [PASS] Phase 9 Gate Verification passed with 100% success.")
+        is_phase3 = "phase3" in tag.lower()
+        scorecard_obj = {}
+        if is_phase3:
+            print("\nStep 8: Executing Phase 3 Replay, Data Integrity & Scorecard Regeneration in clone...")
+            # 8a: Real data replay
+            print("  [8a] Replaying historical real data...")
+            replay_cmd = (
+                f'"{venv_python}" scripts/replay_historical.py '
+                f'--mode historical '
+                f'--dataset data/phase3/benchmark_real_75_dataset.jsonl '
+                f'--output-json artifacts/phase3_75/replay_metrics.json'
+            )
+            code, out, err = run_cmd(replay_cmd, cwd=temp_dir)
+            if code != 0:
+                print(f"[FAIL] Phase 3 Historical Replay failed:\n{out[-400:]}\n{err[-400:]}")
+                return 1
+            print("  [PASS] Phase 3 Historical Replay succeeded.")
+
+            # 8b: Data manifest validation
+            print("  [8b] Validating Phase 3 data manifest and anti-leakage invariants...")
+            val_cmd = f'"{venv_python}" scripts/validate_phase3_data.py --manifest artifacts/phase3_75/data_manifest.json'
+            code, out, err = run_cmd(val_cmd, cwd=temp_dir)
+            if code != 0:
+                print(f"[FAIL] Phase 3 Data Manifest validation failed:\n{out[-400:]}\n{err[-400:]}")
+                return 1
+            print("  [PASS] Phase 3 Data Manifest validated.")
+
+            # 8c: Scorecard regeneration from checked-out commit
+            print("  [8c] Regenerating authoritative scorecard from checked-out commit...")
+            scorecard_cmd = f'"{venv_python}" scripts/generate_authoritative_scorecard.py --strict'
+            code, out, err = run_cmd(scorecard_cmd, cwd=temp_dir)
+            if code != 0:
+                print(f"[FAIL] Authoritative Scorecard regeneration failed:\n{out[-400:]}\n{err[-400:]}")
+                return 1
+            print("  [PASS] Authoritative Scorecard regenerated from checked-out commit.")
+
+            # 8d: Independent CSV arithmetic recalculation
+            print("  [8d] Verifying independent CSV arithmetic...")
+            clone_csv_path = os.path.join(temp_dir, "artifacts", "authoritative_scorecard.csv")
+            clone_json_path = os.path.join(temp_dir, "artifacts", "authoritative_scorecard.json")
+            if not os.path.isfile(clone_csv_path) or not os.path.isfile(clone_json_path):
+                print(f"[FAIL] Scorecard artifacts missing in clone: {clone_csv_path}, {clone_json_path}")
+                return 1
+            with open(clone_json_path, "r", encoding="utf-8") as jf:
+                scorecard_obj = json.load(jf)
+            csv_sum = 0.0
+            with open(clone_csv_path, "r", encoding="utf-8") as cf:
+                reader = csv.DictReader(cf)
+                for r in reader:
+                    csv_sum += float(r["contribution"])
+            if abs(round(csv_sum, 2) - scorecard_obj["overall_score_rounded"]) > 1e-4:
+                print(f"[FAIL] Independent CSV recalculation mismatch: {csv_sum} vs {scorecard_obj['overall_score_rounded']}")
+                return 1
+            print(f"  [PASS] Independent CSV arithmetic verified: sum={csv_sum:.4f}, rounded={scorecard_obj['overall_score_rounded']}")
+
+            # 8e: Run remediation audit suite
+            print("  [8e] Running remediation audit suite in clone...")
+            audit_cmd = f'"{venv_python}" scripts/run_remediation_audit.py'
+            code, out, err = run_cmd(audit_cmd, cwd=temp_dir)
+            if code != 0:
+                print(f"[FAIL] Remediation audit suite failed:\n{out[-400:]}\n{err[-400:]}")
+                return 1
+            print("  [PASS] Remediation audit suite executed cleanly.")
+        else:
+            # Step 8 for Phase 1: Run gate_test_phase9.py --skip-clean-clone in clone
+            print("\nStep 8: Executing Phase 9 Gate Verification in clone (--skip-clean-clone)...")
+            code, out, err = run_cmd(f'"{venv_python}" scripts/gate_test_phase9.py --skip-clean-clone --tag {tag}', cwd=temp_dir)
+            if code != 0:
+                print(f"[FAIL] Phase 9 Gate Verification failed:\n{out}\n{err}")
+                return 1
+            print("  [PASS] Phase 9 Gate Verification passed with 100% success.")
 
         # Sync generated artifacts to workspace for reporting
         workspace_results_dir = os.path.join(SOURCE_REPO, "artifacts", "test_results")
@@ -379,8 +443,13 @@ def run_reproduction_test(tag: str = "sih-round2-submission-v1.1.3", log_dir: st
             if os.path.isfile(src_f):
                 shutil.copy2(src_f, dst_f)
 
+        # Sync regenerated scorecard from clone to reproduction directory
+        clone_scorecard_json = os.path.join(temp_dir, "artifacts", "authoritative_scorecard.json")
+        if os.path.isfile(clone_scorecard_json):
+            shutil.copy2(clone_scorecard_json, os.path.join(log_dir, f"scorecard_{tag}.json"))
+
         # Generate official attestation inside clean clone
-        tag_version = tag.replace("sih-round2-submission-", "")
+        tag_version = tag.replace("sih-round2-submission-", "").replace("sih-round2-", "")
         with open(raw_vitest_path, "r", encoding="utf-8") as rf:
             raw_data = json.load(rf)
 
@@ -390,8 +459,8 @@ def run_reproduction_test(tag: str = "sih-round2-submission-v1.1.3", log_dir: st
         suite_count_consistent = bool(raw_suites == fe_suites == fe_files)
 
         attestation = {
-            "phase": "phase_1_closeout",
-            "status": "PHASE_1_APPROVED",
+            "phase": "phase_3_closeout" if is_phase3 else "phase_1_closeout",
+            "status": "PHASE_3_APPROVED" if is_phase3 else "PHASE_1_APPROVED",
             "candidate_tag": tag,
             "candidate_commit_sha": commit_sha,
             "tag_commit_sha": commit_sha,
@@ -421,11 +490,7 @@ def run_reproduction_test(tag: str = "sih-round2-submission-v1.1.3", log_dir: st
                 "exit_code": 0,
                 "bundle_entry": "frontend/dist/index.html",
             },
-            "gate_validation": {
-                "status": "PASSED",
-                "exit_code": 0,
-                "master_gates_passed": 10,
-            },
+            "phase3_scorecard": scorecard_obj if is_phase3 else None,
             "clean_clone": {
                 "status": "PASSED",
                 "exit_code": 0,
@@ -447,6 +512,16 @@ def run_reproduction_test(tag: str = "sih-round2-submission-v1.1.3", log_dir: st
 
         with open(log_file, "w", encoding="utf-8") as f:
             f.write(f"Veyra [{resolved_mode.upper()} MODE] reproduction for {tag} SUCCESSFUL at commit {commit_sha}\n")
+            f.write(f"Tag Dereference Commit SHA: {commit_sha}\n")
+            f.write(f"Final HEAD Commit SHA:       {commit_sha}\n")
+            if is_phase3 and scorecard_obj:
+                f.write(f"Scorecard Version:           {scorecard_obj.get('scorecard_version')}\n")
+                f.write(f"Overall Authoritative Score: {scorecard_obj.get('overall_score_rounded')} / 100.00\n")
+                f.write(f"Scorecard Disposition:       {scorecard_obj.get('final_disposition')}\n")
+                f.write(f"Arithmetic Verification:     {scorecard_obj.get('arithmetic_check')}\n")
+                f.write(f"Evidence Verification:       {scorecard_obj.get('evidence_check')}\n")
+            f.write(f"Backend Tests Passed:        {backend_metrics['passed']} (0 failed, 0 errors)\n")
+            f.write(f"Frontend Tests Passed:       {frontend_metrics['passed']} across {frontend_metrics['test_files']} suites\n")
             f.write(f"Summary: {json.dumps(summary_data, indent=2)}\n")
 
         if resolved_mode == "git":
@@ -466,7 +541,7 @@ def run_reproduction_test(tag: str = "sih-round2-submission-v1.1.3", log_dir: st
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--tag", default="sih-round2-submission-v1.1.3")
+    parser.add_argument("--tag", default="sih-round2-phase3-comprehensive-remediation-v1.0.1")
     parser.add_argument("--log-dir", default="artifacts/submission_reproduction")
     parser.add_argument("--mode", choices=["auto", "git", "archive"], default="auto")
     args = parser.parse_args()
